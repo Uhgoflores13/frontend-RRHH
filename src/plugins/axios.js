@@ -2,6 +2,10 @@
 
 import Vue from 'vue';
 import axios from "axios";
+import router from "../router";
+import store from '../store'
+import jwtDecode from "jwt-decode";
+
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -9,7 +13,7 @@ import axios from "axios";
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
+    baseURL: process.env.VUE_APP_API_URL || "http://127.0.0.1:8000/",
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
@@ -29,13 +33,42 @@ _axios.interceptors.request.use(
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-  function(response) {
-    // Do something with response data
-    return response;
-  },
-  function(error) {
-    // Do something with response error
-    return Promise.reject(error);
+  (response)=> response,
+  (error)=> {
+    /**
+     * Logica para refresh token
+     * */
+    const status = error.response.status
+
+    if (status !== 401 || (status === 401 && window.location.pathname === '/login')) {
+      return Promise.reject(error);
+    }
+
+    const base = process.env.VUE_APP_API_URL
+    return axios.post(base + 'api/token/refresh ', {
+      refresh_token: localStorage.getItem('refresh_token')
+    }).then(response => {
+      if (response.status === 200) {
+        const token = response.data.token
+        localStorage.setItem('token', token)
+        localStorage.setItem('refresh_token', response.data.refresh_token)
+        store.dispatch('setToken', token)
+        store.dispatch('setUserInfo', jwtDecode(token))
+        error.response.config.headers['Authorization'] = 'Bearer ' + token
+        return axios(error.response.config)
+      }
+    }).catch(error => {
+      store.dispatch("utils/hideLoader");
+      localStorage.clear()
+      store.dispatch('setToken', null)
+      store.dispatch('setUserInfo', {})
+      router.push('/login').catch(err => {
+      })
+      return Promise.reject(error)
+    })
+    /**
+     * finish here
+     * */
   }
 );
 
