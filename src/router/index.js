@@ -7,7 +7,12 @@ const routes = [
     {
         path: '/',
         name: 'layout',
-        component: () => import(/* webpackChunkName: "layout" */ '../views/layout')
+        component: () => import(/* webpackChunkName: "layout" */ '../views/layout'),
+        children:[{
+            path:'/perfil',
+            name:'perfil',
+            component:()=> import(/* webpackChunkName: "perfil" */ '../views/perfil')
+        }]
     }, {
         path: '/login',
         name: 'login',

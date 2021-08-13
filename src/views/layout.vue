@@ -65,7 +65,7 @@
             <v-icon color="white">mdi-chevron-down</v-icon>
           </template>
           <v-list-item>
-            <v-list-item-icon>
+            <v-list-item-icon style="margin-right: .5rem">
               <v-icon color="white">mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="white--text">prueba</v-list-item-title>
@@ -75,20 +75,24 @@
     </v-navigation-drawer>
 
     <v-main class="grey lighten-3">
-      <router-view :key="$route.path"/>
+      <div class="pa-4">
+        <router-view :key="$route.path"/>
+      </div>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import {mapState} from 'vuex'
-
+import {mapState, mapActions, mapMutations} from 'vuex'
+import jwtDecode from 'jwt-decode'
 export default {
   name: "layout",
   data: () => ({
     drawer: null,
   }),
   methods: {
+    ...mapMutations(['setUserInfo']),
+    ...mapActions(['getUserDetail']),
     cerrarSession() {
       localStorage.clear()
       this.$router.push('/login').catch(e => {
@@ -96,8 +100,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['userInfo'])
-  }
+    ...mapState(['userInfo','token'])
+  },
+  async created() {
+    //sacamos la info del token
+    if (this.token) {
+      const userDecode = jwtDecode(this.token)
+      await this.setUserInfo(userDecode)
+      await this.getUserDetail()
+    } else{
+      this.$router.push('/login').catch(e => {
+      })
+    }
+  },
 }
 </script>
 
