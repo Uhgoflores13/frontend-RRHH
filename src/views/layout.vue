@@ -65,7 +65,7 @@
             <v-icon color="white">mdi-chevron-down</v-icon>
           </template>
           <v-list-item>
-            <v-list-item-icon style="margin-right: .5rem">
+            <v-list-item-icon>
               <v-icon color="white">mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="white--text">prueba</v-list-item-title>
