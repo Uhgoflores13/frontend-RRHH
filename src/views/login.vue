@@ -2,8 +2,11 @@
   <v-app>
     <v-main class="grey lighten-3">
       <v-container fluid fill-height>
+
         <v-layout align-center justify-center>
+
           <v-flex xs12 sm8 md5 lg3>
+
             <div class="d-flex justify-center align-center mb-2">
               <img src="../assets/minsal.svg" alt="" width="400px">
             </div>
@@ -100,8 +103,10 @@ export default {
       }
     },
     showAlert(message) {
+      console.log(message)
       this.alert.show = true
       this.alert.message = message
+      this.alert.type='success'
       setTimeout(() => {
         this.ocultarAlert()
       }, 2000)

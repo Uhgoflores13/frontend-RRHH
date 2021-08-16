@@ -7,13 +7,17 @@ export default {
             message: ''
         },
         loader: false,
+        sideBar: false
     },
     mutations: {
         setAlert: (state, payload) => {
             state.alert = payload
         },
-        showLoader: (state, payload) => {
-            state.loader=payload
+        setLoader: (state, payload) => {
+            state.loader = payload
         },
+        setSibeBar: (state, payload) => {
+            state.sideBar = payload
+        }
     },
 }

@@ -23,8 +23,8 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async getUserDetail({commit, state}) {
-            const response = await http_client(`/api/v1/usuarios/${state.userInfo.username}`)
+        async getUserDetail({commit, state}, email) {
+            const response = await http_client(`/api/v1/usuarios/${email}`)
             commit('setUserDetail', response.data)
         }
     },
