@@ -33,6 +33,8 @@
                       label="Password"
                       :type="showPassword?'text':'password'"
                       :rules="passwordRules"
+                      :error="error"
+                      :error-messages="error_message"
                       outlined
                       dense
                   >
@@ -63,6 +65,8 @@ import jwtDecode from "jwt-decode"
 export default {
   name: "login",
   data: () => ({
+    error:false,
+    error_message:null,
     isValid: false,
     user: null,
     userRules: [
@@ -95,7 +99,8 @@ export default {
           }
         } catch (e) {
           if (e.response && e.response.status === 401) {
-            this.showAlert(e.response.data.message)
+            this.error=true
+            this.error_message=e.response.data.message
           }
         } finally {
           this.disabled = false
