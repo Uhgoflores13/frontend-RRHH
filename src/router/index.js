@@ -1,37 +1,47 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
-    {
-        path: '/',
-        name: 'layout',
-        component: () => import(/* webpackChunkName: "layout" */ '../views/layout'),
-        children:[{
-            path:'/perfil',
-            name:'perfil',
-            component:()=> import(/* webpackChunkName: "perfil" */ '../views/perfil')
-        }]
-    }, {
-        path: '/login',
-        name: 'login',
-        component: () => import(/* webpackChunkName: "login" */ '../views/login')
-    },
-    {
-        path: '/about',
-        name: 'About',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    }
-]
+  {
+    path: "/",
+    name: "layout",
+    component: () => import(/* webpackChunkName: "layout" */ "../views/layout"),
+    children: [
+      {
+        path: "/perfil",
+        name: "perfil",
+        component: () =>
+          import(/* webpackChunkName: "perfil" */ "../views/perfil"),
+      },
+    ],
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import(/* webpackChunkName: "login" */ "../views/login"),
+  },
+  {
+    path: "/resetearPassword",
+    name: "resetearPassword",
+    component: () => import(/* webpackChunkName: "resetearPassword" */ "../views/resetPassword"),
+  },
+  {
+    path: "/about",
+    name: "About",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
+];
 
 const router = new VueRouter({
-    mode: 'history',
-    base: process.env.BASE_URL,
-    routes
-})
+  mode: "history",
+  base: process.env.BASE_URL,
+  routes,
+});
 
-export default router
+export default router;
