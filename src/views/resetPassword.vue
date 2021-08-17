@@ -3,36 +3,73 @@
     <v-main class="grey lighten-2">
       <v-container fill-height justify-center>
         <v-flex lg6>
-          <v-card class="px-10" elevation="2" color="white">
+          <v-card class="rounded-lg px-2 px-sm-12 elevation-2">
             <v-card-title class="justify-center"
-              >Recuperar Contraseña</v-card-title
+              >Reestablecer Contraseña</v-card-title
             >
             <v-card-text>
               <v-divider></v-divider>
-              <div class="body-1 grey--text text--darken-3 my-3">
-                Complete este formulario con su dirección de correo electrónico.
-                Si la dirección ingresada se encuentra en nuestros registros le
-                enviaremos un correo con las instrucciones para reestablecer su
-                contraseña.
-              </div>
-              <v-text-field
-                prepend-icon="mdi-account"
-                name="email"
-                label="Email"
-                type="text"
-                :error="email_error"
-                :error-messages="email_message"
-                v-model="email"
-                outlined
-                dense
-              ></v-text-field>
+              <v-row class="mt-6">
+                <v-col class="pa-0 ma-0 cols-12">
+                  <v-text-field
+                    id="new_pass"
+                    prepend-icon="mdi-lock"
+                    name="new_pass"
+                    v-model="new_pass.value"
+                    label="Contraseña nueva"
+                    :type="new_pass.show ? 'text' : 'password'"
+                    :error="new_pass.error"
+                    :error-messages="new_pass.error_msg"
+                    outlined
+                    dense
+                  >
+                    <template #append>
+                      <v-icon
+                        v-if="new_pass.show === false"
+                        @click="new_pass.show = !new_pass.show"
+                        >mdi-eye-outline</v-icon
+                      >
+                      <v-icon v-else @click="new_pass.show = !new_pass.show"
+                        >mdi-eye-off-outline</v-icon
+                      >
+                    </template>
+                  </v-text-field>
+                </v-col>
+                <v-col cols="12" class="pa-0 ma-0">
+                  <v-text-field
+                    id="repeat_pass"
+                    prepend-icon="mdi-lock-check"
+                    name="repeat_pass"
+                    v-model="repeat_pass.value"
+                    label="Repita la contraseña"
+                    :type="repeat_pass.show ? 'text' : 'password'"
+                    :error="repeat_pass.error"
+                    :error-messages="repeat_pass.error_msg"
+                    outlined
+                    dense
+                  >
+                    <template #append>
+                      <v-icon
+                        v-if="repeat_pass.show === false"
+                        @click="repeat_pass.show = !repeat_pass.show"
+                        >mdi-eye-outline</v-icon
+                      >
+                      <v-icon
+                        v-else
+                        @click="repeat_pass.show = !repeat_pass.show"
+                        >mdi-eye-off-outline</v-icon
+                      >
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
             </v-card-text>
-            <v-card-actions class="justify-center" width="100%">
-              <v-btn class="primary">Solicitar</v-btn>
+            <v-card-actions class="justify-space-around pb-5 " width="100%">
+              <v-btn color="primary" :loading="loading" @click="sendEmail">
+                <v-icon left>mdi-content-save</v-icon>actualizar
+              </v-btn>
               <v-divider vertical></v-divider>
-              <router-link to="/resetearPassword"
-                >¿Olvidaste la contraseña?</router-link
-              >
+              <router-link to="/login">O iniciar sesión</router-link>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -43,13 +80,33 @@
 <script>
 export default {
   data: () => ({
-    email: null,
-    email_error: false,
-    email_message: "Este campo es requerido",
+    loading: false,
+    new_pass: {
+      value: null,
+      error: false,
+      error_msg: "",
+      show: false,
+    },
+    repeat_pass: {
+      value: null,
+      error: false,
+      error_msg: "",
+      show: false,
+    },
   }),
   methods: {
-    valid(v) {
-      return this.isEmail(v);
+    sendEmail() {
+      if (!this.validInput(this.new_pass)) return;
+      if (!this.validInput(this.repeat_pass)) return;
+      if (this.repeat_pass.value==this.new_pass.value) {
+        //En esta parte es donde se realiza la peticion de la api que todavia no han creado
+        
+      }else{
+        this.repeat_pass.error=true
+        this.new_pass.error=true
+        this.repeat_pass.error_msg='Estos campos no pueden ser diferentes'
+        this.new_pass.error_msg='Estos campos no pueden ser diferentes'
+      }
     },
   },
 };
