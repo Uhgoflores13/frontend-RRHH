@@ -10,7 +10,7 @@
 
     <v-divider></v-divider>
     <v-list>
-      <v-list-item to="/">
+      <v-list-item to="/" active-class="blue">
         <v-list-item-icon>
           <v-icon color="white">mdi-home</v-icon>
         </v-list-item-icon>
@@ -32,7 +32,7 @@
         <template #appendIcon>
           <v-icon color="white">mdi-chevron-down</v-icon>
         </template>
-        <v-list-item>
+        <v-list-item to="/perfil" active-class="blue">
           <v-list-item-icon class="app-list-item-icon">
             <v-icon color="white">mdi-home</v-icon>
           </v-list-item-icon>
