@@ -3,8 +3,11 @@
     <v-main class="grey lighten-2">
       <v-container fill-height justify-center>
         <v-flex lg6>
-          <v-card class="rounded-lg px-2 px-sm-12 elevation-2">
-            <v-card-title class="justify-center"
+          <v-card
+            class="rounded-lg px-2 px-sm-12 elevation-2"
+            v-if="mostrarActualizar == true"
+          >
+            <v-card-title class="justify-center" primary-title
               >Reestablecer Contraseña</v-card-title
             >
             <v-card-text>
@@ -65,21 +68,67 @@
               </v-row>
             </v-card-text>
             <v-card-actions class="justify-space-around pb-5 " width="100%">
-              <v-btn color="primary" :loading="loading" @click="sendEmail">
+              <v-btn color="primary" :loading="loading" @click="changePassword">
                 <v-icon left>mdi-content-save</v-icon>actualizar
               </v-btn>
               <v-divider vertical></v-divider>
               <router-link to="/login">O iniciar sesión</router-link>
             </v-card-actions>
           </v-card>
+          <v-card
+            class="rounded-lg px-2 px-sm-12 elevation-2"
+            v-else-if="mostrarActualizar == false"
+          >
+            <v-card-title class="justify-center" primary-title>
+              Ocurrió un error
+            </v-card-title>
+            <v-card-text class="justify-center text-center body-1">
+              El token para reestablecer contraseña ya expiro, por favor
+              <router-link to="/recuperarPassword"
+                >intente nuevamente</router-link
+              >
+            </v-card-text>
+          </v-card>
+          <v-card class="rounded-lg px-2 px-sm-12 elevation-2" v-else>
+            <v-card-title class="justify-center" primary-title>
+              Cargando
+            </v-card-title>
+            <v-card-text class="justify-center text-center body-1">
+              Por favor espere ...
+            </v-card-text>
+            <v-card-actions>
+              <v-progress-linear
+                indeterminate
+                color="primary"
+                rounded
+                height="6"
+              ></v-progress-linear>
+            </v-card-actions>
+          </v-card>
         </v-flex>
       </v-container>
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout"
+        absolute
+        top
+        elevation="2"
+        color="success"
+        right
+      >
+        <v-icon left>mdi-check-circle</v-icon>
+        <span class="body-1">{{ text }}</span>
+      </v-snackbar>
     </v-main>
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
+    mostrarActualizar: null,
+    snackbar: false,
+    text: "Contraseña cambiada con éxito",
+    timeout: 4000,
     loading: false,
     new_pass: {
       value: null,
@@ -95,19 +144,74 @@ export default {
     },
   }),
   methods: {
-    sendEmail() {
-      if (!this.validInput(this.new_pass)) return;
-      if (!this.validInput(this.repeat_pass)) return;
-      if (this.repeat_pass.value==this.new_pass.value) {
-        //En esta parte es donde se realiza la peticion de la api que todavia no han creado
-        
-      }else{
-        this.repeat_pass.error=true
-        this.new_pass.error=true
-        this.repeat_pass.error_msg='Estos campos no pueden ser diferentes'
-        this.new_pass.error_msg='Estos campos no pueden ser diferentes'
+    async checkToken() {
+      try {
+        //Obtenemos el token de la url actual
+        let token = this.$route.params.id;
+        //revisamos si el token aun no ha vencido realizando la siguiente peticion
+        const response = await this.http_client(
+          "/api/recovery/checktoken",
+          null,
+          "post",
+          {
+            Authorization: `Bearer ${token}`,
+          }
+        );
+        //si no ha vencido entonces se le permite ver el formulario
+        if (response.status === 200) {
+          this.mostrarActualizar = true;
+        }
+      } catch (e) {
+        //si ha vencido entonces que intente de nuevo
+        this.mostrarActualizar = false;
       }
     },
+
+    async changePassword() {
+      if (!this.validInput(this.new_pass)) return;
+      if (!this.validInput(this.repeat_pass)) return;
+      if (this.repeat_pass.value == this.new_pass.value) {
+        //si paso las validaciones pasamos a hacer la peticion
+        try {
+          let token = this.$route.params.id;
+          const response = await this.http_client(
+            `/api/reset/password`,
+            {
+              new_password: this.new_pass.value.toString(),
+              repeat_password: this.repeat_pass.value.toString(),
+            },
+            "post",
+            {
+              Authorization: `Bearer ${token}`,
+            }
+          );
+          //recordar hacer tostring a las password
+          if (response.status === 200) {
+            this.snackbar = true;
+            this.$router.push("/login");
+            //si funciono todo entonces redirige al login y muestra mensaje
+          }
+        } catch (e) {
+          if (e.response.status === 404 || e.response.status === 400) {
+            //Aqui se coloca el error en input si es que la contraseña no cumple con las
+            //validaciones del back, ej: longitud,caracteres especiales
+            if (e.response.data.errors[0]) {
+              this.new_pass.message = e.response.data.message;
+              this.new_pass.error = true;
+            } else {
+            }
+          }
+        }
+      } else {
+        this.repeat_pass.error = true;
+        this.new_pass.error = true;
+        this.repeat_pass.error_msg = "Estos campos no pueden ser diferentes";
+        this.new_pass.error_msg = "Estos campos no pueden ser diferentes";
+      }
+    },
+  },
+  async beforeMount() {
+    await this.checkToken();
   },
 };
 </script>
