@@ -27,7 +27,7 @@
                 dense
                 v-if="success == false"
               ></v-text-field>
-              <v-alert dense text type="success" v-else>
+              <v-alert dense text type="success" :value="success==true" transition="slide-x-transition" >
                 Solicitud realizada, por favor revise su bandeja de entrada de
                 su
                 <strong> correo electrónico</strong>

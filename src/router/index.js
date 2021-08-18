@@ -23,13 +23,13 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ "../views/login"),
   },
   {
-    path: "/recuperarPassword",
-    name: "recuperarPassword",
+    path: "/recuperar-password",
+    name: "recuperar-password",
     component: () => import(/* webpackChunkName: "recuperarPassword" */ "../views/recuperarPassword"),
   },
   {
-    path: "/resetPassword",
-    name: "resetPassword",
+    path: "/reset-password/:id",
+    name: "reset-password",
     component: () => import(/* webpackChunkName: "resetPassword" */ "../views/resetPassword"),
   },
   {

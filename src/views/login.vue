@@ -47,7 +47,7 @@
                 <v-card-actions>
                   <v-btn color="primary" elevation="" type="submit" :loading="disabled">Entrar</v-btn>
                   <v-spacer></v-spacer>
-                  <router-link to="/recuperarPassword">¿Olvidaste la contraseña?</router-link>
+                  <router-link to="/recuperar-password">¿Olvidaste la contraseña?</router-link>
                 </v-card-actions>
               </v-form>
             </v-card>

@@ -84,7 +84,7 @@
             </v-card-title>
             <v-card-text class="justify-center text-center body-1">
               El token para reestablecer contraseña ya expiro, por favor
-              <router-link to="/recuperarPassword"
+              <router-link to="/recuperar-password"
                 >intente nuevamente</router-link
               >
             </v-card-text>
@@ -107,9 +107,12 @@
           </v-card>
         </v-flex>
       </v-container>
+        <v-icon left>mdi-error-circle</v-icon>
+        <span class="body-1"><strong>{{ text_error }}</strong></span>
+    </v-main>
       <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
+        v-model="success"
+        :timeout="2000"
         absolute
         top
         elevation="2"
@@ -117,18 +120,28 @@
         right
       >
         <v-icon left>mdi-check-circle</v-icon>
-        <span class="body-1">{{ text }}</span>
+        <span class="body-1">{{ text_success }}</span>
       </v-snackbar>
-    </v-main>
+      <v-snackbar
+        v-model="error"
+        :timeout="5000"
+        absolute
+        top
+        elevation="2"
+        color="error"
+        right
+      >
+      </v-snackbar>
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
     mostrarActualizar: null,
-    snackbar: false,
-    text: "Contraseña cambiada con éxito",
-    timeout: 4000,
+    success: false,
+    error: false,
+    text_success: "Contraseña cambiada con éxito",
+    text_error: "",
     loading: false,
     new_pass: {
       value: null,
@@ -163,6 +176,8 @@ export default {
         }
       } catch (e) {
         //si ha vencido entonces que intente de nuevo
+        this.text_error='El token de autorización ya se venció'
+        this.error=true
         this.mostrarActualizar = false;
       }
     },
@@ -187,7 +202,7 @@ export default {
           );
           //recordar hacer tostring a las password
           if (response.status === 200) {
-            this.snackbar = true;
+            this.success = true;
             this.$router.push("/login");
             //si funciono todo entonces redirige al login y muestra mensaje
           }
@@ -195,18 +210,15 @@ export default {
           if (e.response.status === 404 || e.response.status === 400) {
             //Aqui se coloca el error en input si es que la contraseña no cumple con las
             //validaciones del back, ej: longitud,caracteres especiales
-            if (e.response.data.errors[0]) {
-              this.new_pass.message = e.response.data.message;
-              this.new_pass.error = true;
-            } else {
-            }
+            this.text_error = JSON.parse(
+              e.response.data.detail
+            ).errors[0].error;
+            this.error = true;
           }
         }
       } else {
-        this.repeat_pass.error = true;
-        this.new_pass.error = true;
-        this.repeat_pass.error_msg = "Estos campos no pueden ser diferentes";
-        this.new_pass.error_msg = "Estos campos no pueden ser diferentes";
+        this.error=true;
+        this.text_error='Las contraseñas no coinciden'
       }
     },
   },
