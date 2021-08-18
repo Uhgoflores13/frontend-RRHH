@@ -3,7 +3,7 @@
     <v-main class="grey lighten-2">
       <v-container fill-height justify-center>
         <v-flex lg6>
-          <v-card class="rounded-lg px-10 elevation-2">
+          <v-card class="rounded-lg px-2 px-sm-10 elevation-2">
             <v-card-title class="justify-center"
               >Recuperar Contraseña</v-card-title
             >
