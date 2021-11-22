@@ -7,7 +7,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import './components'
-
+import './assets/scss/variables.scss'
 const moment = require('moment')
 require('moment/locale/es')
 import momentTime from 'moment-timezone'

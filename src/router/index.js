@@ -15,6 +15,12 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "perfil" */ "../views/perfil"),
       },
+      {
+        path: "/dashboard",
+        name: "dashboard",
+        component: () =>
+          import(/* webpackChunkName: "perfil" */ "../views/dashboard"),
+      },
     ],
   },
   {

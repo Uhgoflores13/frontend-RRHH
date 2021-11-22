@@ -35,7 +35,7 @@
             </v-card-text>
             <v-card-actions class="justify-space-around pb-5" width="100%">
               <v-btn
-                class="primary"
+                class="primary_bcen white--text"
                 :loading="loading"
                 @click="sendEmail"
                 v-if="!success"

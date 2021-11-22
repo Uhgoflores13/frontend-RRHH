@@ -5,36 +5,40 @@
 
         <v-layout align-center justify-center>
 
-          <v-flex xs12 sm8 md5 lg3>
-
+          <v-flex xs12 sm10 md7 lg5>
+            <v-card class="elevation-3 pa-10 rounded-lg" >
             <div class="d-flex justify-center align-center mb-2">
-              <img src="../assets/minsal.svg" alt="" width="400px">
+              <img src="../assets/SIS-HAZUL.png" alt="" width="200px">
             </div>
-            <v-card class="elevation-3 pa-10">
+            <p class="text-h4 text-center secondary_bcen--text my-8"> Ingresa tus datos para iniciar </p>
               <v-form @submit.prevent="login()" v-model="isValid">
                 <v-card-text>
-
+                  <v-alert color="error_bcen" type="error" v-if="error">
+                    <v-row>
+                      <v-col cols="10">
+                        {{ error_message }}
+                      </v-col>
+                    </v-row>
+                  </v-alert>
                   <v-text-field
-                      prepend-icon="mdi-account"
-                      name="login"
-                      label="Login"
+                      name="correo"
+                      label="Correo"
                       type="text"
                       v-model="user"
                       :rules="userRules"
                       outlined
+                      append-icon="mdi-account"
                       dense
                   >
                   </v-text-field>
                   <v-text-field
                       id="password"
-                      prepend-icon="mdi-lock"
+                      append-icon="mdi-eye"
                       name="password"
                       v-model="password"
                       label="Password"
                       :type="showPassword?'text':'password'"
                       :rules="passwordRules"
-                      :error="error"
-                      :error-messages="error_message"
                       outlined
                       dense
                   >
@@ -44,11 +48,11 @@
                     </template>
                   </v-text-field>
                 </v-card-text>
-                <v-card-actions>
-                  <v-btn color="primary" elevation="" type="submit" :loading="disabled">Entrar</v-btn>
+                <div class="text-center">
+                  <v-btn class="mb-6 white--text px-16" color="primary_bcen" elevation="" type="submit" :loading="disabled" rounded>Entrar</v-btn>
                   <v-spacer></v-spacer>
                   <router-link to="/recuperar-password">¿Olvidaste la contraseña?</router-link>
-                </v-card-actions>
+                </div>
               </v-form>
             </v-card>
           </v-flex>
@@ -97,7 +101,7 @@ export default {
             localStorage.setItem('refresh_token', response.data.refresh_token)
             this.setToken(response.data.token)
             this.setUserInfo(jwtDecode(response.data.token))
-            this.$router.push('/').catch()
+            this.$router.push('/dashboard').catch()
           }
         } catch (e) {
           if (e.response && e.response.status === 401) {
