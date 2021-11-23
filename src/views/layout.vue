@@ -4,12 +4,15 @@
 
     <app-header></app-header>
 
-    <app-aside-bar></app-aside-bar>
+    <app-aside-bar  v-if="!$vuetify.breakpoint.xs && !$vuetify.breakpoint.sm"></app-aside-bar>
     <v-main class="grey lighten-3">
       <div class="pa-4">
         <router-view :key="$route.path"/>
       </div>
     </v-main>
+    <app-bottom-navigation
+      v-if="$vuetify.breakpoint.xs || $vuetify.breakpoint.sm"
+    ></app-bottom-navigation>
   </v-app>
 </template>
 
@@ -18,12 +21,14 @@ import {mapState, mapActions, mapMutations} from 'vuex'
 import jwtDecode from 'jwt-decode'
 import AppHeader from "../components/AppHeader";
 import AppAsideBar from "../components/AppAsideBar";
+import AppBottomNavigation from '../components/AppBottomNavigation.vue';
 
 export default {
   name: "layout",
   components: {
     AppHeader,
-    AppAsideBar
+    AppAsideBar,
+    AppBottomNavigation
   },
   data: () => ({
   }),

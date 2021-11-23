@@ -8,14 +8,14 @@ export default new Vuetify({
     theme: {
         themes: {
             light : {
-                dark_bcen: '313945',
-                grey_bcen: '697185',
-                grey_bcen_light: 'C5C8CF',
-                primary_bcen: '175EFB',
-                secondary_bcen: '6A83BE',
-                success_bcen: 'B7EE40',
-                error_bcen: 'F36F23',
-                info_bcen: '9DB3E8',
+                primary_expon: '266BB0',
+                success_expon: '1CAC78',
+                error_expon: 'D32F2F',
+                info_expon: 'CCE5FF',
+                blueMinsal:'#175EFB',   
+                blueGrayMinsal:'#6A83BE',   
+                blueDarkMinsal:'#2D52A8',
+                bgMinsal:'#F4F7FD',
             }
         }
     }

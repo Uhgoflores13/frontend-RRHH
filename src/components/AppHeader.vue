@@ -1,6 +1,5 @@
 <template>
   <v-app-bar app elevation="0" color="white">
-    <v-app-bar-nav-icon @click.stop="setSibeBar(!sideBar)"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
 
     <v-menu offset-y transition="scroll-y-transition">
