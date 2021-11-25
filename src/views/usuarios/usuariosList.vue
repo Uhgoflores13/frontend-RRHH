@@ -34,7 +34,7 @@
             v-if="usuarios.length > 0"
           >
             <template v-slot:[`item.last_login`]="{ item }">
-              {{item.last_login | moment('DD/MM/YYYY')}}
+              {{ item.last_login | moment("DD/MM/YYYY") }}
             </template>
             <template v-slot:[`item.is_suspended`]="{ item }">
               <v-chip
@@ -94,7 +94,7 @@
       max-width="500px"
       transition="dialog-transition"
     >
-      <v-card rounded="lg" max-height="600px">
+      <v-card rounded="lg" max-height="700px">
         <v-card-title primary-title>
           Detalle:
         </v-card-title>
@@ -113,20 +113,31 @@
           >
             Si
           </v-chip>
-          <v-chip
-            class="ma-2 white--text"
-            color="red"
-            v-else
-            small
-          >
+          <v-chip class="ma-2 white--text" color="red" v-else small>
             No
           </v-chip>
           <v-spacer></v-spacer>
-          <span class="font-weight-bold">Ultima conexión</span>
+          <span
+            class="font-weight-bold"
+            v-if="usuarioData ? usuarioData.last_login : false"
+            >Ultima conexión</span
+          >
           <v-spacer></v-spacer>
-          {{usuarioData?usuarioData.last_login:'2000-01-01' | moment('DD/MM/YYYY')}}
-
-          
+          {{
+            usuarioData
+              ? usuarioData.last_login
+              : "2000-01-01" | moment("DD/MM/YYYY")
+          }}
+          <v-spacer></v-spacer>
+          <span class="font-weight-bold">Roles</span>
+          <ul>
+            <li
+              v-for="(rol, i) in usuarioData ? usuarioData.mnt_rols : []"
+              :key="i"
+            >
+              {{ rol.name }}
+            </li>
+          </ul>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -167,7 +178,28 @@ export default {
       this.usuarios = response.data;
     },
     editingUsuario(item) {
-      localStorage.setItem("editingUsuario", JSON.stringify({id:item.id,email:item.email,is_suspended:item.is_suspended}));
+      let roles = [];
+      let perfiles = [];
+      if (item.mnt_rols.length > 0) {
+        roles = item.mnt_rols.map((item) => {
+          return item.id;
+        });
+      }
+      if (item.mnt_perfils.length > 0) {
+        perfiles = item.mnt_perfils.map((item) => {
+          return item.id;
+        });
+      }
+      localStorage.setItem(
+        "editingUsuario",
+        JSON.stringify({
+          id: item.id,
+          email: item.email,
+          is_suspended: item.is_suspended,
+          roles,
+          perfiles,
+        })
+      );
       this.$router.push(`edit/${item.id}`);
     },
     showUsuarioData(item) {

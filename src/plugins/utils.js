@@ -111,3 +111,26 @@ Vue.prototype.isNit = (nit) => {
     }
     return valido;
 }
+const buscarRuta = (rutas, ruta) => {
+    return rutas.some((item) => {
+        return item.nombre_uri.toLowerCase() === ruta.name.toLowerCase();
+    });
+  };
+Vue.prototype.canNext = async (ruta) => {
+    const permit = [
+      "login",
+      "recuperar-password",
+      "reset-password",
+      "Forbidden"
+    ];
+    if (!ruta.name) return false;
+    if (permit.some((row) => row.toLowerCase() === ruta.name.toLowerCase()))
+      return true;
+  
+    let { utils } = store.state;
+    if (utils.rutas && utils.rutas.length === 0) {
+      // await Vue.prototype.http_client("/api/v1/index");
+      await store.dispatch("utils/getMenu");
+    }
+    return buscarRuta(utils.rutas, ruta);
+  };

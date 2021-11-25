@@ -2,7 +2,7 @@
   <v-container class="pa-0 pa-sm-2 justify-center d-flex" fill-height fluid>
     <!--      <v-layout align-center justify-center>-->
     <v-flex xs12 sm11 md10 lg9>
-      <v-card>
+      <v-card rounded="lg">
         <v-card-title class="mb-3">Administración</v-card-title>
         <v-card-text>
           <v-row
@@ -67,8 +67,8 @@ export default {
         {
           nombre: "Rutas",
           acciones: [
-            { nombre: "Agregar Nuevo", icono: "mdi-plus-circle" },
-            { nombre: "Listar", icono: "mdi-view-list" },
+            { nombre: "Agregar Nuevo", icono: "mdi-plus-circle",path:'/rutas/create' },
+            { nombre: "Listar", icono: "mdi-view-list",path:'/rutas/list' },
           ],
         }
       );

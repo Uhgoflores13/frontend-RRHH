@@ -9,29 +9,86 @@
           Usuarios
           <v-icon color="blueGrayMinsal">mdi-pencil</v-icon>
         </v-card-title>
-        <v-card-text>
-          <v-text-field
-            label="Correo electrónico"
-            color="blueMinsal"
-            v-model="usuario.email"
-            :rules="[
-              (v) => (v !== null && v !== '') || 'Este campo es obligatorio',
-            ]"
-          ></v-text-field>
-          <v-text-field
-            label="Contraseña"
-            color="blueMinsal"
-            type="password"
-            v-model="password"
-            :rules="[
-              (v) => (v !== null && v !== '') || 'Este campo es obligatorio',
-            ]"
-          ></v-text-field>
-          <v-checkbox
-            label="Deshabilitado"
-            v-model="usuario.is_suspended"
-          ></v-checkbox>
-        </v-card-text>
+        <v-tabs
+          v-model="tab"
+          :vertical="$vuetify.breakpoint.xs"
+          color="blueMinsal"
+          :grow="$vuetify.breakpoint.xs"
+        >
+          <v-tab key="tab1">
+            Usuario
+          </v-tab>
+          <v-tab key="tab2">
+            Seguridad
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <v-card-text>
+              <v-text-field
+                label="Correo"
+                type="search"
+                autocomplete="username"
+                color="blueMinsal"
+                v-model="usuario.email"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
+              <v-text-field
+                label="Contraseña"
+                color="blueMinsal"
+                type="password"
+                autocomplete="new-password"
+                v-model="password"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
+              <v-checkbox
+                label="Deshabilitado"
+                color="blueMinsal"
+                v-model="usuario.is_suspended"
+              ></v-checkbox>
+            </v-card-text>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <span class="blueGrayMinsal--text body-1">Perfiles</span>
+                  <v-select
+                    :items="perfiles"
+                    v-model="perfilesSelect"
+                    label="Seleccione perfiles"
+                    multiple
+                    item-text="nombre"
+                    item-value="id"
+                    chips
+                    color="blueMinsal"
+                    item-color="blueMinsal"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <span class="blueGrayMinsal--text body-1">Roles</span>
+                  <v-select
+                    :items="roles"
+                    v-model="rolesSelect"
+                    label="Seleccione roles"
+                    multiple
+                    item-text="name"
+                    item-value="id"
+                    chips
+                    color="blueMinsal"
+                    item-color="blueMinsal"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-tab-item>
+        </v-tabs-items>
         <v-card-actions>
           <v-row class="pa-0 ma-0">
             <v-col class="pa-0">
@@ -66,31 +123,49 @@
 export default {
   name: "perfilesEdit",
   data: () => ({
-    usuario: { email: null, is_suspended: null },
+    usuario: { email: null, is_suspended: null, roles: [], perfiles: [] },
     password: null,
     editingUsuario: null,
+    perfiles: [],
+    perfilesSelect: [],
+    rolesSelect: [],
+    roles: [],
+    tab: null,
   }),
   methods: {
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
-      this.editingUsuario.roles.forEach((element) => {
-        const index = this.roles.findIndex(
-          (item) => element.nombre == item.name
-        );
-        this.roles[index].value = true;
-      });
+    },
+    async getPerfiles() {
+      const response = await this.http_client("/api/v1/perfiles");
+      this.perfiles = response.data;
     },
     async putUsuario() {
-      if (!this.usuario.email || !this.password) {
+      const id_usuario = this.$route.params.id;
+      if (
+        !this.usuario ||
+        !this.password ||
+        this.perfilesSelect.length == 0 ||
+        this.rolesSelect.length == 0
+      ) {
+        this.temporalAlert({
+          show: true,
+          message: "Por favor complete todos los campos",
+          type: "warning",
+        });
         return;
       }
       const response = await this.http_client(
         `/api/v1/usuarios`,
         {
+          id_usuario,
           email: this.usuario.email,
           password: this.password,
+          confirm_password: this.password,
           is_suspended: this.usuario.is_suspended,
+          roles: this.rolesSelect,
+          perfiles: this.perfilesSelect,
         },
         "put"
       );
@@ -99,8 +174,8 @@ export default {
         message: "Se actualizó el usuario",
         type: "success",
       });
-      this.$router.push("/perfiles/list");
-      localStorage.removeItem("editingPerfil");
+      this.$router.push("/usuarios/list");
+      localStorage.removeItem("editingUsuario");
     },
     async deleteUsuario() {
       const id_usuario = this.$route.params.id;
@@ -116,8 +191,8 @@ export default {
         message: "Se eliminó el usuario",
         type: "success",
       });
-      this.$router.push("/perfiles/list");
-      localStorage.removeItem("editingPerfil");
+      this.$router.push("/usuarios/list");
+      localStorage.removeItem("editingUsuario");
     },
   },
 
@@ -125,7 +200,15 @@ export default {
     this.editingUsuario = JSON.parse(localStorage.getItem("editingUsuario"));
     if (this.editingUsuario) {
       if (this.editingUsuario.id == this.$route.params.id) {
+        await this.getRoles();
+        await this.getPerfiles();
         this.usuario = this.editingUsuario;
+        if (this.editingUsuario.roles.length > 0) {
+          this.rolesSelect = this.editingUsuario.roles;
+        }
+        if (this.editingUsuario.perfiles.length > 0) {
+          this.perfilesSelect = this.editingUsuario.perfiles;
+        }
       } else {
         this.$router.push("/usuarios/list");
       }

@@ -44,7 +44,7 @@
                           dense>
             </v-text-field>
             <div class="text-center">
-              <v-btn color="primary" @click="cambiarEmail()">
+              <v-btn color="blueMinsal" rounded class="white--text" @click="cambiarEmail()">
                 <v-icon class="mr-1">mdi-content-save</v-icon>
                 Guardar
               </v-btn>
@@ -88,7 +88,7 @@
           >
           </v-text-field>
           <v-card-actions class="flex justify-center">
-            <v-btn color="primary" @click="cambiarPassword()">
+            <v-btn color="blueMinsal" rounded class="white--text" @click="cambiarPassword()">
               <v-icon class="mr-1">mdi-content-save</v-icon>
               Guardar
             </v-btn>

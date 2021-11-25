@@ -1,3 +1,5 @@
+import {http_client} from "../../plugins/http_client";
+
 export default {
   namespaced: true,
   state: {
@@ -9,6 +11,8 @@ export default {
     },
     loader: false,
     sideBar: false,
+    menu: [],
+    rutas: [],
   },
   getters: {
     getAlert: (state) => {
@@ -25,10 +29,30 @@ export default {
     setSibeBar: (state, payload) => {
       state.sideBar = payload;
     },
+    setMenu: (state, menu) => {
+      state.menu = menu;
+    },
+    setRutas: (state, rutas) => {
+      state.rutas = rutas;
+    },
   },
   actions: {
     setAlert: ({ commit }, payload) => {
       commit("setAlert", payload);
     },
+    getMenu: async ({ commit }) => {
+      try {
+        const response = await http_client("/api/v1/rutas");
+        const menu = response.data.filter((item) => item.mostrar === true);
+        commit("setMenu", menu);
+        commit("setRutas", response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    clearMenu: ({commit}) => {
+      commit("setMenu",[]);
+      commit("setRutas",[]);
+    }
   },
 };

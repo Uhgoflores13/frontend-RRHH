@@ -38,7 +38,9 @@ export default {
   name: "AppHeader",
   methods:{
     ...mapMutations('utils',['setSibeBar']),
+    ...mapMutations(["setMenu"]),
     cerrarSession() {
+      this.setMenu([]);
       localStorage.clear()
       this.$router.push('/login').catch(e => {
       })

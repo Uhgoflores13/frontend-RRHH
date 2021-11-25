@@ -49,7 +49,7 @@
                   </v-text-field>
                 </v-card-text>
                 <div class="text-center">
-                  <v-btn class="mb-6 white--text px-16" color="primary_bcen" elevation="" type="submit" :loading="disabled" rounded>Entrar</v-btn>
+                  <v-btn class="mb-6 white--text px-16" color="blueMinsal" elevation="" type="submit" :loading="disabled" rounded>Entrar</v-btn>
                   <v-spacer></v-spacer>
                   <router-link to="/recuperar-password">¿Olvidaste la contraseña?</router-link>
                 </div>
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import {mapActions, mapMutations, mapState} from 'vuex'
 import jwtDecode from "jwt-decode"
 
 export default {
@@ -85,6 +85,7 @@ export default {
   }),
   methods: {
     ...mapMutations(['setToken', 'setUserInfo']),
+    ...mapActions('utils',['clearMenu']),
     async login() {
       if (this.isValid) {
         this.disabled = true
@@ -93,6 +94,7 @@ export default {
             username: this.user,
             password: this.password
           };
+          this.clearMenu()
           let response = await this.http_client('/api/login_check', data, 'post')
           if (response.status === 200) {
             this.error=false
@@ -104,6 +106,11 @@ export default {
             this.$router.push('/dashboard').catch()
           }
         } catch (e) {
+          this.temporalAlert({
+            show:true,
+            message:e.response.data.message,
+            type:'error'
+          });
           if (e.response && e.response.status === 401) {
             this.error=true
             this.error_message=e.response.data.message

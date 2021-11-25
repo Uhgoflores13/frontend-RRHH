@@ -9,25 +9,82 @@
           Usuarios
           <v-icon color="blueGrayMinsal">mdi-plus</v-icon>
         </v-card-title>
-        <v-card-text>
-          <v-text-field
-            label="Correo"
-            color="blueMinsal"
-            v-model="usuario"
-            :rules="[
-              (v) => (v !== null && v !== '') || 'Este campo es obligatorio',
-            ]"
-          ></v-text-field>
-          <v-text-field
-            label="Contraseña"
-            color="blueMinsal"
-            type="password"
-            v-model="password"
-            :rules="[
-              (v) => (v !== null && v !== '') || 'Este campo es obligatorio',
-            ]"
-          ></v-text-field>
-        </v-card-text>
+        <v-tabs
+          v-model="tab"
+          :vertical="$vuetify.breakpoint.xs"
+          color="blueMinsal"
+          :grow="$vuetify.breakpoint.xs"
+        >
+          <v-tab key="tab1">
+            Usuario
+          </v-tab>
+          <v-tab key="tab2">
+            Seguridad
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <v-card-text>
+              <v-text-field
+                label="Correo"
+                type="search"
+                autocomplete="username"
+                color="blueMinsal"
+                v-model="usuario"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
+              <v-text-field
+                label="Contraseña"
+                color="blueMinsal"
+                type="password"
+                autocomplete="new-password"
+                v-model="password"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
+            </v-card-text>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <span class="blueGrayMinsal--text body-1">Perfiles</span>
+                  <v-select
+                    :items="perfiles"
+                    v-model="perfilesSelect"
+                    label="Seleccione perfiles"
+                    multiple
+                    item-text="nombre"
+                    item-value="id"
+                    chips
+                    color="blueMinsal"
+                    item-color="blueMinsal"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <span class="blueGrayMinsal--text body-1">Roles</span>
+                  <v-select
+                    :items="roles"
+                    v-model="rolesSelect"
+                    label="Seleccione roles"
+                    multiple
+                    item-text="name"
+                    item-value="id"
+                    chips
+                    color="blueMinsal"
+                    item-color="blueMinsal"
+                  ></v-select>
+                  
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-tab-item>
+        </v-tabs-items>
         <v-card-actions>
           <v-row class="pa-0 ma-0">
             <v-col class="pa-0">
@@ -63,17 +120,37 @@ export default {
   name: "usuariosCreate",
   data: () => ({
     usuario: null,
+    perfiles: [],
+    perfilesSelect:[],
+    rolesSelect:[],
+    roles: [],
+    tab: null,
     password: null,
   }),
   methods: {
+    async getRoles() {
+      const response = await this.http_client("/api/v1/roles");
+      this.roles = response.data;
+    },
+    async getPerfiles() {
+      const response = await this.http_client("/api/v1/perfiles");
+      this.perfiles = response.data;
+    },
     async postUsuario(navigate = false) {
-      if (!this.usuario || !this.password) {
+      if (!this.usuario || !this.password || this.perfilesSelect.length==0 || this.rolesSelect.length==0) {
+        this.temporalAlert({show:true, message:'Por favor complete todos los campos',type:'warning'})
         return;
       }
 
       const response = await this.http_client(
         "/api/v1/usuarios",
-        { email: this.usuario.trim(), password: this.password.trim() },
+        {
+          email: this.usuario.trim(),
+          password: this.password.trim(),
+          confirm_password: this.password.trim(),
+          roles:this.rolesSelect,
+          perfiles: this.perfilesSelect
+        },
         "post"
       );
       this.temporalAlert({
@@ -87,6 +164,10 @@ export default {
         this.$router.push("/usuarios/list");
       }
     },
+  },
+  async created() {
+    await this.getRoles();
+    await this.getPerfiles();
   },
 };
 </script>

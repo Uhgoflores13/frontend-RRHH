@@ -25,12 +25,16 @@
 
     <v-divider></v-divider>
     <v-list rounded>
-      <v-list-item to="/dashboard" active-class="grey lighten-4 blueDarkMinsal--text">
+      <v-list-item
+      v-for="(item,i) in menu" :key="i"
+        :to="item.uri"
+        active-class="grey lighten-4 blueDarkMinsal--text"
+      >
         <v-list-item-icon>
-          <v-icon>mdi-home</v-icon>
+          <v-icon>{{item.icono}}</v-icon>
         </v-list-item-icon>
 
-        <v-list-item-title >Home</v-list-item-title>
+        <v-list-item-title class="text-capitalize">{{item.nombre}}</v-list-item-title>
       </v-list-item>
 
       <!-- <v-list-group :value="true" no-action>
@@ -59,6 +63,14 @@ import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "AppAsideBar",
+  props: {
+    menu: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+  },
   data: () => ({}),
   methods: {
     ...mapMutations("utils", ["setSibeBar"]),
