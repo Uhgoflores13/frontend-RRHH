@@ -47,6 +47,15 @@
                     (v !== null && v !== '') || 'Este campo es obligatorio',
                 ]"
               ></v-text-field>
+              <v-text-field
+                label="Numero de DUI"
+                color="blueMinsal"
+                v-model="dui"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
               <v-checkbox
                 label="Deshabilitado"
                 color="blueMinsal"
@@ -131,6 +140,7 @@ export default {
     rolesSelect: [],
     roles: [],
     tab: null,
+    dui:null,
   }),
   methods: {
     async getRoles() {
@@ -146,8 +156,7 @@ export default {
       if (
         !this.usuario ||
         !this.password ||
-        this.perfilesSelect.length == 0 ||
-        this.rolesSelect.length == 0
+        this.perfilesSelect.length == 0 
       ) {
         this.temporalAlert({
           show: true,

@@ -43,11 +43,12 @@ _axios.interceptors.response.use(
     if (status !== 401 || (status === 401 && window.location.pathname === '/login')) {
       return Promise.reject(error);
     }
-
+    const token = store.state.token ? store.state.token : localStorage.getItem('token')
+    console.log('token axios',token);
     const base = process.env.VUE_APP_API_URL
     return axios.post(base + 'api/token/refresh ', {
       refresh_token: localStorage.getItem('refresh_token')
-    }).then(response => {
+    },'Bearer ' + token).then(response => {
       if (response.status === 200) {
         const token = response.data.token
         localStorage.setItem('token', token)

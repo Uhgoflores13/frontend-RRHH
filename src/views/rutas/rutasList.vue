@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-0 pa-sm-2 justify-center d-flex" fill-height fluid>
-    <v-flex xs12 sm11 md10 lg9>
+    <v-flex xs12 sm11 md11 lg10>
       <v-card class="pa-4" rounded="lg">
         <v-card-title
           primary-title

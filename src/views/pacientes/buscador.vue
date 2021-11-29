@@ -77,12 +77,13 @@
           <v-progress-linear
             indeterminate
             height="5"
+            color="blueMinsal"
             v-if="loadingPersona"
           ></v-progress-linear>
         </v-fade-transition>
       </v-card>
-      <v-dialog v-model="showInfo" width="900" :fullscreen="dinamicFullScreen">
-        <v-card v-if="showInfo" tile>
+      <v-dialog v-model="showInfo" width="900">
+        <v-card v-if="showInfo" rounded="lg">
           <v-card-text>
             <p class="text-h5 pt-5 black--text text-center">
               {{ nombre_completo }}
@@ -166,12 +167,7 @@
           </v-card-text>
           <v-footer absolute class="justify-end white">
             <v-btn text @click="limpiar()">Cancelar</v-btn>
-            <v-btn
-              text
-              color="info"
-              :to="'/antecedentes/' + this.informacionPersona.id_persona"
-              ><v-icon>mdi-eye</v-icon>ver</v-btn
-            >
+            
           </v-footer>
         </v-card>
       </v-dialog>
@@ -236,31 +232,30 @@ export default {
         * informacionPersona.primer_nombre+' '+informacionPersona.segundo_nombre+' '
                                                   +informacionPersona.primer_apellido+ '' + informacionPersona.segundo_apellido
         * */
-        this.informacionPersona = response.data[0];
+        this.informacionPersona = response.data;
         console.log(response.data);
-        if (response.data.length > 0) {
-          if (response.data[0].primer_nombre !== null) {
-            this.nombre_completo = response.data[0].primer_nombre + " ";
-          }
-          if (response.data[0].segundo_nombre !== null) {
-            this.nombre_completo += response.data[0].segundo_nombre + " ";
-          }
-          if (response.data[0].tercer_nombre !== null) {
-            this.nombre_completo += response.data[0].tercer_nombre + " ";
-          }
-          if (response.data[0].primer_apellido !== null) {
-            this.nombre_completo += response.data[0].primer_apellido + " ";
-          }
-          if (response.data[0].segundo_apellido !== null) {
-            this.nombre_completo += response.data[0].segundo_apellido + " ";
-          }
-          if (response.data[0].apellido_casada !== null) {
-            this.nombre_completo += response.data[0].apellido_casada + " ";
-          }
+        if (Object.keys(response.data).length > 0) {
           this.showInfo = true;
+          if (response.data.primer_nombre !== null) {
+            this.nombre_completo = response.data.primer_nombre + " ";
+          }
+          if (response.data.segundo_nombre !== null) {
+            this.nombre_completo += response.data.segundo_nombre + " ";
+          }
+          if (response.data.tercer_nombre !== null) {
+            this.nombre_completo += response.data.tercer_nombre + " ";
+          }
+          if (response.data.primer_apellido !== null) {
+            this.nombre_completo += response.data.primer_apellido + " ";
+          }
+          if (response.data.segundo_apellido !== null) {
+            this.nombre_completo += response.data.segundo_apellido + " ";
+          }
+          if (response.data.apellido_casada !== null) {
+            this.nombre_completo += response.data.apellido_casada + " ";
+          }
         }
       } catch (e) {
-        console.log("erro", e);
       } finally {
         this.loadingPersona = false;
       }

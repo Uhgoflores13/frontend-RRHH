@@ -129,13 +129,24 @@
               : "2000-01-01" | moment("DD/MM/YYYY")
           }}
           <v-spacer></v-spacer>
-          <span class="font-weight-bold">Roles</span>
+          <span class="font-weight-bold" v-if="usuarioData ? usuarioData.mnt_rols.length>0 : false">Roles</span>
           <ul>
             <li
               v-for="(rol, i) in usuarioData ? usuarioData.mnt_rols : []"
               :key="i"
             >
               {{ rol.name }}
+            </li>
+          </ul>
+          <v-spacer></v-spacer>
+          <span class="font-weight-bold" v-if="usuarioData ? usuarioData.mnt_perfils.length>0 : false">Perfiles</span>
+          <v-spacer></v-spacer>
+          <ul>
+            <li
+              v-for="(perfil, i) in usuarioData ? usuarioData.mnt_perfils : []"
+              :key="i"
+            >
+              {{ perfil.nombre }}
             </li>
           </ul>
         </v-card-text>

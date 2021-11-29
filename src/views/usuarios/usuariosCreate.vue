@@ -47,6 +47,16 @@
                     (v !== null && v !== '') || 'Este campo es obligatorio',
                 ]"
               ></v-text-field>
+              <v-text-field
+                label="Numero de DUI"
+                color="blueMinsal"
+                v-model="dui"
+                v-mask="'########-#'"
+                :rules="[
+                  (v) =>
+                    (v !== null && v !== '') || 'Este campo es obligatorio',
+                ]"
+              ></v-text-field>
             </v-card-text>
           </v-tab-item>
           <v-tab-item>
@@ -124,6 +134,7 @@ export default {
     perfilesSelect:[],
     rolesSelect:[],
     roles: [],
+    dui:null,
     tab: null,
     password: null,
   }),
@@ -137,7 +148,7 @@ export default {
       this.perfiles = response.data;
     },
     async postUsuario(navigate = false) {
-      if (!this.usuario || !this.password || this.perfilesSelect.length==0 || this.rolesSelect.length==0) {
+      if (!this.dui || !this.usuario || !this.password || this.perfilesSelect.length==0 || this.rolesSelect.length==0) {
         this.temporalAlert({show:true, message:'Por favor complete todos los campos',type:'warning'})
         return;
       }
@@ -149,7 +160,8 @@ export default {
           password: this.password.trim(),
           confirm_password: this.password.trim(),
           roles:this.rolesSelect,
-          perfiles: this.perfilesSelect
+          perfiles: this.perfilesSelect,
+          dui:this.dui,
         },
         "post"
       );

@@ -98,12 +98,13 @@ export default {
           let response = await this.http_client('/api/login_check', data, 'post')
           if (response.status === 200) {
             this.error=false
-            this.error_message=null
+            this.error_message=null;
+            console.log(response.data.refresh_token);
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('refresh_token', response.data.refresh_token)
             this.setToken(response.data.token)
             this.setUserInfo(jwtDecode(response.data.token))
-            this.$router.push('/dashboard').catch()
+            this.$router.push('/').catch()
           }
         } catch (e) {
           this.temporalAlert({
