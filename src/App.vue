@@ -32,7 +32,7 @@
             ><strong> {{ alert().message }}</strong></span
           >
 
-          <template #action="{attrs}">
+          <template #action="{ attrs }">
             <v-btn v-bind="attrs" icon right @click="alert().show = false"
               ><v-icon small>mdi-close</v-icon></v-btn
             >
