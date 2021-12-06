@@ -7,15 +7,113 @@
           class="d-flex justify-space-between blueGrayMinsal--text"
         >
           Usuarios
-          <v-btn
-            color="blueMinsal"
-            rounded
-            class="white--text"
-            @click="$router.push('create')"
-            ><v-icon left>mdi-plus</v-icon> Agregar</v-btn
-          >
+          <div>
+            <v-menu rounded="0" :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  rounded
+                  color="blueMinsal"
+                  class="white--text"
+                  v-bind="attrs"
+                  v-on="on"
+                  ><v-icon left>mdi-filter-variant-plus</v-icon>filtros</v-btn
+                >
+              </template>
+
+              <v-list dense>
+                <v-list-item-group
+                  v-model="filtros_seleccionados_aux"
+                  multiple
+                  color="blueMinsal"
+                >
+                  <v-virtual-scroll
+                    :items="filtros_disponibles"
+                    :item-height="40"
+                    max-height="250"
+                    :bench="14"
+                    width="200"
+                  >
+                    <template v-slot="{ item }">
+                      <v-list-item :key="item.id" link :value="item">
+                        <v-list-item-title>{{ item.nombre }}</v-list-item-title>
+                      </v-list-item></template
+                    >
+                  </v-virtual-scroll>
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
+            <v-btn
+              rounded
+              color="blueMinsal"
+              class="white--text ml-2"
+              @click="$router.push('create')"
+              ><v-icon left>mdi-plus</v-icon>Agregar</v-btn
+            >
+          </div>
         </v-card-title>
+        <v-card-text
+          :class="filtros_seleccionados.length > 0 ? 'pt-7' : 'pa-0 pt-2'"
+        >
+          <v-slide-x-transition group tag="div" class="row">
+            <v-col
+              cols="12"
+              md="4"
+              lg="3"
+              sm="6"
+              xl="2"
+              class="py-0"
+              v-for="(filtro_disponible, index) in filtros_seleccionados"
+              :key="index + 1"
+            >
+              <v-text-field
+                v-if="filtro_disponible.tipo == 'text'"
+                dense
+                outlined
+                color="blueMinsal"
+                :label="filtro_disponible.nombre"
+                v-model="filtro_disponible.value"
+                @keypress.enter="filtrarPerfiles()"
+              >
+              </v-text-field>
+              <v-select
+                outlined
+                dense
+                :label="filtro_disponible.nombre"
+                :items="
+                  filtro_disponible.options ? filtro_disponible.options : []
+                "
+                :item-text="filtro_disponible.textfield"
+                :item-value="filtro_disponible.valuefield"
+                v-show="true"
+                :multiple="filtro_disponible.multiple"
+                v-model="filtro_disponible.value"
+                v-else-if="filtro_disponible.tipo == 'select'"
+              ></v-select>
+            </v-col>
+          </v-slide-x-transition>
+          <v-slide-y-transition>
+            <v-btn
+              color="blueMinsal"
+              v-show="filtros_seleccionados.length > 0"
+              @click="filtrarPerfiles()"
+              rounded
+              text
+              ><v-icon left>mdi-filter</v-icon>Filtrar</v-btn
+            >
+          </v-slide-y-transition>
+          <v-slide-y-transition>
+            <v-btn
+              color="red"
+              rounded
+              text
+              v-show="filtros_seleccionados.length > 0"
+              @click="limpiarFiltros()"
+              ><v-icon left>mdi-filter-off</v-icon>Limpiar</v-btn
+            >
+          </v-slide-y-transition>
+        </v-card-text>
         <v-card-text>
+          <v-skeleton-loader v-if="loading == true"></v-skeleton-loader>
           <v-data-table
             v-model="selected"
             :headers="headers"
@@ -85,6 +183,15 @@
               </v-expand-transition>
             </template>
           </v-data-table>
+          <v-alert
+            color="blueMinsal"
+            icon="mdi-information"
+            prominent
+            text
+            v-else
+          >
+            No se encontraron datos</v-alert
+          >
         </v-card-text>
       </v-card>
     </v-flex>
@@ -95,9 +202,7 @@
       transition="dialog-transition"
     >
       <v-card rounded="lg" max-height="700px">
-        <v-card-title primary-title>
-          Detalle:
-        </v-card-title>
+        <v-card-title primary-title> Detalle: </v-card-title>
         <v-card-text>
           <span class="font-weight-bold">Correo electrónico</span>
           <v-spacer></v-spacer>
@@ -129,7 +234,11 @@
               : "2000-01-01" | moment("DD/MM/YYYY")
           }}
           <v-spacer></v-spacer>
-          <span class="font-weight-bold" v-if="usuarioData ? usuarioData.mnt_rols.length>0 : false">Roles</span>
+          <span
+            class="font-weight-bold"
+            v-if="usuarioData ? usuarioData.mnt_rols.length > 0 : false"
+            >Roles</span
+          >
           <ul>
             <li
               v-for="(rol, i) in usuarioData ? usuarioData.mnt_rols : []"
@@ -139,7 +248,11 @@
             </li>
           </ul>
           <v-spacer></v-spacer>
-          <span class="font-weight-bold" v-if="usuarioData ? usuarioData.mnt_perfils.length>0 : false">Perfiles</span>
+          <span
+            class="font-weight-bold"
+            v-if="usuarioData ? usuarioData.mnt_perfils.length > 0 : false"
+            >Perfiles</span
+          >
           <v-spacer></v-spacer>
           <ul>
             <li
@@ -159,6 +272,9 @@ export default {
   data: () => ({
     usuarios: [],
     selected: [],
+    loading: false,
+    filtros_seleccionados_aux: [],
+    filtros_disponibles: [],
     usuarioModal: false,
     usuarioData: null,
     headers: [
@@ -184,9 +300,25 @@ export default {
     ],
   }),
   methods: {
-    async getUsuarios() {
-      const response = await this.http_client("/api/v1/usuarios");
+    async filtrarPerfiles() {
+      let filtros = {};
+      this.filtros_seleccionados.forEach((filtro_selec) => {
+        filtros[filtro_selec.filter_name] = filtro_selec.value;
+      });
+      await this.getUsuarios(filtros);
+    },
+    limpiarFiltros() {
+      this.filtros_seleccionados_aux.forEach((filtro) => {
+        filtro.value = null;
+      });
+      this.filtros_seleccionados_aux = [];
+      this.getUsuarios();
+    },
+    async getUsuarios(filtros = null) {
+      this.loading = true;
+      const response = await this.http_client("/api/v1/usuarios",filtros);
       this.usuarios = response.data;
+      this.loading = false;
     },
     editingUsuario(item) {
       let roles = [];
@@ -235,7 +367,43 @@ export default {
       this.getUsuarios();
     },
   },
+  computed: {
+    busquedas() {
+      return this.filtros_seleccionados.filter((filtro) => {
+        return { id: filtro.id, search: filtro.search, value: filtro.value };
+      });
+    },
+    filtros() {
+      return [
+        {
+          id: 0,
+          nombre: "Correo",
+          tipo: "text",
+          value: null,
+          filter_name: "email",
+        },
+        {
+          id: 1,
+          nombre: "Deshabilitado",
+          tipo: "select",
+          multiple: false,
+          options: [
+            { text: "Si", value: true },
+            { text: "No", value: false },
+          ],
+          value: null,
+          textfield: "text",
+          valuefield: "value",
+          filter_name: "deshabilitado",
+        },
+      ];
+    },
+    filtros_seleccionados() {
+      return this.filtros_seleccionados_aux;
+    },
+  },
   async mounted() {
+    this.filtros_disponibles = this.filtros;
     await this.getUsuarios();
   },
 };

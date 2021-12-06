@@ -38,7 +38,7 @@
                 @click="deleteRol()"
               >
                 <v-icon left>mdi-delete</v-icon>
-                Eliminar y regresar al listado</v-btn
+                Eliminar</v-btn
               >
             </v-col>
           </v-row>

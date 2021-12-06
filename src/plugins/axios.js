@@ -55,6 +55,7 @@ _axios.interceptors.response.use(
         localStorage.setItem('refresh_token', response.data.refresh_token)
         store.dispatch('setToken', token)
         store.dispatch('setUserInfo', jwtDecode(token))
+        window.location.reload();
         error.response.config.headers['Authorization'] = 'Bearer ' + token
         return axios(error.response.config)
       }
