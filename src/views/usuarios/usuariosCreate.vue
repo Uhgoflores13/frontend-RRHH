@@ -15,12 +15,8 @@
           color="blueMinsal"
           :grow="$vuetify.breakpoint.xs"
         >
-          <v-tab key="tab1">
-            Usuario
-          </v-tab>
-          <v-tab key="tab2">
-            Seguridad
-          </v-tab>
+          <v-tab key="tab1"> Usuario </v-tab>
+          <v-tab key="tab2"> Seguridad </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab">
           <v-tab-item>
@@ -31,10 +27,7 @@
                 autocomplete="username"
                 color="blueMinsal"
                 v-model="usuario"
-                :rules="[
-                  (v) =>
-                    (v !== null && v !== '') || 'Este campo es obligatorio',
-                ]"
+                :rules="userRules"
               ></v-text-field>
               <v-text-field
                 label="Contraseña"
@@ -42,10 +35,7 @@
                 type="password"
                 autocomplete="new-password"
                 v-model="password"
-                :rules="[
-                  (v) =>
-                    (v !== null && v !== '') || 'Este campo es obligatorio',
-                ]"
+                :rules="passwordRules"
               ></v-text-field>
               <v-text-field
                 label="Numero de DUI"
@@ -89,7 +79,6 @@
                     color="blueMinsal"
                     item-color="blueMinsal"
                   ></v-select>
-                  
                 </v-col>
               </v-row>
             </v-card-text>
@@ -131,10 +120,10 @@ export default {
   data: () => ({
     usuario: null,
     perfiles: [],
-    perfilesSelect:[],
-    rolesSelect:[],
+    perfilesSelect: [],
+    rolesSelect: [],
     roles: [],
-    dui:null,
+    dui: null,
     tab: null,
     password: null,
   }),
@@ -148,8 +137,18 @@ export default {
       this.perfiles = response.data;
     },
     async postUsuario(navigate = false) {
-      if (!this.dui || !this.usuario || !this.password || this.perfilesSelect.length==0 || this.rolesSelect.length==0) {
-        this.temporalAlert({show:true, message:'Por favor complete todos los campos',type:'warning'})
+      if (
+        !this.dui ||
+        !this.usuario ||
+        !this.password ||
+        this.perfilesSelect.length == 0 ||
+        this.rolesSelect.length == 0
+      ) {
+        this.temporalAlert({
+          show: true,
+          message: "Por favor complete todos los campos",
+          type: "warning",
+        });
         return;
       }
 
@@ -159,9 +158,9 @@ export default {
           email: this.usuario.trim(),
           password: this.password.trim(),
           confirm_password: this.password.trim(),
-          roles:this.rolesSelect,
+          roles: this.rolesSelect,
           perfiles: this.perfilesSelect,
-          dui:this.dui,
+          dui: this.dui,
         },
         "post"
       );
@@ -175,6 +174,22 @@ export default {
       if (navigate) {
         this.$router.push("/usuarios/list");
       }
+    },
+  },
+  computed: {
+    userRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es obligatorio",
+        (v) => this.isEmail(v) || "El correo electrónico no es válido",
+      ];
+    },
+    passwordRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es requerido",
+        (v) =>
+          this.isPassword(v) ||
+          "La contraseña debe tener 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+      ];
     },
   },
   async created() {
