@@ -10,7 +10,7 @@ Vue.prototype.hideLoader =async () => {
 }
 Vue.prototype.isPassword = value => {
     if (value === null) return false;
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^&\*])(?=.{8,})/.test(
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^&\*])(?=.{8,20})/.test(
       value
     );
   

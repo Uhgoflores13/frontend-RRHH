@@ -32,7 +32,7 @@
               <v-text-field
                 label="Contraseña"
                 color="blueMinsal"
-                type="password"
+                type="text"
                 autocomplete="new-password"
                 v-model="password"
                 :rules="passwordRules"
