@@ -1,15 +1,15 @@
 <template>
   <v-app>
-    <v-main class="grey lighten-2">
-      <v-container fill-height justify-center>
-        <v-flex lg6>
-          <v-card class="rounded-lg px-2 px-sm-10 elevation-2">
-            <v-card-title class="justify-center"
+    <v-main class="bgMinsal">
+      <v-container fill-height justify-center fluid>
+        <v-flex xs12 sm8 md6 lg4 xl3>
+          <v-card class="rounded-lg px-2 px-sm-10 elevation-3">
+            <v-card-title class="justify-center blueGrayMinsal--text"
               >Recuperar Contraseña</v-card-title
             >
             <v-card-text>
               <v-divider></v-divider>
-              <div class="body-1 grey--text text--darken-3 my-3">
+              <div class="body-1 my-2">
                 Complete este formulario con su dirección de correo electrónico.
                 Si la dirección ingresada se encuentra en nuestros registros le
                 enviaremos un correo con las instrucciones para reestablecer su
@@ -20,14 +20,20 @@
                 name="email"
                 label="Email"
                 type="text"
+                color="blueMinsal"
                 :error="email_error"
                 :error-messages="email_message"
                 v-model="email"
-                outlined
-                dense
+                :rules="userRules"
                 v-if="success == false"
               ></v-text-field>
-              <v-alert dense text type="success" :value="success==true" transition="slide-x-transition" >
+              <v-alert
+                dense
+                text
+                type="success"
+                :value="success == true"
+                transition="slide-x-transition"
+              >
                 Solicitud realizada, por favor revise su bandeja de entrada de
                 su
                 <strong> correo electrónico</strong>
@@ -36,13 +42,21 @@
             <v-card-actions class="justify-space-around pb-5" width="100%">
               <v-btn
                 class="blueMinsal white--text"
+                rounded
                 :loading="loading"
                 @click="sendEmail"
                 v-if="!success"
                 >Solicitar</v-btn
               >
               <v-divider vertical v-if="!success"></v-divider>
-              <router-link to="/login">Iniciar sesión</router-link>
+              <v-btn
+                to="/login"
+                class="blueMinsal--text"
+                rounded
+                text
+                style="text-transform: none"
+                >Iniciar sesión</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -70,15 +84,10 @@ export default {
           this.email_error = false;
           this.email_message = "";
           //Se usa form data para enviar el email
-          var form_data = new FormData();
-          form_data.append("email", this.email);
           const response = await this.http_client(
             "/api/recovery/password",
-            form_data,
-            "post",
-            {
-              "Content-Type": "application/x-www-form-urlencoded",
-            }
+            { email: this.email },
+            "post"
           );
           //Si todo esta bien muestra alerta tipo success
           if (response.status === 200) {
@@ -92,6 +101,14 @@ export default {
         this.email_error = true;
         this.email_message = "Correo electrónico no valido";
       }
+    },
+  },
+  computed: {
+    userRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es requerido",
+        (v) => this.isEmail(v) || "Correo no válido",
+      ];
     },
   },
 };

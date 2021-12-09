@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <v-main class="grey lighten-2">
-      <v-container fill-height justify-center>
-        <v-flex lg6>
+    <v-main class="bgMinsal">
+      <v-container fill-height justify-center fluid>
+        <v-flex xs12 sm8 md6 lg4 xl3>
           <v-card
             class="rounded-lg px-2 px-sm-12 elevation-2"
             v-if="mostrarActualizar == true"
@@ -20,11 +20,10 @@
                     name="new_pass"
                     v-model="new_pass.value"
                     label="Contraseña nueva"
+                    :rules="passwordRules"
                     :type="new_pass.show ? 'text' : 'password'"
                     :error="new_pass.error"
                     :error-messages="new_pass.error_msg"
-                    outlined
-                    dense
                   >
                     <template #append>
                       <v-icon
@@ -45,11 +44,10 @@
                     name="repeat_pass"
                     v-model="repeat_pass.value"
                     label="Repita la contraseña"
+                    :rules="passwordRules"
                     :type="repeat_pass.show ? 'text' : 'password'"
                     :error="repeat_pass.error"
                     :error-messages="repeat_pass.error_msg"
-                    outlined
-                    dense
                   >
                     <template #append>
                       <v-icon
@@ -67,12 +65,19 @@
                 </v-col>
               </v-row>
             </v-card-text>
-            <v-card-actions class="justify-space-around pb-5 " width="100%">
-              <v-btn color="primary" :loading="loading" @click="changePassword">
+            <v-card-actions class="justify-space-around pb-5" width="100%">
+              <v-btn
+                color="blueMinsal white--text"
+                :loading="loading"
+                @click="changePassword"
+                rounded
+              >
                 <v-icon left>mdi-content-save</v-icon>actualizar
               </v-btn>
               <v-divider vertical></v-divider>
-              <router-link to="/login">O iniciar sesión</router-link>
+              <router-link to="/login" class="blueMinsal--text"
+                >O iniciar sesión</router-link
+              >
             </v-card-actions>
           </v-card>
           <v-card
@@ -84,7 +89,7 @@
             </v-card-title>
             <v-card-text class="justify-center text-center body-1">
               El token para reestablecer contraseña ya expiro, por favor
-              <router-link to="/recuperar-password"
+              <router-link to="/recuperar-password" class="blueMinsal--text"
                 >intente nuevamente</router-link
               >
             </v-card-text>
@@ -107,31 +112,7 @@
           </v-card>
         </v-flex>
       </v-container>
-        <v-icon left>mdi-error-circle</v-icon>
-        <span class="body-1"><strong>{{ text_error }}</strong></span>
     </v-main>
-      <v-snackbar
-        v-model="success"
-        :timeout="2000"
-        absolute
-        top
-        elevation="2"
-        color="success"
-        right
-      >
-        <v-icon left>mdi-check-circle</v-icon>
-        <span class="body-1">{{ text_success }}</span>
-      </v-snackbar>
-      <v-snackbar
-        v-model="error"
-        :timeout="5000"
-        absolute
-        top
-        elevation="2"
-        color="error"
-        right
-      >
-      </v-snackbar>
   </v-app>
 </template>
 <script>
@@ -176,8 +157,8 @@ export default {
         }
       } catch (e) {
         //si ha vencido entonces que intente de nuevo
-        this.text_error='El token de autorización ya se venció'
-        this.error=true
+        this.text_error = "El token de autorización ya se venció";
+        this.error = true;
         this.mostrarActualizar = false;
       }
     },
@@ -192,8 +173,8 @@ export default {
           const response = await this.http_client(
             `/api/reset/password`,
             {
-              new_password: this.new_pass.value.toString(),
-              repeat_password: this.repeat_pass.value.toString(),
+              password: this.new_pass.value.toString().trim(),
+              confirm_password: this.repeat_pass.value.toString().trim(),
             },
             "post",
             {
@@ -202,7 +183,12 @@ export default {
           );
           //recordar hacer tostring a las password
           if (response.status === 200) {
-            this.success = true;
+            this.temporalAlert({
+              show:true,
+              message:'La contraseña se cambio, inicie sesión',
+              type:'success',
+              timeout:4000,
+            })
             this.$router.push("/login");
             //si funciono todo entonces redirige al login y muestra mensaje
           }
@@ -217,9 +203,19 @@ export default {
           }
         }
       } else {
-        this.error=true;
-        this.text_error='Las contraseñas no coinciden'
+        this.error = true;
+        this.text_error = "Las contraseñas no coinciden";
       }
+    },
+  },
+  computed: {
+    passwordRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es requerido",
+        (v) =>
+          this.isPassword(v) ||
+          "La contraseña debe tener 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+      ];
     },
   },
   async beforeMount() {
