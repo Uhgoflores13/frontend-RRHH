@@ -1,12 +1,12 @@
 <template>
   <v-layout justify-center>
     <v-flex xs12 sm12 md10 lg8>
-      <v-card :class="dinamicMargins" class="px-0 " rounded="lg">
+      <v-card :class="dinamicMargins" class="px-0" rounded="lg">
         <v-card
           :style="
             'position: absolute; top:' +
-              positionTopDinamic +
-              '; left: 0; right: 0; margin-left:1%; margin-right:1%;'
+            positionTopDinamic +
+            '; left: 0; right: 0; margin-left:1%; margin-right:1%;'
           "
           color="blueMinsal"
           dark
@@ -14,27 +14,20 @@
           class="py-4 px-2"
         >
           <v-icon size="35">mdi-account</v-icon>
-          <span class="pl-4 text-sm-h6 text-subtitle-1 font-weight-regular" 
+          <span class="pl-4 text-sm-h6 text-subtitle-1 font-weight-regular"
             >Búsqueda de paciente por DUI</span
           >
         </v-card>
         <v-card-text class="pt-15 px-3 px-sm-10">
           <div class="pt-12 pt-sm-2 d-flex"></div>
-          <v-alert
-            v-if="alert.show"
-            color="error_expon"
-            icon="mdi-alert-circle"
-            type="error"
-          >
-            {{ alert.message }}
-          </v-alert>
           <v-text-field
             v-mask="'########-#'"
             hint="Digite su número de DUI"
             label="Número de DUI"
-            :rules="error ? numeroDuiRules : []"
+            :rules="numeroDuiRules"
             :error="error"
             v-model="numeroDui"
+            color="blueMinsal"
             persistent-hint
             @keypress.enter="verificarDui()"
             :disabled="loadingPersona"
@@ -54,7 +47,13 @@
           </v-text-field>
         </v-card-text>
         <v-card-text class="px-3 px-sm-10">
-          <v-alert class="px-2 px-sm-8 pt-4 pb-10" text color="blueMinsal" outlined rounded="lg">
+          <v-alert
+            class="px-2 px-sm-8 pt-4 pb-10"
+            text
+            color="blueMinsal"
+            outlined
+            rounded="lg"
+          >
             <p>Pasos para consultar la información clínica del paciente:</p>
             <ol>
               <li>
@@ -92,18 +91,17 @@
           <v-card-text>
             <v-container fluid>
               <v-layout row>
-                <v-flex xs3 sm3 md3 lg3 xl3>
+                <v-flex xs12 sm3 md3 lg3 xl3 class="d-flex justify-center">
                   <img
                     :src="'data:image/jpeg;base64,' + informacionPersona.foto"
                     width="160"
                     height="200"
                   /><br />
-                  <v-icon left></v-icon
-                  ><span class="font-weight-bold">{{
-                    informacionPersona.nombre_sexo
-                  }}</span>
                 </v-flex>
                 <v-flex xs10 sm10 md8 lg8 xl8>
+                  <span class="font-weight-bold">{{
+                    informacionPersona.nombre_sexo
+                  }}</span>
                   <v-row dense>
                     <v-col
                       cols="12"
@@ -148,27 +146,47 @@
                       <v-icon left>mdi-account-multiple</v-icon
                       ><span>Familiares</span>
                     </v-col>
-                    <v-col>
+                    <v-col v-if="informacionPersona.familiares.madre">
                       <v-icon left>mdi-human-female</v-icon>
                       <span class="font-weight-bold">Madre</span>
                       <v-spacer></v-spacer>
-                      {{ informacionPersona.familiares.madre.nombre_completo }}
+                      {{
+                        informacionPersona.familiares.madre
+                          ? informacionPersona.familiares.madre.nombre_completo
+                          : null
+                      }}
                     </v-col>
-                    <v-col>
+                    <v-col v-if="informacionPersona.familiares.padre">
                       <v-icon left>mdi-human-male</v-icon>
                       <span class="font-weight-bold">Padre</span>
                       <v-spacer></v-spacer>
-                      {{ informacionPersona.familiares.padre.nombre_completo }}
+                      {{
+                        informacionPersona.familiares.padre
+                          ? informacionPersona.familiares.padre.nombre_completo
+                          : null
+                      }}
                     </v-col>
                   </v-row>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
-          <v-footer absolute class="justify-end white">
-            <v-btn text @click="limpiar()">Cancelar</v-btn>
-            
-          </v-footer>
+          <v-card-actions class="d-flex justify-end">
+            <v-btn
+              @click="detallePersona()"
+              rounded
+              color="blueMinsal"
+              class="white--text"
+              >Ver mas</v-btn
+            >
+            <v-btn
+              @click="limpiar()"
+              rounded
+              color="blueMinsal"
+              class="white--text"
+              >Cancelar</v-btn
+            >
+          </v-card-actions>
         </v-card>
       </v-dialog>
     </v-flex>
@@ -181,17 +199,10 @@ import { mapActions, mapState } from "vuex";
 export default {
   name: "home",
   data: () => ({
-    alert: {
-      show: false,
-      message: null,
-    },
     loadingPersona: false,
     numeroDui: null,
     error: false,
     error_message: null,
-    numeroDuiRules: [
-      (v) => (v !== null && v !== "") || "Digite su número de DUI",
-    ],
     showInfo: false,
     informacionPersona: null,
     nombre_completo: null,
@@ -202,23 +213,17 @@ export default {
       this.numeroDui = null;
       this.showInfo = false;
     },
+    detallePersona() {
+      console.log("antecedentes/", this.informacionPersona.id_persona);
+      this.$router.push("antecedentes/" + this.informacionPersona.id_persona);
+    },
     verificarDui() {
       if (this.numeroDui !== null && this.numeroDui !== "") {
         if (Vue.prototype.isDui(this.numeroDui)) {
+          this.error = false;
           this.consultar();
-        } else {
-          this.numeroDuiRules = [];
-          this.numeroDuiRules.push("Digite su número de DUI");
-          this.error = true;
-          this.alert.show = true;
-          this.alert.message =
-            "El número de DUI ingresado no es válido, por favor verifique los digitos e intentelo nuevamente";
         }
-      } else {
-        this.error = true;
-        this.alert.show = true;
-        this.alert.message = "El número de DUI es requerido";
-      }
+      } 
     },
     async consultar() {
       try {
@@ -262,6 +267,12 @@ export default {
     },
   },
   computed: {
+    numeroDuiRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Digite su número de DUI",
+        (v) => this.isDui(v) || "Ingrese un número de DUI válido",
+      ];
+    },
     formatDate() {
       var objFecha = new Date(
         this.informacionPersona.datos_nacimiento.fecha_hora_nacimiento

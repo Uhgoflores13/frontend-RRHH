@@ -30,6 +30,12 @@ const routes = [
           import(/* webpackChunkName: "perfil" */ "../views/dashboard"),
       },
       {
+        path: "antecedentes/:id",
+        name: "antecedentesAdmin",
+        component: () =>
+          import(/* webpackChunkName: "perfil" */ "../views/pacientes/antecedentes"),
+      },
+      {
         path: "roles",
         name: "roles",
         component: () =>

@@ -37,15 +37,6 @@
                 v-model="password"
                 :rules="passwordRules"
               ></v-text-field>
-              <v-text-field
-                label="Numero de DUI"
-                color="blueMinsal"
-                v-model="dui"
-                :rules="[
-                  (v) =>
-                    (v !== null && v !== '') || 'Este campo es obligatorio',
-                ]"
-              ></v-text-field>
               <v-checkbox
                 label="Deshabilitado"
                 color="blueMinsal"
@@ -130,7 +121,6 @@ export default {
     rolesSelect: [],
     roles: [],
     tab: null,
-    dui: null,
   }),
   methods: {
     async getRoles() {
@@ -143,7 +133,7 @@ export default {
     },
     async putUsuario() {
       const id_usuario = this.$route.params.id;
-      if (!this.usuario || !this.password || this.perfilesSelect.length == 0) {
+      if (!this.usuario || this.perfilesSelect.length == 0) {
         this.temporalAlert({
           show: true,
           message: "Por favor complete todos los campos",
@@ -199,10 +189,9 @@ export default {
     },
     passwordRules() {
       return [
-        (v) => (v !== null && v !== "") || "Este campo es requerido",
         (v) =>
           this.isPassword(v) ||
-          "La contraseña debe tener 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+          "La contraseña debe tener al menos 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
       ];
     },
   },

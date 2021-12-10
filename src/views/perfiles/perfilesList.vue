@@ -13,7 +13,7 @@
                 <v-btn
                   rounded
                   color="blueMinsal"
-                  class="white--text"
+                  class="white--text ma-1"
                   v-bind="attrs"
                   v-on="on"
                   ><v-icon left>mdi-filter-variant-plus</v-icon>filtros</v-btn
@@ -45,7 +45,7 @@
             <v-btn
               rounded
               color="blueMinsal"
-              class="white--text ml-2"
+              class="white--text ma-1"
               @click="$router.push('create')"
               ><v-icon left>mdi-plus</v-icon>Agregar</v-btn
             >

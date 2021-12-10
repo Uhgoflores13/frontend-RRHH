@@ -188,7 +188,7 @@ export default {
         (v) => (v !== null && v !== "") || "Este campo es requerido",
         (v) =>
           this.isPassword(v) ||
-          "La contraseña debe tener 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+          "La contraseña debe tener al menos 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
       ];
     },
   },
