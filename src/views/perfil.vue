@@ -10,18 +10,18 @@
             <v-col md="6" sm="12">
               <p class="subtitle-2">Nombre</p>
               <p class="body-1 grey--text">
-                  {{
-                    `${datosPerfil.primer_nombre} ${datosPerfil.segundo_nombre}`
-                  }}
-                </p>
+                {{
+                  `${datosPerfil.primer_nombre} ${datosPerfil.segundo_nombre}`
+                }}
+              </p>
             </v-col>
             <v-col md="6" sm="12">
               <p class="subtitle-2">Apellido</p>
               <p class="body-1 grey--text">
-                  {{
-                    `${datosPerfil.primer_apellido} ${datosPerfil.segundo_apellido}`
-                  }}
-                </p>
+                {{
+                  `${datosPerfil.primer_apellido} ${datosPerfil.segundo_apellido}`
+                }}
+              </p>
             </v-col>
           </v-row>
           <v-row>
@@ -32,11 +32,11 @@
             <v-col>
               <p class="subtitle-2">Ultima conexion</p>
               <p class="body-1 grey--text">
-                  {{
-                    datosPerfil.creacion
-                      | moment("timezone", "America/El_Salvador", "LL")
-                  }}
-                </p>
+                {{
+                  datosPerfil.creacion
+                    | moment("timezone", "America/El_Salvador", "LL")
+                }}
+              </p>
             </v-col>
           </v-row>
           <v-divider class="mt-4"></v-divider>
@@ -95,7 +95,7 @@
               :append-icon="
                 new_password.show ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
               "
-              :rules="passwordRules"
+              :rules="newPasswordRules"
               outlined
               dense
               @click:append="new_password.show = !new_password.show"
@@ -108,6 +108,7 @@
               name="confirmPassword"
               v-model="confirm_password.value"
               label="Confirmar Contraseña"
+              :rules="confirmPasswordRules"
               :type="confirm_password.show ? 'text' : 'password'"
               outlined
               :append-icon="
@@ -192,75 +193,34 @@ export default {
             },
             "post"
           );
-          let token = response.data.data.token;
-          let refresh = response.data.data.refresh_token;
+          let token = response.data.token;
+          let refresh = response.data.refresh_token;
           localStorage.setItem("token", token);
           localStorage.setItem("refresh_token", refresh);
           this.setToken(token);
           await this.setUserInfo(jwtDecode(token));
           await this.getUserDetail(this.email);
-          this.alert.type = "success";
-          this.alert.show = true;
-          this.alert.message = "Correo electrónico actualizado";
-          setTimeout(() => {
-            this.alert.show = false;
-          }, 5000);
+          this.temporalAlert({
+            show: true,
+            message: "Correo actualizado con exito",
+            type: "success",
+          });
         }
       } catch (e) {
-        if (e.response.status === 400) {
-        }
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.status,
+          type: "error",
+        });
       } finally {
         await this.hideLoader();
       }
     },
-    validarCambioPasssword() {
-      let respuesta = true;
-      let valid = [null, ""];
-      if (valid.some((rule) => rule === this.password.value)) {
-        respuesta = false;
-        this.password.state = true;
-        this.password.message = "Contraseña es obligatoria";
-      } else {
-        this.password.state = false;
-        this.password.message = null;
-      }
-
-      if (valid.some((rule) => rule === this.new_password.value)) {
-        respuesta = false;
-        this.new_password.state = true;
-        this.new_password.message = "Nueva contraseña es obligatoria";
-      } else {
-        this.new_password.state = false;
-        this.new_password.message = null;
-      }
-
-      if (valid.some((rule) => rule === this.confirm_password.value)) {
-        respuesta = false;
-        this.confirm_password.message =
-          "Confirmación de contraseña es obligatoria";
-        this.confirm_password.state = true;
-      } else {
-        this.confirm_password.message = null;
-        this.confirm_password.state = false;
-      }
-
-      if (
-        this.confirm_password.value &&
-        this.confirm_password.value !== this.new_password.value
-      ) {
-        respuesta = false;
-        this.confirm_password.message = "Las contraseñas no coinciden";
-        this.confirm_password.state = true;
-      } else if (this.confirm_password.value) {
-        this.confirm_password.message = null;
-        this.confirm_password.state = false;
-      }
-      return respuesta;
-    },
+    
     async cambiarPassword() {
-      this.showLoader();
       if (this.$refs.passForm.validate()) {
         try {
+          this.showLoader();
           const response = await this.http_client(
             "/api/change/password",
             {
@@ -318,12 +278,21 @@ export default {
   },
   computed: {
     ...mapState(["userDetail", "userInfo"]),
-    passwordRules() {
+    newPasswordRules() {
       return [
         (v) => (v !== null && v !== "") || "Este campo es requerido",
         (v) =>
           this.isPassword(v) ||
           "La contraseña debe tener al menos 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+      ];
+    },
+    confirmPasswordRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es requerido",
+        (v) =>
+          this.isPassword(v) ||
+          "La contraseña debe tener al menos 1 minuscula, 1 mayuscula, 1 caracter especial, 1 numero y minimo 8 caracteres",
+        (v) => v == this.new_password.value || "Las contraseñas no coinciden",
       ];
     },
     datosPerfil() {

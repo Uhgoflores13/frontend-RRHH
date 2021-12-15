@@ -2,6 +2,7 @@
   <v-navigation-drawer
     app
     permanent
+    stateless
     :mini-variant="sideBar"
     mini-variant-width="70"
     @input="setSibeBar($event)"

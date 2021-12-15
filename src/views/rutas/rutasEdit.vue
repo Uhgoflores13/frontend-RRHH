@@ -155,6 +155,7 @@ export default {
           publico: this.rutaForm.publico,
           roles: this.rolesSelect,
           admin: this.rutaForm.admin,
+          orden:this.rutaForm.orden,
           id_ruta,
         },
         "put"

@@ -152,6 +152,7 @@ export default {
           publico: this.rutaForm.publico,
           admin: this.rutaForm.admin,
           roles: this.rolesSelect,
+          orden: this.rutaForm.orden
         },
         "post"
       );
