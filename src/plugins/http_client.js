@@ -35,6 +35,8 @@ const http_client = async (
           : "Acceso no autorizado",
         type: "error",
       });
+      store.dispatch("setToken", null);
+      localStorage.clear();
       Vue.prototype.hideLoader();
     } else if (e.response.status === 403) {
     } else {

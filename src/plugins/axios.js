@@ -53,20 +53,20 @@ _axios.interceptors.response.use(
         const token = response.data.token
         localStorage.setItem('token', token)
         localStorage.setItem('refresh_token', response.data.refresh_token)
-        store.dispatch('setToken', token)
-        store.dispatch('setUserInfo', jwtDecode(token))
-        window.location.reload();
+        store.commit('setToken', token)
+        store.commit('setUserInfo', jwtDecode(token))
         error.response.config.headers['Authorization'] = 'Bearer ' + token
         return axios(error.response.config)
       }
     }).catch(error => {
-      store.dispatch("utils/hideLoader");
+      store.commit("utils/hideLoader");
       localStorage.clear()
-      store.dispatch('setToken', null)
-      store.dispatch('setUserInfo', {})
+      store.commit('setToken', null)
+      store.commit('setUserInfo', {})
       router.push('/login').catch(err => {
       })
       return Promise.reject(error)
+    }).finally(res=>{
     })
     /**
      * finish here
