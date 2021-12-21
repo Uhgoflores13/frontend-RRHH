@@ -12,7 +12,7 @@ A continuación se muestra la guía para la instalación de la API de Expediente
   - [Preparación del servidor](#1-preparación-del-servidor)
     - [Configuración de repositorios Debian](#11-configuración-de-repositorios-debian)
     - [Instalación de Node.js y NPM](#12-instalación-de-nodejs-y-npm)
-    - [Instalación y configuración de la aplicación web](#12-instalación-y-configuración-de-la-aplicacion-web)
+    - [Instalación y configuración de la aplicación web](#2-instalación-y-configuración-de-la-aplicacion-web)
     - [Clonación del proyecto](#21-clonación-del-proyecto)
   - - [Instalación de módulos](#22-instalación-de-módulos)
     - [Configurar la conexión a la API](#23-configurar-la-conexión-a-la-api)
