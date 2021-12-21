@@ -15,7 +15,7 @@ A continuación se muestra la guía para la instalación de la API de Expediente
     - [Instalación y configuración de la aplicación web](#12-instalación-y-configuración-de-la-aplicacion-web)
     - [Clonación del proyecto](#21-clonación-del-proyecto)
   - - [Instalación de módulos](#22-instalación-de-módulos)
-    - [Configurar la conexión a la API](#23-configurar-la-conexión-a-la-API)
+    - [Configurar la conexión a la API](#23-configurar-la-conexión-a-la-api)
     - [Ejecutar el proyecto](#29-ejecutar-el-proyecto)
     - ## Requisitos
 
