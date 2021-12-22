@@ -137,42 +137,51 @@ export default {
       this.perfiles = response.data;
     },
     async postUsuario(navigate = false) {
-      if (
-        !this.dui ||
-        !this.usuario ||
-        !this.password ||
-        this.perfilesSelect.length == 0 ||
-        this.rolesSelect.length == 0
-      ) {
+      if (!this.dui || !this.usuario || !this.password) {
         this.temporalAlert({
           show: true,
-          message: "Por favor complete todos los campos",
+          message: "Por favor complete los campos del usuario",
           type: "warning",
         });
         return;
       }
-
-      const response = await this.http_client(
-        "/api/v1/usuarios",
-        {
-          email: this.usuario.trim(),
-          password: this.password.trim(),
-          confirm_password: this.password.trim(),
-          roles: this.rolesSelect,
-          perfiles: this.perfilesSelect,
-          dui: this.dui,
-        },
-        "post"
-      );
-      this.temporalAlert({
-        show: true,
-        message: "Se ha creado el usuario",
-        type: "success",
-      });
-      this.usuario = null;
-      this.password = null;
-      if (navigate) {
-        this.$router.push("/usuarios/list");
+      if (this.perfilesSelect.length == 0 && this.rolesSelect.length == 0) {
+        this.temporalAlert({
+          show: true,
+          message: "Debe seleccionar por lo menos un perfil o un rol",
+          type: "warning",
+        });
+        return;
+      }
+      try {
+        const response = await this.http_client(
+          "/api/v1/usuarios",
+          {
+            email: this.usuario.trim(),
+            password: this.password.trim(),
+            confirm_password: this.password.trim(),
+            roles: this.rolesSelect,
+            perfiles: this.perfilesSelect,
+            dui: this.dui,
+          },
+          "post"
+        );
+        this.temporalAlert({
+          show: true,
+          message: "Se ha creado el usuario",
+          type: "success",
+        });
+        this.usuario = null;
+        this.password = null;
+        if (navigate) {
+          this.$router.push("/usuarios/list");
+        }
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "error",
+        });
       }
     },
   },

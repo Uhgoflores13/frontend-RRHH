@@ -302,6 +302,7 @@
   </v-container>
 </template>
 <script>
+import { mapActions } from "vuex";
 export default {
   data: () => ({
     rutas: [],
@@ -358,6 +359,7 @@ export default {
     ],
   }),
   methods: {
+    ...mapActions("utils", ["getMenu"]),
     async filtrarRutas() {
       let filtros = {};
       this.filtros_seleccionados.forEach((filtro_selec) => {
@@ -372,11 +374,11 @@ export default {
       this.filtros_seleccionados_aux = [];
       this.getRutas();
     },
-    async getRutas(filtros=null) {
-      this.loading=true;
-      const response = await this.http_client("/api/v1/show/rutas",filtros);
+    async getRutas(filtros = null) {
+      this.loading = true;
+      const response = await this.http_client("/api/v1/show/rutas", filtros);
       this.rutas = response.data;
-      this.loading=false;
+      this.loading = false;
     },
     editingRuta(item) {
       let roles = [];
@@ -406,6 +408,7 @@ export default {
         message: "Se eliminaron las rutas",
         type: "success",
       });
+      this.getMenu();
       this.selected = [];
       this.getRutas();
     },
@@ -481,7 +484,7 @@ export default {
     },
   },
   async created() {
-    this.filtros_disponibles = this.filtros
+    this.filtros_disponibles = this.filtros;
     await this.getRutas();
   },
 };

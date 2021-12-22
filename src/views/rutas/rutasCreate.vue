@@ -105,6 +105,7 @@
   >
 </template>
 <script>
+import { mapActions } from 'vuex';
 export default {
   name: "rolesCreate",
   data: () => ({
@@ -122,6 +123,7 @@ export default {
     rolesSelect: [],
   }),
   methods: {
+    ...mapActions('utils',['getMenu']),
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
@@ -162,6 +164,7 @@ export default {
           message: "Se ha creado la ruta",
           type: "success",
         });
+        this.getMenu();
         this.rutaForm = {
           nombre: null,
           uri: null,

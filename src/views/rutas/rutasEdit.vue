@@ -106,6 +106,7 @@
   >
 </template>
 <script>
+import { mapActions } from 'vuex';
 export default {
   name: "rolesEdit",
   data: () => ({
@@ -124,6 +125,7 @@ export default {
     rolesSelect: [],
   }),
   methods: {
+    ...mapActions('utils',['getMenu']),
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
@@ -165,6 +167,7 @@ export default {
         message: "Se actualizó la ruta",
         type: "success",
       });
+      this.getMenu();
       this.$router.push("/rutas/list");
       localStorage.removeItem("editingRuta");
     },
@@ -182,6 +185,7 @@ export default {
         message: "Se eliminó la ruta",
         type: "success",
       });
+      this.getMenu();
       this.$router.push("/rutas/list");
       localStorage.removeItem("editingRuta");
     },
