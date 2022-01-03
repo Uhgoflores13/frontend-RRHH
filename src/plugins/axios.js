@@ -44,7 +44,6 @@ _axios.interceptors.response.use(
       return Promise.reject(error);
     }
     const token = store.state.token ? store.state.token : localStorage.getItem('token')
-    console.log('token axios',token);
     const base = process.env.VUE_APP_API_URL
     return axios.post(base + 'api/token/refresh ', {
       refresh_token: localStorage.getItem('refresh_token')

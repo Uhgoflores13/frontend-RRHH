@@ -118,7 +118,6 @@ export default {
         if (response.status === 200) {
           this.error = false;
           this.error_message = null;
-          console.log(response.data.refresh_token);
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("refresh_token", response.data.refresh_token);
           this.setToken(response.data.token);

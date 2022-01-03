@@ -214,7 +214,6 @@ export default {
       this.showInfo = false;
     },
     detallePersona() {
-      console.log("antecedentes/", this.informacionPersona.id_persona);
       this.$router.push("antecedentes/" + this.informacionPersona.id_persona);
     },
     verificarDui() {
@@ -238,7 +237,6 @@ export default {
                                                   +informacionPersona.primer_apellido+ '' + informacionPersona.segundo_apellido
         * */
         this.informacionPersona = response.data;
-        console.log(response.data);
         if (Object.keys(response.data).length > 0) {
           this.showInfo = true;
           if (response.data.primer_nombre !== null) {
