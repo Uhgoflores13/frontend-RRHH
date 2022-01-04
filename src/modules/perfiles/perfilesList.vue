@@ -241,10 +241,18 @@ export default {
       this.getPerfiles();
     },
     async getPerfiles(filtros = null) {
-      this.loading = true;
-      const response = await this.http_client("/api/v1/perfiles", filtros);
-      this.perfiles = response.data;
-      this.loading = false;
+      try {
+        this.loading = true;
+        const response = await this.http_client("/api/v1/perfiles", filtros);
+        this.perfiles = response.data;
+        this.loading = false;
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "warning",
+        });
+      }
     },
     editingPerfil(item) {
       localStorage.setItem("editingPerfil", JSON.stringify(item));

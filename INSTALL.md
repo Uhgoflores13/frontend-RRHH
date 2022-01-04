@@ -1,6 +1,6 @@
 # FrontEnd - Sistema Integral Salud [Ciudadano]
 
-A continuación se muestra la guía para la instalación de la API de Expediente unificado.
+A continuación se muestra la guía para la instalación de la API de Administrador
 
 ## Contenido
 
@@ -33,7 +33,7 @@ El sistema funciona bajo el Sistema Operativo Linux, en su distribución Debian 
 
 ### 3 Cliente
 
-Para la administración de expediente en linea sera necesario que el cliente se conecte mediante su navegador a la dirección URL
+Para la administración en linea sera necesario que el cliente se conecte mediante su navegador a la dirección URL
 
 ## Instalación de la aplicación
 
@@ -101,7 +101,7 @@ A continuación se listan los pasos para la instalación y configuración de la 
 Clonar el proyecto desde los repositorios oficiales ejecutando el siguiente comando:
 
 ```bash
-git clone git@codigo.salud.gob.sv:expediente_central/front-exonline.git
+git clone git@codigo.salud.gob.sv:plantillas/front-admin.git
 ```
 
 #### 2.2 Instalación de módulos

@@ -212,11 +212,19 @@ export default {
       this.filtros_seleccionados_aux = [];
       this.getRoles();
     },
-    async getRoles(filtros=null) {
-      this.loading = true;
-      const response = await this.http_client("/api/v1/roles",filtros);
-      this.roles = response.data;
-      this.loading = false;
+    async getRoles(filtros = null) {
+      try {
+        this.loading = true;
+        const response = await this.http_client("/api/v1/roles", filtros);
+        this.roles = response.data;
+        this.loading = false;
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "warning",
+        });
+      }
     },
     editingRole(item) {
       localStorage.setItem("editingRole", JSON.stringify(item));

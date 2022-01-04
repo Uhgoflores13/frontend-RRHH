@@ -315,10 +315,18 @@ export default {
       this.getUsuarios();
     },
     async getUsuarios(filtros = null) {
-      this.loading = true;
-      const response = await this.http_client("/api/v1/usuarios", filtros);
-      this.usuarios = response.data;
-      this.loading = false;
+      try {
+        this.loading = true;
+        const response = await this.http_client("/api/v1/usuarios", filtros);
+        this.usuarios = response.data;
+        this.loading = false;
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "warning",
+        });
+      }
     },
     editingUsuario(item) {
       let roles = [];

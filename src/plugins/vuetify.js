@@ -7,11 +7,8 @@ Vue.use(Vuetify);
 export default new Vuetify({
     theme: {
         themes: {
+            //Se definen colores globales para el tema claro
             light : {
-                primary_expon: '266BB0',
-                success_expon: '1CAC78',
-                error_expon: 'D32F2F',
-                info_expon: 'CCE5FF',
                 blueMinsal:'#175EFB',   
                 blueGrayMinsal:'#6A83BE',   
                 blueDarkMinsal:'#2D52A8',

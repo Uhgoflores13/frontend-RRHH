@@ -42,6 +42,7 @@ export default {
   }),
   methods: {
     addItems() {
+      //Agregar las opciones adicionales aquí
       this.items.push(
         {
           nombre: "Usuarios",

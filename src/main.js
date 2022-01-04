@@ -7,17 +7,19 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import vMask from "v-mask";
-import "./components";
 import "./assets/scss/variables.scss";
 const moment = require("moment");
 require("moment/locale/es");
-Vue.prototype.moment = moment
+Vue.prototype.moment = moment;
 import momentTime from "moment-timezone";
 Vue.use(vMask);
 Vue.use(require("vue-moment"), {
   moment,
   momentTime,
 });
+
+import { regComponents } from "@/modules/utils/regComponents";
+regComponents(Vue);
 
 Vue.config.productionTip = false;
 

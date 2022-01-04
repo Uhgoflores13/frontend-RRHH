@@ -10,8 +10,11 @@
               max-width="350"
             />
             <v-card class="pa-2 pa-sm-10" rounded="lg" :elevation="5">
-              <p class="text-h5 text-center pt-5 blueGrayMinsal--text">
+              <p class="text-h5 pt-5 text-center blueGrayMinsal--text ma-0">
                 Inicie sesión para continuar
+              </p>
+              <p class=" text-center blueGrayMinsal--text text--lighten-1 ma-0">
+                Administrador
               </p>
 
               <v-form @submit.prevent="login()">

@@ -117,12 +117,15 @@ Vue.prototype.isNit = (nit) => {
     }
     return valido;
 }
+//Funcion auxiliar para verificar rutas accesibles
 const buscarRuta = (rutas, ruta) => {
     return rutas.some((item) => {
         return item.nombre_uri.toLowerCase() === ruta.name.toLowerCase();
     });
   };
+//Funcion para verificar las rutas accesibles
 Vue.prototype.canNext = async (ruta) => {
+    //Rutas a las que el usuario siempre va a poder acceder
     const permit = [
       "login",
       "recuperar-password",
@@ -130,13 +133,15 @@ Vue.prototype.canNext = async (ruta) => {
       "Forbidden"
     ];
     if (!ruta.name) return false;
+    //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso
     if (permit.some((row) => row.toLowerCase() === ruta.name.toLowerCase()))
       return true;
-  
+    //Se verifica si la ruta proporcionada se encuentra en las rutas
+    //almacenadas, si no hay entonces se hace la petición para almacenarlas
     let { utils } = store.state;
     if (utils.rutas && utils.rutas.length === 0) {
-      // await Vue.prototype.http_client("/api/v1/index");
       await store.dispatch("utils/getMenu");
     }
+    //Busca ruta en el arreglo de rutas
     return buscarRuta(utils.rutas, ruta);
   };
