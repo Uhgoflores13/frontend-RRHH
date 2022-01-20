@@ -4,7 +4,7 @@
       <v-container fluid fill-height>
         <v-row class="text-center">
           <v-col cols="12">
-            <img src="../assets/SIS-HAZUL.png" :width="dinamicSize" />
+            <img src="../assets/img/404notfound.svg" :width="dinamicSize" />
           </v-col>
           <v-col cols="12">
             <p :class="dinamicClass">
@@ -30,7 +30,7 @@
 </template>
 <script>
 export default {
-  name: "Forbidden",
+  name: "About",
   data: () => ({
     move: 0,
     interval: null,

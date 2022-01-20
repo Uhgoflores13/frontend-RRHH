@@ -3,10 +3,7 @@
     <v-main class="bgMinsal">
       <v-container fill-height justify-center fluid>
         <v-flex xs12 sm8 md6 lg4 xl3>
-          <v-card
-            class="rounded-lg px-2 px-sm-12 elevation-2"
-            v-if="mostrarActualizar == true"
-          >
+          <v-card class="rounded-lg px-2 px-sm-12 elevation-2">
             <v-card-title class="justify-center" primary-title
               >Reestablecer Contraseña</v-card-title
             >
@@ -80,36 +77,6 @@
               >
             </v-card-actions>
           </v-card>
-          <v-card
-            class="rounded-lg px-2 px-sm-12 elevation-2"
-            v-else-if="mostrarActualizar == false"
-          >
-            <v-card-title class="justify-center" primary-title>
-              Ocurrió un error
-            </v-card-title>
-            <v-card-text class="justify-center text-center body-1">
-              El token para reestablecer contraseña ya expiro, por favor
-              <router-link to="/recuperar-password" class="blueMinsal--text"
-                >intente nuevamente</router-link
-              >
-            </v-card-text>
-          </v-card>
-          <v-card class="rounded-lg px-2 px-sm-12 elevation-2" v-else>
-            <v-card-title class="justify-center" primary-title>
-              Cargando
-            </v-card-title>
-            <v-card-text class="justify-center text-center body-1">
-              Por favor espere ...
-            </v-card-text>
-            <v-card-actions>
-              <v-progress-linear
-                indeterminate
-                color="primary"
-                rounded
-                height="6"
-              ></v-progress-linear>
-            </v-card-actions>
-          </v-card>
         </v-flex>
       </v-container>
     </v-main>
@@ -121,8 +88,6 @@ export default {
     mostrarActualizar: null,
     success: false,
     error: false,
-    text_success: "Contraseña cambiada con éxito",
-    text_error: "",
     loading: false,
     new_pass: {
       value: null,
@@ -156,10 +121,13 @@ export default {
           this.mostrarActualizar = true;
         }
       } catch (e) {
-        //si ha vencido entonces que intente de nuevo
-        this.text_error = "El token de autorización ya se venció";
-        this.error = true;
         this.mostrarActualizar = false;
+        //si ha vencido entonces que intente de nuevo
+        this.temporalAlert({
+          message: "El token de autorización ya venció",
+          show: true,
+          type: "error",
+        });
       }
     },
 
@@ -171,12 +139,12 @@ export default {
         try {
           let token = this.$route.params.id;
           const response = await this.http_client(
-            `/api/reset/password`,
+            `/api/v1/recoveryPassword/changePassword`,
             {
-              password: this.new_pass.value.toString().trim(),
-              confirm_password: this.repeat_pass.value.toString().trim(),
+              password: this.new_pass.value.toString(),
+              confirmPassword: this.repeat_pass.value.toString(),
             },
-            "post",
+            "put",
             {
               Authorization: `Bearer ${token}`,
             }
@@ -184,27 +152,32 @@ export default {
           //recordar hacer tostring a las password
           if (response.status === 200) {
             this.temporalAlert({
-              show:true,
-              message:'La contraseña se cambio, inicie sesión',
-              type:'success',
-              timeout:4000,
-            })
+              show: true,
+              message: "Contraseña actualizada con éxito",
+              type: "success",
+            });
             this.$router.push("/login");
-            //si funciono todo entonces redirige al login y muestra mensaje
+            //si funcionó todo, entonces redirige al login y muestra mensaje
           }
         } catch (e) {
           if (e.response.status === 404 || e.response.status === 400) {
             //Aqui se coloca el error en input si es que la contraseña no cumple con las
             //validaciones del back, ej: longitud,caracteres especiales
-            this.text_error = JSON.parse(
-              e.response.data.detail
-            ).errors[0].error;
-            this.error = true;
+            this.temporalAlert({
+              show: true,
+              message:
+                "La contraseña debe tener al menos minimo 6 digitos, un caracter especial, una mayúscula",
+              type: "warning",
+            });
           }
         }
       } else {
         this.error = true;
-        this.text_error = "Las contraseñas no coinciden";
+        this.temporalAlert({
+          show: true,
+          message: "Las contraseñas no coinciden",
+          type: "warning",
+        });
       }
     },
   },
@@ -218,9 +191,7 @@ export default {
       ];
     },
   },
-  async beforeMount() {
-    await this.checkToken();
-  },
+  async beforeMount() {},
 };
 </script>
 <style lang="scss" scoped></style>

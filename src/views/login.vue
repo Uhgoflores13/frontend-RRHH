@@ -6,17 +6,31 @@
           <v-flex xs12 sm8 md6 lg4 xl3>
             <v-img
               class="mx-auto d-flex mb-2"
-              src="../assets/SIS-HAZUL.png"
+              src="@/assets/img/SIS-HAZUL.png"
               max-width="350"
             />
             <v-card class="pa-2 pa-sm-10" rounded="lg" :elevation="5">
-              <p class="text-h5 pt-5 text-center blueGrayMinsal--text ma-0">
+              <p class="text-h5 text-center pt-5 blueGrayMinsal--text">
                 Inicie sesión para continuar
               </p>
-              <p class=" text-center blueGrayMinsal--text text--lighten-1 ma-0">
-                Administrador
-              </p>
-
+              <v-card :color="login_loader.color" dark v-if="dialog">
+                <v-card-text>
+                  <v-row dense class="pt-2 mr-4 white--text">
+                    <v-col cols="2">
+                      <v-progress-circular
+                        v-if="login_loader.show"
+                        size="30"
+                        indeterminate
+                        color="white"
+                      ></v-progress-circular>
+                      <v-icon v-else size="35">mdi-alert-circle</v-icon>
+                    </v-col>
+                    <v-col cols="10" class="text-wrap pt-2">
+                      {{ login_loader.text }}
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
               <v-form @submit.prevent="login()">
                 <v-card-text>
                   <v-text-field
@@ -24,6 +38,7 @@
                     name="login"
                     label="Usuario / Correo Electronico *"
                     type="text"
+                    @keydown="cleanMail"
                     v-model="user"
                     :rules="userRules"
                     :error="error"
@@ -57,16 +72,36 @@
                     </template>
                   </v-text-field>
                 </v-card-text>
-                <v-card-text class="text-center justify-center pa-0">
-                  <v-btn
-                    color="blueMinsal white--text px-sm-8"
-                    rounded
-                    type="submit"
-                    @click="login()"
-                    :loading="disabled"
-                    >iniciar sesión</v-btn
+                <v-row class="pt-5">
+                  <v-col
+                    cols="12"
+                    md="6"
+                    class="flex justify-center text-center"
                   >
-
+                    <v-btn
+                      color="blueMinsal white--text px-sm-8"
+                      rounded
+                      type="submit"
+                      :loading="disabled"
+                      >iniciar sesión</v-btn
+                    >
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="6"
+                    class="flex justify-center text-center"
+                  >
+                    <v-btn
+                      color="blueMinsal "
+                      class="px-sm-8"
+                      rounded
+                      outlined
+                      :to="'/register'"
+                      >Registrarse</v-btn
+                    >
+                  </v-col>
+                </v-row>
+                <v-row class="pa-0 ma-0">
                   <v-btn
                     text
                     style="text-transform: none"
@@ -76,7 +111,7 @@
                     to="/recuperar-password"
                     >Olvidaste tu contraseña?</v-btn
                   >
-                </v-card-text>
+                </v-row>
               </v-form>
             </v-card>
           </v-flex>
@@ -84,65 +119,126 @@
       </v-container>
     </v-main>
     <v-spacer class="my-10"></v-spacer>
+    <v-footer class="text-center blueDarkMinsal py-3">
+      <v-row>
+        <v-col cols="12" sm="6" md="4">
+          <v-img
+            src="../assets/img/escudo-white-minsal.png"
+            width="200"
+            class="mx-auto"
+          />
+        </v-col>
+        <v-col
+          class="text-center white--text font-weight-bold align-center"
+          cols="12"
+          sm="6"
+          md="4"
+        >
+          <p class="ma-0 font-weight-thin">
+            Ministerio de Salud <br />
+            República de El Salvador, C.A <br />
+            Calle Arce No. 827, San Salvador, El Salvador
+          </p>
+        </v-col>
+        <v-col cols="12" sm="12" md="4">
+          <v-img
+            src="../assets/img/SIS-HBLANCO.png"
+            width="150"
+            class="mx-auto"
+          />
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
+
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import jwtDecode from "jwt-decode";
+import store from "../store";
 
 export default {
   name: "login",
   data: () => ({
     error: false,
+    dialog: false,
+    login_loader: {
+      //deep-orange darken-4
+      //validando usuario, por favor espere ...
+      //Usuario o contraseña no validos
+      //info
+      text: null,
+      show: null,
+      color: null,
+    },
     error_message: null,
-    isValid: false,
+    isValid: true,
     user: null,
-    userRules: [(v) => (v !== null && v !== "") || "usuario no valido"],
+
     password: null,
-    passwordRules: [(v) => (v !== null && v !== "") || "password no valida"],
+    passwordRules: [(v) => (v !== null && v !== "") || "Contraseña no valida"],
     showPassword: false,
     disabled: false,
   }),
   methods: {
     ...mapMutations(["setToken", "setUserInfo"]),
-    ...mapActions("utils", ["clearMenu"]),
+    cleanMail(e) {
+      if (e.keyCode === 32) {
+        e.preventDefault();
+      }
+    },
     async login() {
       if (!this.user || !this.password) {
         return;
       }
-      this.disabled = true;
-      try {
-        let data = {
-          username: this.user,
-          password: this.password,
-        };
-        this.clearMenu();
-        let response = await this.http_client("/api/login_check", data, "post");
-        if (response.status === 200) {
-          this.error = false;
-          this.error_message = null;
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("refresh_token", response.data.refresh_token);
-          this.setToken(response.data.token);
-          this.setUserInfo(jwtDecode(response.data.token));
-          this.$router.push("/").catch();
+      this.dialog = true;
+      this.login_loader.show = true;
+      this.login_loader.color = "blueMinsal";
+      this.login_loader.text = "validando usuario, por favor espere...";
+      if (this.isValid) {
+        this.disabled = true;
+        try {
+          let data = {
+            email: this.user,
+            password: this.password,
+          };
+          let response = await this.http_client(
+            "/api/v1/login",
+            data,
+            "post"
+          );
+          if (response.status === 200) {
+            this.error = false;
+            this.error_message = null;
+            this.$router.push({
+              name: "2fa",
+              params: {
+                email: this.user,
+                token: response.data["token"],
+                verified: response.data["verified"],
+                metodos_autenticacion:
+                  response.data["metodos_autenticacion"],
+              },
+            });
+          }
+        } catch (e) {
+          this.temporalAlert({
+            show: true,
+            message: e.response.data.message
+              ? e.response.data.message
+              : "El correo electrónico o la contraseña no son validos",
+            type: "error",
+          });
+          this.isValid = true;
+          this.dialog = false;
+        } finally {
+          this.dialog = false;
+          this.login_loader.show = false;
+          this.disabled = false;
         }
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "error",
-        });
-        if (e.response && e.response.status === 401) {
-          this.error = true;
-          this.error_message = e.response.data.message;
-        }
-      } finally {
-        this.disabled = false;
       }
     },
     showAlert(message) {
-      console.log(message);
       this.alert.show = true;
       this.alert.message = message;
       this.alert.type = "success";
@@ -153,6 +249,18 @@ export default {
     ocultarAlert() {
       this.alert.show = !this.alert.show;
     },
+  },
+  computed: {
+    userRules() {
+      return [
+        (v) => (v !== null && v !== "") || "Este campo es requerido",
+        (v) => this.isEmail(v) || "Correo no válido",
+      ];
+    },
+  },
+  created() {
+    store.commit("utils/setRutas", []);
+    localStorage.clear();
   },
 };
 </script>

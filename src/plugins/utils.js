@@ -130,7 +130,7 @@ Vue.prototype.canNext = async (ruta) => {
       "login",
       "recuperar-password",
       "reset-password",
-      "Forbidden"
+      "forbidden"
     ];
     if (!ruta.name) return false;
     //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso

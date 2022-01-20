@@ -84,10 +84,10 @@ export default {
           this.email_error = false;
           this.email_message = "";
           //Se usa form data para enviar el email
+          var form_data = new FormData();
+          form_data.append("email", this.email);
           const response = await this.http_client(
-            "/api/recovery/password",
-            { email: this.email },
-            "post"
+            `/api/v1/recoveryPassword/sendEmail/${this.email}`
           );
           //Si todo esta bien muestra alerta tipo success
           if (response.status === 200) {

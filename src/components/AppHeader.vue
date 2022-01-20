@@ -1,19 +1,24 @@
 <template>
-  <v-app-bar app elevation="0" color="white">
+  <v-app-bar app :elevation="0" color="white" dense>
+   
+        <v-btn text icon @click.stop="setSibeBar(!sideBar)" color="blueMinsal">
+          <v-icon >mdi-menu</v-icon>
+        </v-btn>
     <v-spacer></v-spacer>
 
-    <v-menu offset-y transition="scroll-y-transition">
+    <v-menu offset-y transition="scroll-y-transition" rounded="lg">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
             v-bind="attrs"
             v-on="on"
             elevation=""
+            small
         >
           {{ userInfo.username }}
           <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </template>
-      <v-list>
+      <v-list dense>
         <v-list-item to="/perfil">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>

@@ -3,33 +3,30 @@
     app
     permanent
     stateless
+    :class="sideBar?'px-0':'px-2'"
     :mini-variant="sideBar"
     mini-variant-width="70"
     @input="setSibeBar($event)"
   >
-    <template v-slot:prepend>
-      <v-list-item two-line class="blueDarkMinsal">
-        <img
-          :src="require(`@/assets/SIS-HBLANCO.png`)"
-          width="100%"
-          height="100"
-          v-if="!sideBar"
-        />
-        <v-btn text fab @click.stop="setSibeBar(!sideBar)" v-if="!sideBar">
-          <v-icon class="white--text">mdi-chevron-left</v-icon>
-        </v-btn>
-        <v-btn text fab @click.stop="setSibeBar(!sideBar)" v-else>
-          <v-icon class="white--text">mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-list-item>
+    <template v-slot:prepend >
+       <v-card elevation="2" class="ma-4 py-0" v-if="!sideBar">
+          <v-card-title>
+            <img
+              :src="require(`@/assets/img/SIS-HAZUL.png`)"
+              width="95%"
+              height="auto"
+            />
+          </v-card-title>
+       </v-card>
+         <v-list-item v-else two-line >
+           <v-btn text icon x-large color="blueMinsal" @click="$router.push('/')"><v-icon size="30">mdi-asterisk</v-icon></v-btn>
+         </v-list-item>
     </template>
-
-    <v-divider></v-divider>
     <v-list rounded>
       <v-list-item
       v-for="(item,i) in menu" :key="i"
         :to="item.uri"
-        active-class="grey lighten-4 blueDarkMinsal--text"
+        active-class="grey lighten-5 blueMinsal--text"
       >
         <v-list-item-icon>
           <v-icon>{{item.icono}}</v-icon>

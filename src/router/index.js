@@ -40,7 +40,7 @@ const routes = [
     name: "recuperar-password",
     component: () =>
       import(
-        /* webpackChunkName: "recuperarPassword" */ "../views/recuperarPassword"
+        /* webpackChunkName: "recuperarPassword" */ "../views/recoverPassword"
       ),
   },
   {
@@ -51,9 +51,9 @@ const routes = [
   },
   {
     path: "/forbidden",
-    name: "Forbidden",
+    name: "forbidden",
     component: () =>
-      import(/* webpackChunkName: "forbidden" */ "../views/Forbidden"),
+      import(/* webpackChunkName: "forbidden" */ "../views/forbidden"),
   },
 ];
 
