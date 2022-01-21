@@ -106,7 +106,7 @@
   >
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 export default {
   name: "rolesEdit",
   data: () => ({
@@ -118,14 +118,14 @@ export default {
       mostrar: false,
       publico: false,
       orden: null,
-      admin:false,
-      rutas:[]
+      admin: false,
+      rutas: [],
     },
     roles: [],
     rolesSelect: [],
   }),
   methods: {
-    ...mapActions('utils',['getMenu']),
+    ...mapActions("utils", ["getMenu"]),
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
@@ -136,8 +136,7 @@ export default {
         !this.rutaForm.nombre ||
         !this.rutaForm.uri ||
         !this.rutaForm.nombre_uri ||
-        !this.rutaForm.icono ||
-        this.rolesSelect.length==0
+        this.rolesSelect.length == 0
       ) {
         this.temporalAlert({
           show: true,
@@ -147,7 +146,7 @@ export default {
         return;
       }
       const response = await this.http_client(
-        "/api/v1/rutas",
+        `/api/v1/rutas/${id_ruta}`,
         {
           nombre: this.rutaForm.nombre,
           uri: this.rutaForm.uri,
@@ -157,7 +156,7 @@ export default {
           publico: this.rutaForm.publico,
           roles: this.rolesSelect,
           admin: this.rutaForm.admin,
-          orden:this.rutaForm.orden,
+          orden: parseInt(this.rutaForm.orden) || 0,
           id_ruta,
         },
         "put"

@@ -42,7 +42,7 @@ export default {
     },
     getMenu: async ({ commit }) => {
       try {
-        const response = await http_client("/api/v1/rutas");
+        const response = await http_client("/api/v1/get-rutas");
         const menu = response.data.filter((item) => item.mostrar === true);
         commit("setMenu", menu);
         commit("setRutas", response.data);

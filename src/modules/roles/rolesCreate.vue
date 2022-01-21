@@ -62,7 +62,7 @@ export default {
       }
       const response = await this.http_client(
         "/api/v1/roles",
-        { nombre: "ROLE_" + this.nombreRol.trim() },
+        { name: "ROLE_" + this.nombreRol.trim() },
         "post"
       );
       this.temporalAlert({

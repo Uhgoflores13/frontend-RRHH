@@ -1,11 +1,10 @@
 "use strict";
 
-import Vue from 'vue';
+import Vue from "vue";
 import axios from "axios";
 import router from "../router";
-import store from '../store'
+import store from "../store";
 import jwtDecode from "jwt-decode";
-
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -13,7 +12,7 @@ import jwtDecode from "jwt-decode";
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-    baseURL: process.env.VUE_APP_API_URL || "http://127.0.0.1:8000/",
+  baseURL: process.env.VUE_APP_API_URL || "http://127.0.0.1:8000/",
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
@@ -21,11 +20,11 @@ let config = {
 const _axios = axios.create(config);
 
 _axios.interceptors.request.use(
-  function(config) {
+  function (config) {
     // Do something before request is sent
     return config;
   },
-  function(error) {
+  function (error) {
     // Do something with request error
     return Promise.reject(error);
   }
@@ -33,63 +32,73 @@ _axios.interceptors.request.use(
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-  (response)=> response,
-  (error)=> {
+  (response) => response,
+  (error) => {
     /**
      * Logica para refresh token
      * */
-    const status = error.response.status
+    const status = error.response.status;
 
-    if (status !== 401 || (status === 401 && window.location.pathname === '/login')) {
+    if (
+      status !== 401 ||
+      (status === 401 && window.location.pathname === "/login")
+    ) {
       return Promise.reject(error);
     }
-    const token = store.state.token ? store.state.token : localStorage.getItem('token')
-    const base = process.env.VUE_APP_API_URL
-    return axios.post(base + 'api/token/refresh ', {
-      refresh_token: localStorage.getItem('refresh_token')
-    },'Bearer ' + token).then(response => {
-      if (response.status === 200) {
-        const token = response.data.token
-        localStorage.setItem('token', token)
-        localStorage.setItem('refresh_token', response.data.refresh_token)
-        store.commit('setToken', token)
-        store.commit('setUserInfo', jwtDecode(token))
-        error.response.config.headers['Authorization'] = 'Bearer ' + token
-        return axios(error.response.config)
-      }
-    }).catch(error => {
-      store.commit("utils/hideLoader");
-      localStorage.clear()
-      store.commit('setToken', null)
-      store.commit('setUserInfo', {})
-      router.push('/login').catch(err => {
+    const token = store.state.token
+      ? store.state.token
+      : localStorage.getItem("token");
+    const base = process.env.VUE_APP_API_URL;
+    return axios
+      .post(
+        base + "api/v1/refresh",
+        {
+          refresh_token: localStorage.getItem("refresh_token"),
+        },
+        "Bearer " + token
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+          localStorage.setItem("refresh_token", response.data.refresh_token);
+          store.commit("setToken", token);
+          store.commit("setUserInfo", jwtDecode(token));
+          error.response.config.headers["Authorization"] = "Bearer " + token;
+          return axios(error.response.config);
+        }
       })
-      return Promise.reject(error)
-    }).finally(res=>{
-    })
+      .catch((error) => {
+        store.commit("utils/hideLoader");
+        localStorage.clear();
+        store.commit("setToken", null);
+        store.commit("setUserInfo", {});
+        router.push("/login").catch((err) => {});
+        return Promise.reject(error);
+      });
     /**
      * finish here
      * */
   }
 );
 
-Plugin.install = function(Vue, options) {
+Plugin.install = function (Vue, options) {
   Vue.axios = _axios;
   window.axios = _axios;
   Object.defineProperties(Vue.prototype, {
     axios: {
       get() {
         return _axios;
-      }
+      },
     },
     $axios: {
       get() {
         return _axios;
-      }
+      },
     },
   });
 };
 
-Vue.use(Plugin)
+Vue.use(Plugin);
 
 export default Plugin;

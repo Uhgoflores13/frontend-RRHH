@@ -293,7 +293,7 @@
           </p>
           <p> <span class="font-weight-bold">Roles: </span>
             <ul>
-              <li v-for="(rol,i) in rutaData ? rutaData.mnt_rols : []" :key="i">{{rol.name}}</li>
+              <li v-for="(rol,i) in rutaData ? rutaData.Rols : []" :key="i">{{rol.name}}</li>
             </ul>
           </p>
         </v-card-text>
@@ -377,7 +377,7 @@ export default {
     async getRutas(filtros = null) {
       try {
         this.loading = true;
-        const response = await this.http_client("/api/v1/show/rutas", filtros);
+        const response = await this.http_client("/api/v1/rutas", filtros);
         this.rutas = response.data;
         this.loading = false;
       } catch (e) {
@@ -390,8 +390,8 @@ export default {
     },
     editingRuta(item) {
       let roles = [];
-      if (item.mnt_rols.length > 0) {
-        roles = item.mnt_rols.map((item) => {
+      if (item.Rols.length > 0) {
+        roles = item.Rols.map((item) => {
           return item.id;
         });
       }

@@ -110,14 +110,14 @@
                   <a
                     href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=es_SV&gl=US"
                     target="_blank"
-                    style="text-decoration: none;"
+                    style="text-decoration: none"
                   >
                     <v-icon class="green--text">mdi-android</v-icon></a
                   >
                   <a
                     href="https://apps.apple.com/es/app/google-authenticator/id388497605"
                     target="_blank"
-                    style="text-decoration: none;"
+                    style="text-decoration: none"
                     ><v-icon class="black--text">mdi-apple</v-icon></a
                   >
                 </span>
@@ -128,21 +128,27 @@
                   <a
                     href="https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=es_SV&gl=US"
                     target="_blank"
-                    style="text-decoration: none;"
+                    style="text-decoration: none"
                   >
                     <v-icon class="green--text">mdi-android</v-icon></a
                   >
                   <a
                     href="https://apps.apple.com/es/app/microsoft-authenticator/id983156458"
                     target="_blank"
-                    style="text-decoration: none;"
+                    style="text-decoration: none"
                   >
                     <v-icon class="black--text">mdi-apple</v-icon></a
                   >
                 </span>
               </v-row>
             </p>
-            <div class="d-flex justify-center">
+            <v-sheet color="grey lighten-3" v-show="loadingQr==true">
+              <v-skeleton-loader
+                type="image"
+                class="mx-auto my-2"
+              ></v-skeleton-loader>
+            </v-sheet>
+            <div class="d-flex justify-center" v-show="loadingQr==false">
               <v-img :src="qr" max-width="300"></v-img>
             </div>
             <v-btn
@@ -208,6 +214,7 @@ export default {
     metodos: [],
     metodoselect: null,
     actionsKey: 0,
+    loadingQr: null,
   }),
   methods: {
     async getMetodos() {
@@ -221,6 +228,7 @@ export default {
       this.metodoPrimarioAux = this.metodoPrimario;
     },
     async getQr() {
+      this.loadingQr = true;
       try {
         const response = await this.http_client(
           "/api/v1/users/2fa/add",
@@ -233,13 +241,16 @@ export default {
           type: "success",
         });
         this.qr = response.data.codigoQr;
+        this.loadingQr = false;
       } catch (e) {
         this.temporalAlert({
           show: true,
           message: e.response.data.message,
           type: "error",
         });
-        }
+      } finally {
+        this.loadingQr = false;
+      }
     },
     async eliminarMetodo(id_metodo) {
       try {

@@ -36,6 +36,7 @@
               <v-text-field
                 label="Orden"
                 color="blueMinsal"
+                @keypress="restrictInteger"
                 v-model="rutaForm.orden"
               ></v-text-field>
               <v-checkbox
@@ -105,7 +106,7 @@
   >
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 export default {
   name: "rolesCreate",
   data: () => ({
@@ -117,13 +118,13 @@ export default {
       mostrar: false,
       publico: false,
       orden: null,
-      admin:false,
+      admin: false,
     },
     roles: [],
     rolesSelect: [],
   }),
   methods: {
-    ...mapActions('utils',['getMenu']),
+    ...mapActions("utils", ["getMenu"]),
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
@@ -133,7 +134,6 @@ export default {
         !this.rutaForm.nombre ||
         !this.rutaForm.uri ||
         !this.rutaForm.nombre_uri ||
-        !this.rutaForm.icono ||
         this.rolesSelect.length == 0
       ) {
         this.temporalAlert({
@@ -154,7 +154,7 @@ export default {
           publico: this.rutaForm.publico,
           admin: this.rutaForm.admin,
           roles: this.rolesSelect,
-          orden: this.rutaForm.orden
+          orden: parseInt(this.rutaForm.orden) || 0,
         },
         "post"
       );
@@ -172,7 +172,7 @@ export default {
           icono: null,
           mostrar: false,
           publico: false,
-          admin:false,
+          admin: false,
           orden: null,
         };
         if (navigate) {

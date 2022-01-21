@@ -317,7 +317,7 @@ export default {
     async getUsuarios(filtros = null) {
       try {
         this.loading = true;
-        const response = await this.http_client("/api/v1/usuarios", filtros);
+        const response = await this.http_client("/api/v1/users", filtros);
         this.usuarios = response.data;
         this.loading = false;
       } catch (e) {

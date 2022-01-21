@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { rolesRouter } from "../modules/roles/rolesRouter"
-import { perfilesRouter } from "../modules/perfiles/perfilesRouter"
-import { usuariosRouter } from "../modules/usuarios/usuariosRouter"
-import { rutasRouter } from "../modules/rutas/rutasRouter"
+import { rolesRouter } from "../modules/roles/rolesRouter";
+import { perfilesRouter } from "../modules/perfiles/perfilesRouter";
+import { usuariosRouter } from "../modules/usuarios/usuariosRouter";
+import { rutasRouter } from "../modules/rutas/rutasRouter";
 Vue.use(VueRouter);
 
 const routes = [
@@ -23,6 +23,12 @@ const routes = [
         name: "dashboard",
         component: () =>
           import(/* webpackChunkName: "perfil" */ "../views/dashboard"),
+      },
+      {
+        path: "/seguridad",
+        name: "seguridad",
+        component: () =>
+          import(/* webpackChunkName: "seguridad" */ "../views/seguridad.vue"),
       },
       rolesRouter,
       perfilesRouter,
@@ -50,10 +56,21 @@ const routes = [
       import(/* webpackChunkName: "resetPassword" */ "../views/resetPassword"),
   },
   {
+    path: "/verify-mail/:token",
+    name: "verifyMail",
+    component: () =>
+      import(/* webpackChunkName: "login" */ "../views/verifyMail"),
+  },
+  {
     path: "/forbidden",
-    name: "forbidden",
+    name: "Forbidden",
     component: () =>
       import(/* webpackChunkName: "forbidden" */ "../views/forbidden"),
+  },
+  {
+    path: "/autenticacionqr",
+    name: "2fa",
+    component: () => import(/* webpackChunkName: "qr" */ "../views/2fa"),
   },
 ];
 
@@ -64,13 +81,13 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  // if (to.fullPath == "/") {
-  //   const token = localStorage.getItem("token");
-  //   if (!token) {
-  //     next("/login");
-  //     return;
-  //   }
-  // }
+  if (to.fullPath == "/") {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      next("/login");
+      return;
+    }
+  }
   if (await Vue.prototype.canNext(to)) {
     next();
   } else {
