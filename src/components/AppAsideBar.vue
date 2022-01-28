@@ -29,7 +29,7 @@
         v-for="(item, i) in menu"
         :key="i"
         :to="item.uri"
-        active-class="grey lighten-5 blueMinsal--text"
+        active-class=" blueMinsal--text"
       >
         <v-tooltip right :disabled="!sideBar" color="blueMinsal">
           <template v-slot:activator="{ on, attrs }">

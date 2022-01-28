@@ -1,6 +1,12 @@
 <template>
-  <v-app-bar app :elevation="0" color="white" dense>
-    <v-btn text icon @click.stop="setSibeBar(!sideBar)" color="blueMinsal" v-if="!$vuetify.breakpoint.smAndDown">
+  <v-app-bar app :elevation="0" color="bgWhite" dense>
+    <v-btn
+      text
+      icon
+      @click.stop="setSibeBar(!sideBar)"
+      color="blueMinsal"
+      v-if="!$vuetify.breakpoint.smAndDown"
+    >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
     <v-spacer></v-spacer>
@@ -31,6 +37,17 @@
           </v-list-item-icon>
           <v-list-item-title>Cerrar Sesión</v-list-item-title>
         </v-list-item>
+        <v-list-item class="my-0">
+          <v-list-item-icon>
+            <v-switch
+              v-model="$vuetify.theme.dark"
+              class="my-0"
+              hint="This toggles the global state of the Vuetify theme"
+              dense
+            ></v-switch>
+          </v-list-item-icon>
+          <v-list-item-title>Tema Oscuro </v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-menu>
   </v-app-bar>
@@ -42,24 +59,13 @@ import { mapMutations, mapState } from "vuex";
 export default {
   name: "AppHeader",
   methods: {
-    ...mapMutations("utils", ["setSibeBar"]),
-    ...mapMutations(["setMenu"]),
+    ...mapMutations("utils", ["setSibeBar", "setMenu"]),
+    ...mapMutations(["setToken"]),
     async cerrarSession() {
-      try {
-        const response = await this.http_client("api/v1/logout", {}, "post");
-        this.setMenu([]);
-        this.setToken(null);
-        this.setUserInfo(null);
-        localStorage.clear();
-        this.$router.push("/login").catch((e) => {});
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "error",
-        });
-      } finally {
-      }
+      this.setMenu([]);
+      this.setToken(null);
+      localStorage.clear();
+      this.$router.push("/login").catch((e) => {});
     },
   },
   computed: {

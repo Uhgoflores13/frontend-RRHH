@@ -10,7 +10,7 @@
             style="border-top: 1px solid #f1f1f1"
           >
             <v-col cols="12" sm="6">
-              <p class="font-weight-bold black--text">
+              <p class="font-weight-bold">
                 {{ item.nombre }}
               </p>
             </v-col>

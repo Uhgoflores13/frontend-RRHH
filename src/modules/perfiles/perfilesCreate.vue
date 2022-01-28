@@ -62,10 +62,7 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 rounded
-                @click="
-                  postPerfil(true);
-                  
-                "
+                @click="postPerfil(true)"
                 :small="$vuetify.breakpoint.xs"
               >
                 <v-icon left>mdi-content-save</v-icon>
@@ -102,21 +99,29 @@ export default {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
     },
-    async postPerfil(navigate=false) {
+    async postPerfil(navigate = false) {
       if (!this.nombrePerfil || !this.codigoPerfil) {
         return;
       }
-      const newRoles = this.roles.reduce((activos, rol)=> {
-        if (rol.value==true) {
+      const newRoles = this.roles.reduce((activos, rol) => {
+        if (rol.value == true) {
           activos.push(rol.id);
         }
         return activos;
       }, []);
+      if (newRoles.length == 0) {
+        return this.temporalAlert({
+          show: true,
+          message: "Debe poseer al menos un rol",
+          type: "warning",
+        });
+      }
       const response = await this.http_client(
         "/api/v1/perfiles",
-        { nombre: this.nombrePerfil.trim(),
+        {
+          nombre: this.nombrePerfil.trim(),
           codigo: this.codigoPerfil.trim(),
-          roles: newRoles
+          roles: newRoles,
         },
         "post"
       );
@@ -128,7 +133,7 @@ export default {
       this.nombrePerfil = null;
       this.codigoPerfil = null;
       if (navigate) {
-        this.$router.push('/perfiles/list');
+        this.$router.push("/perfiles/list");
       }
     },
   },

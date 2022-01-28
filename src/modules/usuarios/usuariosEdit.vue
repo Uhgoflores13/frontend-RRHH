@@ -86,22 +86,13 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 rounded
-                @click="putUsuario()"
+                @click="editUsuario()"
                 :small="$vuetify.breakpoint.xs"
               >
                 <v-icon left>mdi-content-save</v-icon>
                 Editar y regresar al listado</v-btn
               >
-              <v-btn
-                color="blueMinsal"
-                class="white--text ma-1"
-                :small="$vuetify.breakpoint.xs"
-                rounded
-                @click="deleteUsuario()"
-              >
-                <v-icon left>mdi-delete</v-icon>
-                Eliminar</v-btn
-              >
+             
             </v-col>
           </v-row>
         </v-card-actions>
@@ -131,51 +122,127 @@ export default {
       const response = await this.http_client("/api/v1/perfiles");
       this.perfiles = response.data;
     },
-    async putUsuario() {
-      const id_usuario = this.$route.params.id;
-      if (!this.usuario || this.perfilesSelect.length == 0) {
-        this.temporalAlert({
-          show: true,
-          message: "Por favor complete todos los campos",
-          type: "warning",
-        });
-        return;
-      }
+    async deleteUsuarioRoles(id_usuario) {
       const response = await this.http_client(
-        `/api/v1/usuarios`,
-        {
-          id_usuario,
-          email: this.usuario.email,
-          password: this.password,
-          confirm_password: this.password,
-          is_suspended: this.usuario.is_suspended,
-          roles: this.rolesSelect,
-          perfiles: this.perfilesSelect,
-        },
+        `/api/v1/users/${id_usuario}/roles`,
+        {},
+        "delete"
+      );
+    },
+    async addUsuarioRoles(id_usuario, roles) {
+      const response = await this.http_client(
+        `/api/v1/users/${id_usuario}/roles`,
+        { roles },
+        "post"
+      );
+    },
+    async deleteUsuarioPerfiles(id_usuario) {
+      const response = await this.http_client(
+        `/api/v1/users/${id_usuario}/perfiles`,
+        {},
+        "delete"
+      );
+    },
+    async addUsuarioPerfiles(id_usuario, perfiles) {
+      const response = await this.http_client(
+        `/api/v1/users/${id_usuario}/perfiles`,
+        { perfiles },
+        "post"
+      );
+    },
+    async putUsuario(id_usuario, data) {
+      const response = await this.http_client(
+        `/api/v1/users/${id_usuario}`,
+        data,
         "put"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se actualizó el usuario",
-        type: "success",
-      });
-      this.$router.push("/usuarios/list");
-      localStorage.removeItem("editingUsuario");
+    },
+    async editUsuario() {
+      try {
+        this.showLoader();
+        const id_usuario = this.$route.params.id;
+        if (!this.usuario || this.perfilesSelect.length == 0) {
+          this.temporalAlert({
+            show: true,
+            message: "Por favor complete todos los campos",
+            type: "warning",
+          });
+          return;
+        }
+        var oldUsuario = this.editingUsuario;
+        var newUsuario = this.usuario;
+        const rolesHaveChanged =
+          JSON.stringify(oldUsuario.roles) != JSON.stringify(this.rolesSelect);
+        const perfilesHaveChanged =
+          JSON.stringify(oldUsuario.perfiles) !=
+          JSON.stringify(this.perfilesSelect);
+        const canDeleteRoles = oldUsuario.roles.length > 0;
+        const canDeletePerfiles = oldUsuario.perfiles.length > 0;
+        const canPostRoles = this.rolesSelect.length > 0;
+        const canPostPerfiles = this.perfilesSelect.length > 0;
+        delete oldUsuario.roles;
+        delete newUsuario.roles;
+        delete oldUsuario.perfiles;
+        delete newUsuario.perfiles;
+        const usuarioHasChanged = !this.objectsEqual(oldUsuario, newUsuario);
+        if (rolesHaveChanged) {
+          if (canDeleteRoles) {
+            await this.deleteUsuarioRoles(id_usuario);
+          }
+          if (canPostRoles) {
+            await this.addUsuarioRoles(id_usuario, this.rolesSelect);
+          }
+        }
+        if (perfilesHaveChanged) {
+          if (canDeletePerfiles) {
+            await this.deleteUsuarioPerfiles(id_usuario);
+          }
+          if (canPostPerfiles) {
+            await this.addUsuarioPerfiles(id_usuario, this.rolesSelect);
+          }
+        }
+        if (usuarioHasChanged) {
+          let usuario = {
+            email: this.usuario.email,
+            password: this.password,
+            is_suspended: this.usuario.is_suspended,
+          };
+          // if (!usuario.password) {
+          //   delete usuario.password
+          // }
+          await this.putUsuario(id_usuario, usuario);
+        }
+        this.temporalAlert({
+          show: true,
+          message: "Se actualizó el usuario",
+          type: "success",
+        });
+        this.$router.push("/usuarios/list");
+        localStorage.removeItem("editingUsuario");
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "error",
+        });
+      } finally {
+        this.hideLoader();
+      }
     },
     async deleteUsuario() {
       const id_usuario = this.$route.params.id;
       const response = await this.http_client(
-        "/api/v1/usuarios",
-        {
-          id: [id_usuario],
-        },
+        `/api/v1/users`,
+        { id: [id_usuario] },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminó el usuario",
-        type: "success",
-      });
+      if (response?.status === 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se deshabilitó el usuario",
+          type: "success",
+        });
+      }
       this.$router.push("/usuarios/list");
       localStorage.removeItem("editingUsuario");
     },
@@ -201,12 +268,16 @@ export default {
       if (this.editingUsuario.id == this.$route.params.id) {
         await this.getRoles();
         await this.getPerfiles();
-        this.usuario = this.editingUsuario;
+        this.usuario = JSON.parse(localStorage.getItem("editingUsuario"));
         if (this.editingUsuario.roles.length > 0) {
-          this.rolesSelect = this.editingUsuario.roles;
+          this.rolesSelect = JSON.parse(
+            localStorage.getItem("editingUsuario")
+          ).roles;
         }
         if (this.editingUsuario.perfiles.length > 0) {
-          this.perfilesSelect = this.editingUsuario.perfiles;
+          this.perfilesSelect = JSON.parse(
+            localStorage.getItem("editingUsuario")
+          ).perfiles;
         }
       } else {
         this.$router.push("/usuarios/list");

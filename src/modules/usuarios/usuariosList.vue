@@ -8,7 +8,7 @@
         >
           Usuarios
           <div>
-            <v-menu rounded="0" :close-on-content-click="false">
+            <!-- <v-menu rounded="0" :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   rounded
@@ -41,7 +41,7 @@
                   </v-virtual-scroll>
                 </v-list-item-group>
               </v-list>
-            </v-menu>
+            </v-menu> -->
             <v-btn
               rounded
               color="blueMinsal"
@@ -236,12 +236,12 @@
           <v-spacer></v-spacer>
           <span
             class="font-weight-bold"
-            v-if="usuarioData ? usuarioData.mnt_rols.length > 0 : false"
+            v-if="usuarioData ? usuarioData.Rols.length > 0 : false"
             >Roles</span
           >
           <ul>
             <li
-              v-for="(rol, i) in usuarioData ? usuarioData.mnt_rols : []"
+              v-for="(rol, i) in usuarioData ? usuarioData.Rols : []"
               :key="i"
             >
               {{ rol.name }}
@@ -250,13 +250,13 @@
           <v-spacer></v-spacer>
           <span
             class="font-weight-bold"
-            v-if="usuarioData ? usuarioData.mnt_perfils.length > 0 : false"
+            v-if="usuarioData ? usuarioData.Perfils.length > 0 : false"
             >Perfiles</span
           >
           <v-spacer></v-spacer>
           <ul>
             <li
-              v-for="(perfil, i) in usuarioData ? usuarioData.mnt_perfils : []"
+              v-for="(perfil, i) in usuarioData ? usuarioData.Perfils : []"
               :key="i"
             >
               {{ perfil.nombre }}
@@ -281,19 +281,16 @@ export default {
       {
         text: "Correo electrónico",
         align: "start",
-        sortable: false,
         value: "email",
       },
       {
         text: "Ultima conexión",
         align: "start",
-        sortable: false,
         value: "last_login",
       },
       {
         text: "Deshabilitado",
         align: "start",
-        sortable: false,
         value: "is_suspended",
       },
       { text: "Accion", value: "accion", sortable: false, width: "100" },
@@ -315,29 +312,21 @@ export default {
       this.getUsuarios();
     },
     async getUsuarios(filtros = null) {
-      try {
-        this.loading = true;
-        const response = await this.http_client("/api/v1/users", filtros);
-        this.usuarios = response.data;
-        this.loading = false;
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "warning",
-        });
-      }
+      this.loading = true;
+      const response = await this.http_client("/api/v1/users", filtros);
+      this.usuarios = response?.data;
+      this.loading = false;
     },
     editingUsuario(item) {
       let roles = [];
       let perfiles = [];
-      if (item.mnt_rols.length > 0) {
-        roles = item.mnt_rols.map((item) => {
+      if (item.Rols.length > 0) {
+        roles = item.Rols.map((item) => {
           return item.id;
         });
       }
-      if (item.mnt_perfils.length > 0) {
-        perfiles = item.mnt_perfils.map((item) => {
+      if (item.Perfils.length > 0) {
+        perfiles = item.Perfils.map((item) => {
           return item.id;
         });
       }
@@ -362,15 +351,17 @@ export default {
         return usuario.id;
       });
       const response = await this.http_client(
-        "/api/v1/usuarios",
+        "/api/v1/users",
         { id: usuarios },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminaron los perfiles",
-        type: "success",
-      });
+      if (response?.status == 200 || response?.status == 201) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminaron los perfiles",
+          type: "success",
+        });
+      }
       this.selected = [];
       this.getUsuarios();
     },

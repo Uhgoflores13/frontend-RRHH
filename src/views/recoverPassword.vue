@@ -79,24 +79,20 @@ export default {
     },
     async sendEmail() {
       if (this.valid(this.email)) {
-        try {
-          this.loading = true;
-          this.email_error = false;
-          this.email_message = "";
-          //Se usa form data para enviar el email
-          var form_data = new FormData();
-          form_data.append("email", this.email);
-          const response = await this.http_client(
-            `/api/v1/recoveryPassword/sendEmail/${this.email}`
-          );
-          //Si todo esta bien muestra alerta tipo success
-          if (response.status === 200) {
-            this.success = true;
-          }
-        } catch (e) {
-        } finally {
-          this.loading = false;
+        this.loading = true;
+        this.email_error = false;
+        this.email_message = "";
+        //Se usa form data para enviar el email
+        var form_data = new FormData();
+        form_data.append("email", this.email);
+        const response = await this.http_client(
+          `/api/v1/recovery_password/send_email/${this.email}`
+        );
+        //Si todo esta bien muestra alerta tipo success
+        if (response.status === 200) {
+          this.success = true;
         }
+        this.loading = false;
       } else {
         this.email_error = true;
         this.email_message = "Correo electrónico no valido";

@@ -8,7 +8,7 @@
         >
           Roles
           <div>
-            <v-menu rounded="0" :close-on-content-click="false">
+            <!-- <v-menu rounded="0" :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   rounded
@@ -41,7 +41,7 @@
                   </v-virtual-scroll>
                 </v-list-item-group>
               </v-list>
-            </v-menu>
+            </v-menu> -->
             <v-btn
               rounded
               color="blueMinsal"
@@ -191,7 +191,6 @@ export default {
       {
         text: "Nombre",
         align: "start",
-        sortable: false,
         value: "name",
       },
       { text: "Accion", value: "accion", sortable: false, width: "100" },
@@ -213,18 +212,10 @@ export default {
       this.getRoles();
     },
     async getRoles(filtros = null) {
-      try {
-        this.loading = true;
-        const response = await this.http_client("/api/v1/roles", filtros);
-        this.roles = response.data;
-        this.loading = false;
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "warning",
-        });
-      }
+      this.loading = true;
+      const response = await this.http_client("/api/v1/roles", filtros);
+      this.roles = response.data;
+      this.loading = false;
     },
     editingRole(item) {
       localStorage.setItem("editingRole", JSON.stringify(item));
@@ -240,14 +231,16 @@ export default {
       });
       const response = await this.http_client(
         "/api/v1/roles",
-        { id: roles },
+        { roles },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminaron los roles",
-        type: "success",
-      });
+      if (response?.status === 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminaron los roles",
+          type: "success",
+        });
+      }
       this.selected = [];
       this.getRoles();
     },

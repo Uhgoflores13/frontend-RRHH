@@ -8,7 +8,7 @@
         >
           Rutas
           <div>
-            <v-menu rounded="0" :close-on-content-click="false">
+            <!-- <v-menu rounded="0" :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   rounded
@@ -41,7 +41,7 @@
                   </v-virtual-scroll>
                 </v-list-item-group>
               </v-list>
-            </v-menu>
+            </v-menu> -->
             <v-btn
               rounded
               color="blueMinsal"
@@ -316,19 +316,16 @@ export default {
       {
         text: "Nombre",
         align: "start",
-        sortable: false,
         value: "nombre",
       },
       {
         text: "URI",
         align: "start",
-        sortable: false,
         value: "uri",
       },
       {
         text: "Nombre URI",
         align: "start",
-        sortable: false,
         value: "nombre_uri",
       },
       {
@@ -340,19 +337,16 @@ export default {
       {
         text: "Mostrar",
         align: "start",
-        sortable: false,
         value: "mostrar",
       },
       {
         text: "Publico",
         align: "start",
-        sortable: false,
         value: "publico",
       },
       {
         text: "Administrador",
         align: "start",
-        sortable: false,
         value: "admin",
       },
       { text: "Accion", value: "accion", sortable: false, width: "100" },
@@ -375,18 +369,10 @@ export default {
       this.getRutas();
     },
     async getRutas(filtros = null) {
-      try {
-        this.loading = true;
-        const response = await this.http_client("/api/v1/rutas", filtros);
-        this.rutas = response.data;
-        this.loading = false;
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "warning",
-        });
-      }
+      this.loading = true;
+      const response = await this.http_client("/api/v1/rutas", filtros);
+      this.rutas = response.data;
+      this.loading = false;
     },
     editingRuta(item) {
       let roles = [];
@@ -411,11 +397,13 @@ export default {
         { id: rutas },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminaron las rutas",
-        type: "success",
-      });
+      if (response?.status == 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminaron las rutas",
+          type: "success",
+        });
+      }
       this.getMenu();
       this.selected = [];
       this.getRutas();

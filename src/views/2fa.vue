@@ -36,9 +36,7 @@
               v-if="selectedMethod == 1"
               rounded="lg"
             >
-              <v-card-title primary-title>
-                Correo electrónico
-              </v-card-title>
+              <v-card-title primary-title> Correo electrónico </v-card-title>
               <v-card-text
                 >Se envió un código de seis digitos a su
                 <b>correo electrónico</b>, por favor ingrese el
@@ -63,7 +61,7 @@
                 ></v-text-field>
               </v-card-text>
               <v-card-actions class="py-0">
-                <v-row class="my-2 my-xs-0 ">
+                <v-row class="my-2 my-xs-0">
                   <v-btn
                     color="blueMinsal white--text elevation-0 ma-1"
                     rounded
@@ -119,7 +117,7 @@
                 ></v-text-field>
               </v-card-text>
               <v-card-actions class="py-0">
-                <v-row class="my-2 my-xs-0 ">
+                <v-row class="my-2 my-xs-0">
                   <v-btn
                     color="blueMinsal white--text elevation-0 ma-1"
                     rounded
@@ -195,27 +193,19 @@ export default {
     async checkSelectedMethod(id) {
       this.selectedMethod = id;
       if (this.selectedMethod == 1) {
-        try {
-          const response = await this.http_client(
-            "/api/v1/2fa",
-            { id_metodo: this.selectedMethod },
-            "post",
-            {
-              Authorization: `Bearer ${this.tempToken}`,
-            }
-          );
+        const response = await this.http_client(
+          "/api/v1/2fa",
+          { id_metodo: this.selectedMethod },
+          "post",
+          {
+            Authorization: `Bearer ${this.tempToken}`,
+          }
+        );
+        if (response?.status == 200) {
           this.temporalAlert({
             show: true,
             message: "Revise su bandeja de entrada",
             type: "success",
-          });
-        } catch (e) {
-          this.temporalAlert({
-            show: true,
-            message: e.response.data.message
-              ? e.response.data.message
-              : "No se realizó el envío de correo",
-            type: "warning",
           });
         }
       }
@@ -238,7 +228,7 @@ export default {
             Authorization: `Bearer ${this.tempToken}`,
           }
         );
-        if (response.status == 200) {
+        if (response?.status == 200) {
           this.check2fa_resp = response.data;
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("refresh_token", response.data.refreshToken);

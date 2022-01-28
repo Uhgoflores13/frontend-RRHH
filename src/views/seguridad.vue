@@ -142,13 +142,13 @@
                 </span>
               </v-row>
             </p>
-            <v-sheet color="grey lighten-3" v-show="loadingQr==true">
+            <v-sheet color="grey lighten-3" v-show="loadingQr == true">
               <v-skeleton-loader
                 type="image"
                 class="mx-auto my-2"
               ></v-skeleton-loader>
             </v-sheet>
-            <div class="d-flex justify-center" v-show="loadingQr==false">
+            <div class="d-flex justify-center" v-show="loadingQr == false">
               <v-img :src="qr" max-width="300"></v-img>
             </div>
             <v-btn
@@ -253,32 +253,24 @@ export default {
       }
     },
     async eliminarMetodo(id_metodo) {
-      try {
-        const response = await this.http_client(
-          "/api/v1/eliminar_metodo",
-          { id: id_metodo },
-          "delete"
-        );
-        this.getMetodos();
-        this.actionsKey += 1;
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "error",
-        });
-      }
+      const response = await this.http_client(
+        "/api/v1/eliminar_metodo",
+        { id: id_metodo },
+        "delete"
+      );
+      this.getMetodos();
+      this.actionsKey += 1;
     },
     async cambiarMetodoPrimario() {
       if (this.metodoPrimarioAux.id_metodo_usuario == this.metodoPrimario) {
         return;
       }
-      try {
-        const response = await this.http_client(
-          "/api/v1/users/2fa/method/update",
-          { id_metodo_usuario: this.metodoPrimario },
-          "post"
-        );
+      const response = await this.http_client(
+        "/api/v1/users/2fa/method/update",
+        { id_metodo_usuario: this.metodoPrimario },
+        "post"
+      );
+      if (response?.status === 200 || response?.status === 201) {
         this.metodoPrimarioAux = this.metodoPrimario;
         this.getMetodos();
         this.actionsKey += 1;
@@ -287,34 +279,22 @@ export default {
           show: true,
           type: "success",
         });
-      } catch (e) {
-        this.temporalAlert({
-          message: "Ocurrió un error en la petición",
-          show: true,
-          type: "error",
-        });
       }
     },
     async updateMethod() {
       if (this.codigo) {
-        try {
-          const response = await this.http_client(
-            "/api/v1/users/2fa/add/verify",
-            { id_metodo: this.metodoselect, codigo: this.codigo },
-            "post"
-          );
+        const response = await this.http_client(
+          "/api/v1/users/2fa/add/verify",
+          { id_metodo: this.metodoselect, codigo: this.codigo },
+          "post"
+        );
+        if (response?.status === 200 || response?.status === 201) {
           this.dialog = false;
           await this.getMetodos();
           this.temporalAlert({
             show: true,
             message: "Se ha actualizado la información",
             type: "success",
-          });
-        } catch (e) {
-          this.temporalAlert({
-            show: true,
-            message: e.response.data.message,
-            type: "error",
           });
         }
       }

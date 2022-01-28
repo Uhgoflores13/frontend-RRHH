@@ -13,6 +13,18 @@ export default new Vuetify({
                 blueGrayMinsal:'#6A83BE',   
                 blueDarkMinsal:'#2D52A8',
                 bgMinsal:'#F4F7FD',
+                bgWhite:"#FFFFFF",
+                'primary': '#175EFB'
+            },
+            dark:{
+                bgMinsal:'#2f3032',
+                blueMinsal:'#175EFB',   
+                blueGrayMinsal:'#6A83BE',   
+                blueDarkMinsal:'#2D52A8',
+                'primary': '#175EFB'
+                // primary: {
+                //     base: colors.purple.base,
+                // }
             }
         }
     }

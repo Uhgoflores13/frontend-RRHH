@@ -8,7 +8,7 @@
         >
           Perfiles
           <div>
-            <v-menu rounded="0" :close-on-content-click="false">
+            <!-- <v-menu rounded="0" :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   rounded
@@ -41,7 +41,7 @@
                   </v-virtual-scroll>
                 </v-list-item-group>
               </v-list>
-            </v-menu>
+            </v-menu> -->
             <v-btn
               rounded
               color="blueMinsal"
@@ -180,17 +180,14 @@
           <v-spacer></v-spacer>
           <span
             class="font-weight-bold"
-            v-if="perfilData ? perfilData.roles.length > 0 : false"
+            v-if="perfilData ? perfilData.Rols.length > 0 : false"
             >Roles</span
           >
           <v-spacer></v-spacer>
 
           <ul>
-            <li
-              v-for="(item, i) in perfilData ? perfilData.roles : []"
-              :key="i"
-            >
-              {{ item.nombre }}
+            <li v-for="(item, i) in perfilData ? perfilData.Rols : []" :key="i">
+              {{ item.name }}
             </li>
           </ul>
         </v-card-text>
@@ -213,13 +210,11 @@ export default {
       {
         text: "Código",
         align: "start",
-        sortable: false,
         value: "codigo",
       },
       {
         text: "Nombre",
         align: "start",
-        sortable: false,
         value: "nombre",
       },
       { text: "Accion", value: "accion", sortable: false, width: "100" },
@@ -241,18 +236,10 @@ export default {
       this.getPerfiles();
     },
     async getPerfiles(filtros = null) {
-      try {
-        this.loading = true;
-        const response = await this.http_client("/api/v1/perfiles", filtros);
-        this.perfiles = response.data;
-        this.loading = false;
-      } catch (e) {
-        this.temporalAlert({
-          show: true,
-          message: e.response.data.message,
-          type: "warning",
-        });
-      }
+      this.loading = true;
+      const response = await this.http_client("/api/v1/perfiles", filtros);
+      this.perfiles = response.data;
+      this.loading = false;
     },
     editingPerfil(item) {
       localStorage.setItem("editingPerfil", JSON.stringify(item));
@@ -268,14 +255,16 @@ export default {
       });
       const response = await this.http_client(
         "/api/v1/perfiles",
-        { id_perfil: perfiles },
+        { perfiles },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminaron los perfiles",
-        type: "success",
-      });
+      if (response?.status === 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminaron los perfiles",
+          type: "success",
+        });
+      }
       this.selected = [];
       this.getPerfiles();
     },

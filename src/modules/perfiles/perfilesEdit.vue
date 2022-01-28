@@ -26,6 +26,7 @@
                 label="Código"
                 color="blueMinsal"
                 v-model="perfil.codigo"
+                maxlength="5"
                 :rules="[
                   (v) =>
                     (v !== null && v !== '') || 'Este campo es obligatorio',
@@ -63,7 +64,7 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 rounded
-                @click="putPerfil()"
+                @click="editPerfil()"
                 :small="$vuetify.breakpoint.xs"
               >
                 <v-icon left>mdi-content-save</v-icon>
@@ -99,57 +100,114 @@ export default {
     async getRoles() {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
-      this.editingPerfil.roles.forEach((element) => {
-        const index = this.roles.findIndex(
-          (item) => element.nombre == item.name
-        );
+      this.editingPerfil.Rols.forEach((element) => {
+        const index = this.roles.findIndex((item) => element.name == item.name);
         this.roles[index].value = true;
       });
     },
-    async putPerfil() {
-      if (!this.perfil.nombre || !this.perfil.codigo) {
-        return;
-      }
-      const id_perfil = this.$route.params.id;
-      const newRoles = this.roles.filter((rol) => {
-        if (rol.value == true) {
-          return rol;
-        }
-      });
+    async deletePerfilRoles(id_perfil) {
       const response = await this.http_client(
-        "/api/v1/perfiles",
-        {
-          id_perfil: id_perfil,
-          nombre: this.perfil.nombre,
-          codigo: this.perfil.codigo,
-          roles: newRoles,
-        },
+        `/api/v1/perfiles/${id_perfil}/roles`,
+        {},
+        "delete"
+      );
+    },
+    async addPerfilRoles(id_perfil, roles) {
+      const response = await this.http_client(
+        `/api/v1/perfiles/${id_perfil}/roles`,
+        { roles },
+        "post"
+      );
+    },
+    async putPerfil(id_perfil, data) {
+      const response = await this.http_client(
+        `/api/v1/perfiles/${id_perfil}`,
+        data,
         "put"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se actualizó el perfil",
-        type: "success",
-      });
-      this.$router.push("/perfiles/list");
-      localStorage.removeItem("editingPerfil");
+    },
+    async editPerfil() {
+      try {
+        this.showLoader();
+        if (!this.perfil.nombre || !this.perfil.codigo) {
+          return;
+        }
+        const id_perfil = this.$route.params.id;
+
+        const newRoles = this.roles
+          .reduce((filtrados, rol) => {
+            if (rol.value == true) {
+              filtrados.push(rol.id);
+            }
+            return filtrados;
+          }, [])
+          .sort();
+        if (newRoles.length == 0) {
+          return this.temporalAlert({
+            show: true,
+            message: "Debe poseer al menos un rol",
+            type: "warning",
+          });
+        }
+        var oldPerfil = this.editingPerfil;
+        var newPerfil = this.perfil;
+        const rolesAux = oldPerfil.Rols.map((rol) => {
+          return rol.id;
+        }).sort();
+        const rolesHaveChanged =
+          JSON.stringify(rolesAux) != JSON.stringify(newRoles);
+        const canDeletePerfil = oldPerfil.Rols.length > 0;
+
+        delete oldPerfil.Rols;
+        delete newPerfil.Rols;
+        const perfilHasChanged = !this.objectsEqual(oldPerfil, newPerfil);
+        if (rolesHaveChanged) {
+          if (canDeletePerfil) {
+            await this.deletePerfilRoles(id_perfil);
+          }
+          await this.addPerfilRoles(id_perfil, newRoles);
+        }
+        if (perfilHasChanged) {
+          await this.putPerfil(id_perfil, {
+            nombre: this.perfil.nombre,
+            codigo: this.perfil.codigo,
+          });
+        }
+        this.temporalAlert({
+          show: true,
+          message: "Se actualizó el perfil",
+          type: "success",
+        });
+        this.$router.push("/perfiles/list");
+        localStorage.removeItem("editingPerfil");
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "error",
+        });
+      } finally {
+        this.hideLoader();
+      }
     },
     async deletePerfil() {
       const id_perfil = this.$route.params.id;
       const response = await this.http_client(
         "/api/v1/perfiles",
         {
-          id: [id_perfil],
+          perfiles: [parseInt(id_perfil)],
         },
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminó el perfil",
-        type: "success",
-      });
-      this.$router.push("/perfiles/list");
-      localStorage.removeItem("editingPerfil");
+      if (response?.status == 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminó el perfil",
+          type: "success",
+        });
+        this.$router.push("/perfiles/list");
+        localStorage.removeItem("editingPerfil");
+      }
     },
   },
   watch: {
@@ -170,7 +228,7 @@ export default {
     if (this.editingPerfil) {
       if (this.editingPerfil.id == this.$route.params.id) {
         await this.getRoles();
-        this.perfil = this.editingPerfil;
+        this.perfil = JSON.parse(localStorage.getItem("editingPerfil"));
       } else {
         this.$router.push("/perfiles/list");
       }

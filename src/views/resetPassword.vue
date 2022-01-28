@@ -136,40 +136,27 @@ export default {
       if (!this.validInput(this.repeat_pass)) return;
       if (this.repeat_pass.value == this.new_pass.value) {
         //si paso las validaciones pasamos a hacer la peticion
-        try {
-          let token = this.$route.params.id;
-          const response = await this.http_client(
-            `/api/v1/recoveryPassword/changePassword`,
-            {
-              password: this.new_pass.value.toString(),
-              confirmPassword: this.repeat_pass.value.toString(),
-            },
-            "put",
-            {
-              Authorization: `Bearer ${token}`,
-            }
-          );
-          //recordar hacer tostring a las password
-          if (response.status === 200) {
-            this.temporalAlert({
-              show: true,
-              message: "Contraseña actualizada con éxito",
-              type: "success",
-            });
-            this.$router.push("/login");
-            //si funcionó todo, entonces redirige al login y muestra mensaje
+        let token = this.$route.params.id;
+        const response = await this.http_client(
+          `/api/v1/recovery_password/change_password`,
+          {
+            password: this.new_pass.value.toString(),
+            confirmPassword: this.repeat_pass.value.toString(),
+          },
+          "put",
+          {
+            Authorization: `Bearer ${token}`,
           }
-        } catch (e) {
-          if (e.response.status === 404 || e.response.status === 400) {
-            //Aqui se coloca el error en input si es que la contraseña no cumple con las
-            //validaciones del back, ej: longitud,caracteres especiales
-            this.temporalAlert({
-              show: true,
-              message:
-                "La contraseña debe tener al menos minimo 6 digitos, un caracter especial, una mayúscula",
-              type: "warning",
-            });
-          }
+        );
+        //recordar hacer tostring a las password
+        if (response.status === 200) {
+          this.temporalAlert({
+            show: true,
+            message: "Contraseña actualizada con éxito",
+            type: "success",
+          });
+          this.$router.push("/login");
+          //si funcionó todo, entonces redirige al login y muestra mensaje
         }
       } else {
         this.error = true;

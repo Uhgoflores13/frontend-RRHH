@@ -27,6 +27,51 @@ const http_client = async (
   try {
     return await Vue.prototype.axios(config);
   } catch (e) {
+    if (e.response.status === 500) {
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          ? e.response.data.message
+          : "Ha ocurrido un error interno",
+        type: "error",
+      });
+    }
+    if (e.response.status === 422) {
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          ? e.response.data.message
+          : "No se pudo procesar la entidad",
+        type: "error",
+      });
+    }
+    if (e.response.status === 404) {
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          ? e.response.data.message
+          : "No se encontró el recurso",
+        type: "error",
+      });
+    }
+    if (e.response.status === 403) {
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          ? e.response.data.message
+          : "Petición rechazada",
+        type: "error",
+      });
+    }
+    if (e.response.status === 400) {
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          ? e.response.data.message
+          : "Petición erronea",
+        type: "error",
+      });
+    }
     if (e.response.status === 401) {
       Vue.prototype.temporalAlert({
         show: true,
@@ -35,13 +80,9 @@ const http_client = async (
           : "Acceso no autorizado",
         type: "error",
       });
-      store.dispatch("setToken", null);
-      localStorage.clear();
-      Vue.prototype.hideLoader();
-    } else if (e.response.status === 403) {
-    } else {
-      throw e;
     }
+    Vue.prototype.hideLoader();
+    return;
   }
 };
 

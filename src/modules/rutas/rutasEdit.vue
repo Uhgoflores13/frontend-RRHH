@@ -6,7 +6,7 @@
           primary-title
           class="d-flex justify-space-between blueGrayMinsal--text"
         >
-          Roles
+          Rutas
           <v-icon color="blueGrayMinsal">mdi-pencil</v-icon>
         </v-card-title>
 
@@ -38,6 +38,7 @@
                 label="Orden"
                 color="blueMinsal"
                 v-model="rutaForm.orden"
+                @keypress="restrictInteger"
               ></v-text-field>
               <v-checkbox
                 label="Mostrar"
@@ -82,7 +83,7 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 rounded
-                @click="putRuta()"
+                @click="editRuta()"
                 :small="$vuetify.breakpoint.xs"
               >
                 <v-icon left>mdi-content-save</v-icon>
@@ -119,8 +120,8 @@ export default {
       publico: false,
       orden: null,
       admin: false,
-      rutas: [],
     },
+    editingRuta: null,
     roles: [],
     rolesSelect: [],
   }),
@@ -130,45 +131,95 @@ export default {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
     },
-    async putRuta() {
-      const id_ruta = this.$route.params.id;
-      if (
-        !this.rutaForm.nombre ||
-        !this.rutaForm.uri ||
-        !this.rutaForm.nombre_uri ||
-        this.rolesSelect.length == 0
-      ) {
+    async deleteRutaRoles(id_ruta) {
+        const response = await this.http_client(
+          `/api/v1/rutas/${id_ruta}/roles`,
+          {},
+          "delete"
+        );
+      
+    },
+    async addRutaRoles(id_ruta) {
+        const response = await this.http_client(
+          `/api/v1/rutas/${id_ruta}/roles`,
+          { roles: this.rolesSelect },
+          "post"
+        );
+      
+    },
+    async putRuta(data) {
+        const response = await this.http_client(
+          `/api/v1/rutas/${id_ruta}`,
+          data,
+          "put"
+        );
+      
+    },
+    async editRuta() {
+      try {
+        this.showLoader();
+        const id_ruta = this.$route.params.id;
+        if (
+          !this.rutaForm.nombre ||
+          !this.rutaForm.uri ||
+          !this.rutaForm.nombre_uri ||
+          this.rolesSelect.length == 0
+        ) {
+          this.temporalAlert({
+            show: true,
+            message: "Por favor complete todos los campos",
+            type: "warning",
+          });
+          return;
+        }
+
+        var oldRuta = this.editingRuta;
+        var newRuta = this.rutaForm;
+        const rolesHaveChanged =
+          JSON.stringify(oldRuta.roles) != JSON.stringify(this.rolesSelect);
+        const canDeleteRoles = oldRuta.roles.length > 0;
+        delete oldRuta.Rols;
+        delete oldRuta.roles;
+        delete newRuta.Rols;
+        delete newRuta.roles;
+        const rutaHasChanged = !this.objectsEqual(oldRuta, newRuta);
+        if (rolesHaveChanged) {
+          if (canDeleteRoles) {
+            await this.deleteRutaRoles(id_ruta);
+          }
+          await this.addRutaRoles(id_ruta);
+        }
+        if (rutaHasChanged) {
+          let ruta = {
+            nombre: this.rutaForm.nombre,
+            uri: this.rutaForm.uri,
+            nombre_uri: this.rutaForm.nombre_uri,
+            mostrar: this.rutaForm.mostrar,
+            icono: this.rutaForm.icono,
+            publico: this.rutaForm.publico,
+            admin: this.rutaForm.admin,
+            orden: parseInt(this.rutaForm.orden) || 0,
+            id_ruta,
+          };
+          await this.putRuta(ruta);
+        }
         this.temporalAlert({
           show: true,
-          message: "Por favor complete todos los campos",
-          type: "warning",
+          message: "Se actualizó la ruta",
+          type: "success",
         });
-        return;
+        this.getMenu();
+        this.$router.push("/rutas/list");
+        localStorage.removeItem("editingRuta");
+      } catch (e) {
+        this.temporalAlert({
+          show: true,
+          message: e.response.data.message,
+          type: "error",
+        });
+      } finally {
+        this.hideLoader();
       }
-      const response = await this.http_client(
-        `/api/v1/rutas/${id_ruta}`,
-        {
-          nombre: this.rutaForm.nombre,
-          uri: this.rutaForm.uri,
-          nombre_uri: this.rutaForm.nombre_uri,
-          mostrar: this.rutaForm.mostrar,
-          icono: this.rutaForm.icono,
-          publico: this.rutaForm.publico,
-          roles: this.rolesSelect,
-          admin: this.rutaForm.admin,
-          orden: parseInt(this.rutaForm.orden) || 0,
-          id_ruta,
-        },
-        "put"
-      );
-      this.temporalAlert({
-        show: true,
-        message: "Se actualizó la ruta",
-        type: "success",
-      });
-      this.getMenu();
-      this.$router.push("/rutas/list");
-      localStorage.removeItem("editingRuta");
     },
     async deleteRuta() {
       const id_ruta = this.$route.params.id;
@@ -190,14 +241,15 @@ export default {
     },
   },
   async created() {
-    let item = JSON.parse(localStorage.getItem("editingRuta"));
-    if (item) {
-      if (item.id == this.$route.params.id) {
+    const objectToEdit = JSON.parse(localStorage.getItem("editingRuta"));
+    this.editingRuta = JSON.parse(localStorage.getItem("editingRuta"));
+    if (this.editingRuta) {
+      if (this.editingRuta.id == this.$route.params.id) {
         await this.getRoles();
-        if (item.roles.length > 0) {
-          this.rolesSelect = item.roles;
+        if (this.editingRuta.roles.length > 0) {
+          this.rolesSelect = objectToEdit.roles;
         }
-        this.rutaForm = item;
+        this.rutaForm = objectToEdit;
       } else {
         this.$router.push("/rutas/list");
       }

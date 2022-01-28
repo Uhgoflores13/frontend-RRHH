@@ -75,9 +75,9 @@
                 :append-icon="
                   new_password.show ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
                 "
+                @click:append="new_password.show = !new_password.show"
                 outlined
                 dense
-                @click:append="new_password.show = !new_password.show"
                 :error="new_password.state"
                 :error-messages="new_password.message"
               >
@@ -103,11 +103,7 @@
               </v-text-field>
               <v-card-actions class="flex justify-center pa-0">
                 <div class="text-center">
-                  <v-btn
-                    color="blueMinsal white--text"
-                    rounded
-                    type="submit"
-                  >
+                  <v-btn color="blueMinsal white--text" rounded type="submit">
                     <v-icon class="mr-1">mdi-content-save</v-icon>
                     Guardar
                   </v-btn>
@@ -139,12 +135,19 @@
             v-model="emailPassword"
             label="Contraseña actual"
             outlined
+            :type="emailPasswordShow?'password':'text'"
+            :append-icon="
+              emailPasswordShow ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
+            "
+            @click:append="emailPasswordShow = !emailPasswordShow"
             dense
             ref="emailPass"
             :rules="[
               (v) => (v !== null && v !== '') || 'Este campo es requerido',
             ]"
-          ></v-text-field>
+          >
+            <template></template>
+          </v-text-field>
         </v-card-text>
         <v-card-actions class="pb-4">
           <v-btn
@@ -176,6 +179,7 @@ export default {
     },
     emailPassword: null,
     showEmailPasswordForm: false,
+    emailPasswordShow: true,
     new_password: {
       value: null,
       show: false,
@@ -333,8 +337,8 @@ export default {
         ultima_conexion: "1999-10-11T09:09:28Z",
       };
       let usuario;
-      if (Object.keys(this.userDetail).includes("data")) {
-        usuario = this.userDetail.data;
+      if (Object.keys(this.userDetail).includes("email")) {
+        usuario = this.userDetail;
       } else {
         usuario = usuario_dummy;
       }

@@ -10,7 +10,12 @@
             <p :class="dinamicClass">
               {{ message }}
             </p>
-            <v-progress-circular v-if="message == ''" indeterminate color="blueMinsal" class="d-flex mx-auto"></v-progress-circular>
+            <v-progress-circular
+              v-if="message == ''"
+              indeterminate
+              color="blueMinsal"
+              class="d-flex mx-auto"
+            ></v-progress-circular>
             <v-btn
               color="blueMinsal"
               class="mt-8"
@@ -18,7 +23,7 @@
               @click="ejecutarMover()"
               text
               id="botomAction"
-              style="text-transform:none"
+              style="text-transform: none"
               large
             >
               <p class="text-h6 ma-0">Regresar al login</p>
@@ -43,14 +48,10 @@ export default {
     },
     async checkVerify() {
       let token = this.$route.params.token;
-      try {
-        const response = await this.http_client(
-          `/api/v1/verificar-usuario/${token}`,
-        );
-        this.message = response.data.message || "Ha ocurrido un problema";
-      } catch (e) {
-        this.message = "Su correo electrónico no se ha podido verificar";
-      }
+      const response = await this.http_client(
+        `/api/v1/verificar-usuario/${token}`
+      );
+      this.message = response?.data.message || "Ha ocurrido un problema";
     },
     ejecutarMover() {
       // const btn = document.getElementById('botomAction')
