@@ -78,10 +78,8 @@ export default {
     async deleteRol() {
       const id_rol = this.$route.params.id;
       const response = await this.http_client(
-        "/api/v1/roles",
-        {
-          id: [id_rol],
-        },
+        `/api/v1/roles/${id_rol}`,
+        {},
         "delete"
       );
       this.temporalAlert({

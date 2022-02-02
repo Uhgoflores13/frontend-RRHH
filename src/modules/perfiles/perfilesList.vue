@@ -104,7 +104,7 @@
             v-model="selected"
             :headers="headers"
             :items="perfiles"
-            :single-select="false"
+            :single-select="true"
             item-key="id"
             show-select
             class="elevation-0 border-1"
@@ -250,18 +250,16 @@ export default {
       this.perfilData = item;
     },
     async deletePerfiles() {
-      const perfiles = this.selected.map((perfil) => {
-        return perfil.id;
-      });
+      const id_perfil = this.selected[0].id;
       const response = await this.http_client(
-        "/api/v1/perfiles",
-        { perfiles },
+        `/api/v1/perfiles/${id_perfil}`,
+        {},
         "delete"
       );
       if (response?.status === 200) {
         this.temporalAlert({
           show: true,
-          message: "Se eliminaron los perfiles",
+          message: "Se eliminó el perfil",
           type: "success",
         });
       }

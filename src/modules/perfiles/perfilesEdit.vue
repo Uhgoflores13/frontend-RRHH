@@ -193,10 +193,8 @@ export default {
     async deletePerfil() {
       const id_perfil = this.$route.params.id;
       const response = await this.http_client(
-        "/api/v1/perfiles",
-        {
-          perfiles: [parseInt(id_perfil)],
-        },
+        `/api/v1/perfiles/${id_perfil}`,
+        {},
         "delete"
       );
       if (response?.status == 200) {

@@ -118,7 +118,7 @@
             v-model="selected"
             :headers="headers"
             :items="rutas"
-            :single-select="false"
+            :single-select="true"
             item-key="id"
             show-select
             class="elevation-0 border-1"
@@ -389,12 +389,10 @@ export default {
       this.rutaData = item;
     },
     async deleteRutas() {
-      const rutas = this.selected.map((rol) => {
-        return rol.id;
-      });
+      const id_ruta = this.selected[0].id;
       const response = await this.http_client(
-        "/api/v1/rutas",
-        { id: rutas },
+        `/api/v1/rutas/${id_ruta}`,
+        {},
         "delete"
       );
       if (response?.status == 200) {
@@ -403,8 +401,8 @@ export default {
           message: "Se eliminaron las rutas",
           type: "success",
         });
+        this.getMenu();
       }
-      this.getMenu();
       this.selected = [];
       this.getRutas();
     },

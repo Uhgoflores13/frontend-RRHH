@@ -198,7 +198,7 @@ export default {
             await this.deleteUsuarioPerfiles(id_usuario);
           }
           if (canPostPerfiles) {
-            await this.addUsuarioPerfiles(id_usuario, this.rolesSelect);
+            await this.addUsuarioPerfiles(id_usuario, this.perfilesSelect);
           }
         }
         if (usuarioHasChanged) {
@@ -232,8 +232,8 @@ export default {
     async deleteUsuario() {
       const id_usuario = this.$route.params.id;
       const response = await this.http_client(
-        `/api/v1/users`,
-        { id: [id_usuario] },
+        `/api/v1/users/${id_usuario}`,
+        {},
         "delete"
       );
       if (response?.status === 200) {

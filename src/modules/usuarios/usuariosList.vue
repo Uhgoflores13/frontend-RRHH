@@ -118,7 +118,7 @@
             v-model="selected"
             :headers="headers"
             :items="usuarios"
-            :single-select="false"
+            :single-select="true"
             item-key="id"
             show-select
             class="elevation-0 border-1"
@@ -347,18 +347,16 @@ export default {
       this.usuarioData = item;
     },
     async deleteUsuarios() {
-      const usuarios = this.selected.map((usuario) => {
-        return usuario.id;
-      });
+      const id_usuario = this.selected[0].id;
       const response = await this.http_client(
-        "/api/v1/users",
-        { id: usuarios },
+        `/api/v1/users/${id_usuario}`,
+        {},
         "delete"
       );
       if (response?.status == 200 || response?.status == 201) {
         this.temporalAlert({
           show: true,
-          message: "Se eliminaron los perfiles",
+          message: "Se deshabilitó el usuario",
           type: "success",
         });
       }

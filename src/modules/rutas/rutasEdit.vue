@@ -132,28 +132,25 @@ export default {
       this.roles = response.data;
     },
     async deleteRutaRoles(id_ruta) {
-        const response = await this.http_client(
-          `/api/v1/rutas/${id_ruta}/roles`,
-          {},
-          "delete"
-        );
-      
+      const response = await this.http_client(
+        `/api/v1/rutas/${id_ruta}/roles`,
+        {},
+        "delete"
+      );
     },
     async addRutaRoles(id_ruta) {
-        const response = await this.http_client(
-          `/api/v1/rutas/${id_ruta}/roles`,
-          { roles: this.rolesSelect },
-          "post"
-        );
-      
+      const response = await this.http_client(
+        `/api/v1/rutas/${id_ruta}/roles`,
+        { roles: this.rolesSelect },
+        "post"
+      );
     },
-    async putRuta(data) {
-        const response = await this.http_client(
-          `/api/v1/rutas/${id_ruta}`,
-          data,
-          "put"
-        );
-      
+    async putRuta(id_ruta,data) {
+      const response = await this.http_client(
+        `/api/v1/rutas/${id_ruta}`,
+        data,
+        "put"
+      );
     },
     async editRuta() {
       try {
@@ -201,7 +198,7 @@ export default {
             orden: parseInt(this.rutaForm.orden) || 0,
             id_ruta,
           };
-          await this.putRuta(ruta);
+          await this.putRuta(id_ruta,ruta);
         }
         this.temporalAlert({
           show: true,
@@ -214,7 +211,7 @@ export default {
       } catch (e) {
         this.temporalAlert({
           show: true,
-          message: e.response.data.message,
+          message: e,
           type: "error",
         });
       } finally {
@@ -224,18 +221,18 @@ export default {
     async deleteRuta() {
       const id_ruta = this.$route.params.id;
       const response = await this.http_client(
-        "/api/v1/rutas",
-        {
-          id: [id_ruta],
-        },
+        `/api/v1/rutas/${id_ruta}`,
+        {},
         "delete"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se eliminó la ruta",
-        type: "success",
-      });
-      this.getMenu();
+      if (response?.status === 200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se eliminó la ruta",
+          type: "success",
+        });
+        this.getMenu();
+      }
       this.$router.push("/rutas/list");
       localStorage.removeItem("editingRuta");
     },

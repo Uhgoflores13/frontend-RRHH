@@ -104,7 +104,7 @@
             v-model="selected"
             :headers="headers"
             :items="roles"
-            :single-select="false"
+            :single-select="true"
             item-key="id"
             show-select
             class="elevation-0 border-1"
@@ -226,12 +226,10 @@ export default {
       this.rolData = item;
     },
     async deleteRoles() {
-      const roles = this.selected.map((rol) => {
-        return rol.id;
-      });
+      const rol = this.selected[0].id;
       const response = await this.http_client(
-        "/api/v1/roles",
-        { roles },
+        `/api/v1/roles/${rol}`,
+        {},
         "delete"
       );
       if (response?.status === 200) {
