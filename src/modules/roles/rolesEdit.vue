@@ -60,18 +60,19 @@ export default {
       }
       const id_rol = this.$route.params.id;
       const response = await this.http_client(
-        "/api/v1/roles",
+        `/api/v1/roles/${id_rol}`,
         {
-          id: id_rol,
           name: this.nombreRol,
         },
         "put"
       );
-      this.temporalAlert({
-        show: true,
-        message: "Se actualizó el rol",
-        type: "success",
-      });
+      if (response?.status===200) {
+        this.temporalAlert({
+          show: true,
+          message: "Se actualizó el rol",
+          type: "success",
+        });
+      }
       this.$router.push("/roles/list");
       localStorage.removeItem("editingRole");
     },
