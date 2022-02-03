@@ -1,7 +1,8 @@
 <template>
   <v-container class="pa-0 pa-sm-2 justify-center d-flex" fill-height fluid>
     <v-flex xs12 sm11 md10 lg9>
-      <v-card rounded="lg">
+      <!-- COMENTADO PARA MAQUETACION 
+        <v-card rounded="lg">
         <v-card-title class="mb-3">Administración</v-card-title>
         <v-card-text>
           <v-row
@@ -32,7 +33,7 @@
             </v-col>
           </v-row>
         </v-card-text>
-      </v-card>
+      </v-card> -->
     </v-flex>
   </v-container>
 </template>

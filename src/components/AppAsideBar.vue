@@ -57,7 +57,7 @@ export default {
     menu: {
       type: Array,
       default: () => {
-        return [];
+        return [{ uri: "/", nombre: "Inicio", icono: "mdi-home" }];
       },
     },
   },

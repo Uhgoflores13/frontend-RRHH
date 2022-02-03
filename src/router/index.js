@@ -79,20 +79,20 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
-router.beforeEach(async (to, from, next) => {
-  if (to.fullPath == "/") {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      next("/login");
-      return;
-    }
-  }
-  if (await Vue.prototype.canNext(to)) {
-    next();
-  } else {
-    next("/forbidden");
-  }
-});
+//Comentado para maquetacion
+// router.beforeEach(async (to, from, next) => {
+//   if (to.fullPath == "/") {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       next("/login");
+//       return;
+//     }
+//   }
+//   if (await Vue.prototype.canNext(to)) {
+//     next();
+//   } else {
+//     next("/forbidden");
+//   }
+// });
 
 export default router;

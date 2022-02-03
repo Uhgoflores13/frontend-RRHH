@@ -25,12 +25,12 @@
           </v-list-item-icon>
           <v-list-item-title>Perfil</v-list-item-title>
         </v-list-item>
-        <v-list-item to="/seguridad" class="my-0">
+        <!-- <v-list-item to="/seguridad" class="my-0">
           <v-list-item-icon>
             <v-icon size="20">mdi-lock</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Seguridad</v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
         <v-list-item @click="cerrarSession()" class="my-0">
           <v-list-item-icon>
             <v-icon size="20">mdi-logout</v-icon>

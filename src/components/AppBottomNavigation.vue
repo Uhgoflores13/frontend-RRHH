@@ -25,7 +25,7 @@ export default {
     menu: {
       type: Array,
       default: () => {
-        return [{ uri: "/dashboard", nombre: "Dashboard", icono: "mdi-home" }];
+        return [{ uri: "/", nombre: "Inicio", icono: "mdi-home" }];
       },
     },
   },
