@@ -192,19 +192,27 @@ export default {
             data,
             "post"
           );
-          if (response.status === 200) {
+          if (response?.status === 200) {
             this.error = false;
             this.error_message = null;
-            this.$router.push({
-              name: "2fa",
-              params: {
-                email: this.user,
-                token: response.data["token"],
-                verified: response.data["verified"],
-                metodos_autenticacion:
-                  response.data["metodos_autenticacion"],
-              },
-            });
+            if (process.env.TWO_FACTOR_AUTH) {
+              this.$router.push({
+                name: "2fa",
+                params: {
+                  email: this.user,
+                  token: response.data["token"],
+                  verified: response.data["verified"],
+                  metodos_autenticacion:
+                    response.data["metodos_autenticacion"],
+                },
+              });
+            }else{
+              localStorage.setItem("token", response.data.token);
+              localStorage.setItem("refresh_token", response.data.refreshToken);
+              this.setToken(response.data.token);
+              this.setUserInfo(jwtDecode(response.data.token));
+              this.$router.push('/');
+            }
           }
         } catch (e) {
           this.temporalAlert({

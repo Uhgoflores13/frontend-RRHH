@@ -31,53 +31,61 @@ const http_client = async (
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "Ha ocurrido un error interno",
+          || e.response.data.description
+          || "Ha ocurrido un error interno",
         type: "error",
       });
     }
-    if (e.response.status === 422) {
+    else if (e.response.status === 422) {
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "No se pudo procesar la entidad",
+          || e.response.data.description
+          || "No se pudo procesar la entidad",
         type: "error",
       });
     }
-    if (e.response.status === 404) {
+    else if (e.response.status === 404) {
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "No se encontró el recurso",
+          || e.response.data.description
+          || "No se encontró el recurso",
         type: "error",
       });
     }
-    if (e.response.status === 403) {
+    else if (e.response.status === 403) {
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "Petición rechazada",
+          || e.response.data.description
+          || "Petición rechazada",
         type: "error",
       });
     }
-    if (e.response.status === 400) {
+    else if (e.response.status === 400) {
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "Petición erronea",
+          || e.response.data.description
+          || "Petición erronea",
         type: "error",
       });
     }
-    if (e.response.status === 401) {
+    else if (e.response.status === 401) {
       Vue.prototype.temporalAlert({
         show: true,
         message: e.response.data.message
-          ? e.response.data.message
-          : "Acceso no autorizado",
+          || e.response.data.description
+          || "Acceso no autorizado",
+        type: "error",
+      });
+    }else{
+      Vue.prototype.temporalAlert({
+        show: true,
+        message: e.response.data.message
+          || e.response.data.description
+          || "Error al realizar petición",
         type: "error",
       });
     }
