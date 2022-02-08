@@ -82,28 +82,7 @@
                       color="blueMinsal white--text px-sm-8"
                       rounded
                       :loading="disabled"
-                      to="/"
-                      >iniciar sesión</v-btn
-                    >
-                    <!-- <v-btn DESCOMENTAR CUANDO SE QUIERA FUNCIONALIDAD
-                      color="blueMinsal white--text px-sm-8"
-                      rounded
-                      type="submit"
-                      :loading="disabled"
-                      >iniciar sesión</v-btn
-                    > -->
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="6"
-                    class="flex justify-center text-center"
-                  >
-                    <v-btn
-                      color="blueMinsal "
-                      class="px-sm-8"
-                      rounded
-                      outlined
-                      >Registrarse</v-btn
+                      type="submit">iniciar sesión</v-btn
                     >
                   </v-col>
                 </v-row>

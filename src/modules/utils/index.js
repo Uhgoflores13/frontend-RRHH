@@ -41,7 +41,7 @@ export default {
       commit("setAlert", payload);
     },
     getMenu: async ({ commit }) => {
-        const response = await http_client("/api/v1/get-rutas");
+        const response = await http_client("/api/v1/rutas/get-rutas");
         const menu = response?.data.filter((item) => item.mostrar === true);
         commit("setMenu", menu);
         commit("setRutas", response.data);

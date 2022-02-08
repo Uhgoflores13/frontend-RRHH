@@ -3,18 +3,15 @@
     <app-loader v-if="loader"></app-loader>
 
     <app-header></app-header>
-    <!-- Colocar :menu="menu" para validar navegacion con back -->
-    <app-aside-bar
+    <app-aside-bar :menu="menu"
       v-if="!$vuetify.breakpoint.xs && !$vuetify.breakpoint.sm"
     ></app-aside-bar>
     <v-main class="bgMinsal">
-      <!-- <app-menu /> -->
       <div class="pa-2 pa-sm-4" v-if="userDetail">
         <router-view :key="$route.path" />
       </div>
     </v-main>
-    <!-- Colocar :menu="menu" para validar navegacion con el back -->
-    <app-bottom-navigation
+    <app-bottom-navigation :menu="menu"
       v-if="$vuetify.breakpoint.xs || $vuetify.breakpoint.sm"
     ></app-bottom-navigation>
   </v-app>
@@ -41,17 +38,14 @@ export default {
     ...mapState("utils", ["loader", "menu"]),
   },
   async created() {
-    // //await this.getEstablecimientos();
-    // DESCOMENTAR cuando se quiera funcinoalidad
-    // var userToken = this.token || localStorage.getItem('token');
-    // if (userToken) {
-    //   const userDecode = jwtDecode(userToken);
-    //   this.setUserInfo(userDecode);
-    //   this.setUserDetail(userDecode.user);
-    //   //await this.getUserDetail(userDecode.email);
-    // } else {
-    //   this.$router.push("/login").catch((e) => {});
-    // }
+    var userToken = this.token || localStorage.getItem('token');
+    if (userToken) {
+      const userDecode = jwtDecode(userToken);
+      this.setUserInfo(userDecode);
+      this.setUserDetail(userDecode.user);
+    } else {
+      this.$router.push("/login").catch((e) => {});
+    }
   },
 };
 </script>
