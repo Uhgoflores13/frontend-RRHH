@@ -37,16 +37,6 @@
                 v-model="password"
                 :rules="passwordRules"
               ></v-text-field>
-              <v-text-field
-                label="Numero de DUI"
-                color="blueMinsal"
-                v-model="dui"
-                v-mask="'########-#'"
-                :rules="[
-                  (v) =>
-                    (v !== null && v !== '') || 'Este campo es obligatorio',
-                ]"
-              ></v-text-field>
             </v-card-text>
           </v-tab-item>
           <v-tab-item>
@@ -123,7 +113,6 @@ export default {
     perfilesSelect: [],
     rolesSelect: [],
     roles: [],
-    dui: null,
     tab: null,
     password: null,
   }),
@@ -151,7 +140,7 @@ export default {
       );
     },
     async postUsuario(navigate = false) {
-      if (!this.dui || !this.usuario || !this.password) {
+      if (!this.usuario || !this.password) {
         this.temporalAlert({
           show: true,
           message: "Por favor complete los campos del usuario",
@@ -173,7 +162,6 @@ export default {
         confirm_password: this.password.trim(),
         roles: this.rolesSelect,
         perfiles: this.perfilesSelect,
-        dui: this.dui,
       };
       const response = await this.http_client("/api/v1/users", obj, "post");
       if (response?.status == 200 || response?.status == 201) {
