@@ -80,7 +80,7 @@ const router = new VueRouter({
   routes,
 });
 router.beforeEach(async (to, from, next) => {
-  if (to.fullPath == "/") {
+  if (to.fullPath === "/") {
     const token = localStorage.getItem("token");
     if (!token) {
       next("/login");
