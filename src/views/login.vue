@@ -116,7 +116,6 @@
 import {mapMutations} from "vuex";
 import {required, email} from 'vuelidate/lib/validators'
 import jwtDecode from "jwt-decode";
-import store from "../store";
 
 export default {
   name: "login",
@@ -148,7 +147,7 @@ export default {
         try {
           const response = await this.services.auth.login(this.form)
           if (process.env.VUE_APP_TWO_FACTOR_AUTH === 'true') {
-             this.$router.push({
+            this.$router.push({
               name: "2fa",
               params: {
                 email: this.form.email,
@@ -162,7 +161,7 @@ export default {
             localStorage.setItem("refresh_token", response?.data?.refreshToken);
             this.setToken(response?.data?.token);
             this.setUserInfo(jwtDecode(response?.data?.token));
-            this.$router.push({name: 'layout'});
+            this.$router.push({name: 'dashboard'});
           }
         } catch (e) {
         } finally {
