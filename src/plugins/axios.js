@@ -51,7 +51,7 @@ _axios.interceptors.response.use(
     const base = process.env.VUE_APP_API_URL;
     return axios
       .post(
-        base + "api/v1/refresh",
+        base + "/api/v1/refresh",
         {
           refresh_token: localStorage.getItem("refresh_token"),
         },
