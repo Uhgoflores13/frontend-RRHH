@@ -38,7 +38,7 @@ export default {
     ...mapState("utils", ["loader", "menu"]),
   },
   async created() {
-    var userToken = this.token || localStorage.getItem('token');
+    const userToken = this.token || localStorage.getItem('token');
     if (userToken) {
       const userDecode = jwtDecode(userToken);
       this.setUserInfo(userDecode);

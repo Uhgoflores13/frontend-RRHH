@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import {rolesRouter} from "../modules/roles/rolesRouter";
-import {perfilesRouter} from "../modules/perfiles/perfilesRouter";
-import {usuariosRouter} from "../modules/usuarios/usuariosRouter";
-import {rutasRouter} from "../modules/rutas/rutasRouter";
+import {rolesRouter} from "../views/roles/rolesRouter";
+import {perfilesRouter} from "../views/perfiles/perfilesRouter";
+import {usuariosRouter} from "../views/usuarios/usuariosRouter";
+import {rutasRouter} from "../views/rutas/rutasRouter";
 
 Vue.use(VueRouter);
 
@@ -17,19 +17,19 @@ const routes = [
                 path: "/",
                 name: "dashboard",
                 component: () =>
-                    import(/* webpackChunkName: "perfil" */ "../views/dashboard"),
+                    import(/* webpackChunkName: "perfiles" */ "../views/dashboard"),
             },
             {
                 path: "perfil",
                 name: "perfil",
                 component: () =>
-                    import(/* webpackChunkName: "perfil" */ "../views/perfil"),
+                    import(/* webpackChunkName: "perfiles" */ "../views/perfil"),
             },
             {
                 path: "/seguridad",
                 name: "seguridad",
                 component: () =>
-                    import(/* webpackChunkName: "seguridad" */ "../views/seguridad.vue"),
+                    import(/* webpackChunkName: "seguridad" */ "../views/auth/seguridad.vue"),
             },
             rolesRouter,
             perfilesRouter,
@@ -40,27 +40,27 @@ const routes = [
     {
         path: "/login",
         name: "login",
-        component: () => import(/* webpackChunkName: "login" */ "../views/login"),
+        component: () => import(/* webpackChunkName: "login" */ "../views/auth/login"),
     },
     {
         path: "/recuperar-password",
         name: "recuperar-password",
         component: () =>
             import(
-                /* webpackChunkName: "recuperarPassword" */ "../views/recoverPassword"
+                /* webpackChunkName: "recuperarPassword" */ "../views/auth/recoverPassword"
                 ),
     },
     {
         path: "/reset-password/:id",
         name: "reset-password",
         component: () =>
-            import(/* webpackChunkName: "resetPassword" */ "../views/resetPassword"),
+            import(/* webpackChunkName: "resetPassword" */ "../views/auth/resetPassword"),
     },
     {
         path: "/verify-mail/:token",
         name: "verifyMail",
         component: () =>
-            import(/* webpackChunkName: "login" */ "../views/verifyMail"),
+            import(/* webpackChunkName: "login" */ "../views/auth/verifyMail"),
     },
     {
         path: "/forbidden",
@@ -71,7 +71,7 @@ const routes = [
     {
         path: "/autenticacionqr",
         name: "2fa",
-        component: () => import(/* webpackChunkName: "qr" */ "../views/2fa"),
+        component: () => import(/* webpackChunkName: "qr" */ "../views/auth/2fa"),
     },
 ];
 

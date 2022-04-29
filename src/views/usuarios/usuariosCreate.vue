@@ -151,7 +151,7 @@ export default {
       if (this.perfilesSelect.length == 0 && this.rolesSelect.length == 0) {
         this.temporalAlert({
           show: true,
-          message: "Debe seleccionar por lo menos un perfil o un rol",
+          message: "Debe seleccionar por lo menos un perfiles o un rol",
           type: "warning",
         });
         return;

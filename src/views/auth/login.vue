@@ -83,7 +83,7 @@
       <v-row>
         <v-col cols="12" sm="6" md="4">
           <v-img
-              src="../assets/img/escudo-white-minsal.png"
+              src="@/assets/img/escudo-white-minsal.png"
               width="200"
               class="mx-auto"
           />
@@ -102,7 +102,7 @@
         </v-col>
         <v-col cols="12" sm="12" md="4">
           <v-img
-              src="../assets/img/SIS-HBLANCO.png"
+              src="@/assets/img/SIS-HBLANCO.png"
               width="150"
               class="mx-auto"
           />

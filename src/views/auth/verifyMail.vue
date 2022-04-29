@@ -4,7 +4,7 @@
       <v-container fluid fill-height>
         <v-row class="text-center">
           <v-col cols="12">
-            <img src="../assets/img/SIS-HAZUL.png" :width="dinamicSize" />
+            <img src="../../assets/img/SIS-HAZUL.png" :width="dinamicSize" />
           </v-col>
           <v-col cols="12">
             <p :class="dinamicClass">

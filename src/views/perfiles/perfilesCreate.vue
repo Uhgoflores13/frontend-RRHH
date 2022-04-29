@@ -127,7 +127,7 @@ export default {
       );
       this.temporalAlert({
         show: true,
-        message: "Se ha creado el perfil",
+        message: "Se ha creado el perfiles",
         type: "success",
       });
       this.nombrePerfil = null;

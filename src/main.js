@@ -21,9 +21,9 @@ Vue.use(require("vue-moment"), {
     momentTime,
 });
 
-import {regComponents} from "@/modules/utils/regComponents";
+import loadComponentes from "@/plugins/loadComponents";
 
-regComponents(Vue);
+loadComponentes(Vue);
 
 Vue.config.productionTip = false;
 

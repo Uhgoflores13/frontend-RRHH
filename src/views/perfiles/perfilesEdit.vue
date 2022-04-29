@@ -175,7 +175,7 @@ export default {
         }
         this.temporalAlert({
           show: true,
-          message: "Se actualizó el perfil",
+          message: "Se actualizó el perfiles",
           type: "success",
         });
         this.$router.push("/perfiles/list");
@@ -200,7 +200,7 @@ export default {
       if (response?.status == 200) {
         this.temporalAlert({
           show: true,
-          message: "Se eliminó el perfil",
+          message: "Se eliminó el perfiles",
           type: "success",
         });
         this.$router.push("/perfiles/list");

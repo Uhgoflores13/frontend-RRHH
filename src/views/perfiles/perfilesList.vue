@@ -259,7 +259,7 @@ export default {
       if (response?.status === 200) {
         this.temporalAlert({
           show: true,
-          message: "Se eliminó el perfil",
+          message: "Se eliminó el perfiles",
           type: "success",
         });
       }
