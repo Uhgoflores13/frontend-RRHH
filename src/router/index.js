@@ -1,16 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import {rolesRouter} from "../views/roles/rolesRouter";
-import {perfilesRouter} from "../views/perfiles/perfilesRouter";
-import {usuariosRouter} from "../views/usuarios/usuariosRouter";
-import {rutasRouter} from "../views/rutas/rutasRouter";
+import rolesRouter from "../views/roles/rolesRouter";
+import perfilesRouter from "../views/perfiles/perfilesRouter";
+import usuariosRouter from "../views/usuarios/usuariosRouter";
+import rutasRouter from "../views/rutas/rutasRouter";
 
 Vue.use(VueRouter);
 
 const routes = [
     {
         path: "/",
-        name: "layout",
         component: () => import(/* webpackChunkName: "layout" */ "../views/layout"),
         children: [
             {
@@ -31,10 +30,10 @@ const routes = [
                 component: () =>
                     import(/* webpackChunkName: "seguridad" */ "../views/auth/seguridad.vue"),
             },
-            rolesRouter,
-            perfilesRouter,
-            usuariosRouter,
-            rutasRouter,
+            ...rolesRouter,
+            ...perfilesRouter,
+            ...usuariosRouter,
+            ...rutasRouter,
         ],
     },
     {
