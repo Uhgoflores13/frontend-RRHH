@@ -50,7 +50,7 @@
               <v-btn icon small :to="{name:'usuariosEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon small @click="deleteUsuarios(item.id)">
+              <v-btn icon small @click="deleteUsuarios(item.id)" v-if="!item.is_suspended">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
