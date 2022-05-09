@@ -50,10 +50,10 @@ export default {
       const index = result.findIndex(element => element === row[this.itemValue])
       if (index >= 0) {
         result.splice(index, 1)
-        this.$emit('add-item', row[this.itemText])
+        this.$emit('deleteItem', row[this.itemValue])
       } else {
         result.push(row.id)
-        this.$emit('delete-item', row[this.itemText])
+        this.$emit('addItem', row[this.itemValue])
       }
       this.$emit('input', result)
     }

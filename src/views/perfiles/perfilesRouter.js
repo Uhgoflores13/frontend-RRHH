@@ -1,6 +1,6 @@
 export default [
     {
-        path: "list",
+        path: "perfiles/list",
         name: "perfilesList",
         component: () =>
             import(
@@ -8,7 +8,7 @@ export default [
                 ),
     },
     {
-        path: "create",
+        path: "perfiles/create",
         name: "perfilesCreate",
         component: () =>
             import(
@@ -16,7 +16,7 @@ export default [
                 ),
     },
     {
-        path: "edit/:id",
+        path: "perfiles/edit/:id",
         name: "perfilesEdit",
         component: () =>
             import(

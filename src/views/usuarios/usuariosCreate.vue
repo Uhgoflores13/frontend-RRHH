@@ -45,7 +45,7 @@
               <app-search-list :error-messages="perfilesErrors" placeholder="Buscar Perfiles"
                                item-text="nombre"
                                item-value="id"
-                               :items="perfiles" v-model="form.perfiles">
+                               :items="profiles" v-model="form.perfiles">
               </app-search-list>
             </v-col>
             <v-col cols="12" md="6">
@@ -80,6 +80,7 @@
 <script>
 
 import {email, required, minLength, sameAs, requiredIf} from "vuelidate/lib/validators";
+import {mapMutations} from "vuex";
 
 export default {
   name: "usuariosCreate",
@@ -118,7 +119,7 @@ export default {
       perfiles: []
     },
     roles: [],
-    perfiles: [],
+    profiles: [],
     showPassword: false,
     showConfirmPassword: false,
     loading: false,
@@ -129,9 +130,9 @@ export default {
       const response = await this.http_client("/api/v1/roles");
       this.roles = response.data;
     },
-    async getPerfiles() {
+    async getProfiles() {
       const response = await this.http_client("/api/v1/perfiles");
-      this.perfiles = response.data;
+      this.profiles = response.data;
     },
     async createUser(navigate = false) {
       this.$v.$touch()
@@ -201,8 +202,7 @@ export default {
     },
   },
   async created() {
-    await this.getRoles();
-    await this.getPerfiles();
+    await Promise.all[this.getRoles(), this.getProfiles()]
   }
 }
 </script>

@@ -1,8 +1,12 @@
 import Vue from "vue";
 import auth from './auth.services'
 import users from './user.services'
+import roles from './roles.services'
+import profiles from './profiles.services'
 
 Vue.prototype.services = {
     auth,
-    users
+    users,
+    roles,
+    profiles
 }
