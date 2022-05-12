@@ -22,20 +22,17 @@
         </v-card-title>
         <v-card-text>
           <v-skeleton-loader v-if="loading"></v-skeleton-loader>
-          <v-data-table
-              :headers="headers"
-              :items="usuarios"
-              item-key="id"
-              class="elevation-0 border-1"
-              no-data-text="No hay datos"
-              no-results-text="No hay resultados"
-              :footer-props="{
-              'items-per-page-options': [5, 10, 20],
-              'items-per-page-text': 'Filas',
-              'page-text': '',
-            }"
-              v-if="usuarios.length > 0"
-          >
+          <v-data-table hide-default-footer disable-pagination
+                        :headers="headers"
+                        :items="usuarios"
+                        item-key="id"
+                        class="elevation-0 border-1"
+                        no-data-text="No hay datos"
+                        no-results-text="No hay resultados"
+                        v-if="usuarios.length > 0">
+            <template #item.numero="{ index }">
+              {{ ((page - 1) * per_page) + index + 1 }}
+            </template>
             <template #item.last_login="{ item }">
               {{ item.last_login | moment("DD/MM/YYYY") }}
             </template>
@@ -50,11 +47,28 @@
               <v-btn icon small :to="{name:'usuariosEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon small @click="deleteUsuarios(item.id)" v-if="!item.is_suspended">
-                <v-icon>mdi-delete</v-icon>
+              <v-btn icon small @click="deleteUsuarios(item.id)">
+                <v-icon>{{ item.is_suspended ? 'mdi-check' : 'mdi-delete' }}</v-icon>
               </v-btn>
             </template>
           </v-data-table>
+
+          <v-row class="mt-4">
+            <v-col>
+              <v-select :items="options"
+                        v-model.number="per_page" label="Cantidad por página"></v-select>
+            </v-col>
+            <v-col class="d-flex justify-center align-center">
+              <p>Total registros {{total_rows}}</p>
+            </v-col>
+            <v-col >
+              <v-pagination
+                  v-model="page"
+                  @input="getUsuarios"
+                  :length="totalPages"
+              ></v-pagination>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -104,11 +118,19 @@
 export default {
   data: () => ({
     usuarios: [],
+    options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
+    page: 1,
+    per_page: 10,
+    total_rows: 0,
     loading: false,
     usuarioModal: false,
     usuarioData: null,
     headers: [
       {
+        text: "N",
+        align: "start",
+        value: "numero",
+      }, {
         text: "Correo electrónico",
         align: "start",
         value: "email",
@@ -129,8 +151,14 @@ export default {
   methods: {
     async getUsuarios() {
       this.loading = true;
-      const response = await this.services.users.getUsers()
-      this.usuarios = response?.data;
+      const response = await this.services.users.getUsers({
+        per_page: this.per_page,
+        page: this.page
+      })
+      this.usuarios = response?.data?.body;
+      this.per_page = response.data.per_page;
+      this.page = response.data.page;
+      this.total_rows = response.data.total_rows;
       this.loading = false;
     },
     showUsuarioData(item) {
@@ -146,6 +174,17 @@ export default {
       });
       await this.getUsuarios();
     },
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total_rows / this.per_page)
+    }
+  },
+  watch: {
+    per_page() {
+      this.page = 1;
+      this.getUsuarios()
+    }
   },
   async created() {
     await this.getUsuarios();

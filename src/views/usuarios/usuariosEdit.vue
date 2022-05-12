@@ -17,12 +17,6 @@
               color="blueMinsal"
               v-model="usuario.email"
           ></v-text-field>
-          <v-checkbox
-              label="Deshabilitado"
-              color="blueMinsal"
-              v-model="usuario.is_suspended"
-          ></v-checkbox>
-
           <v-row>
             <v-col>
               <app-search-list :error-messages="perfilesErrors" placeholder="Buscar Perfiles"
@@ -91,7 +85,7 @@ export default {
 
   },
   data: () => ({
-    usuario: {email: null, is_suspended: null, roles: [], perfiles: []},
+    usuario: {email: null, roles: [], perfiles: []},
     perfiles: [],
     roles: []
   }),
@@ -120,7 +114,6 @@ export default {
           await this.services.users.updateUser(this.$route.params.id, {
             email: this.usuario.email,
             roles: this.usuario.roles,
-            is_suspended: this.usuario.is_suspended,
             perfiles: this.usuario.perfiles
           })
           this.temporalAlert({
