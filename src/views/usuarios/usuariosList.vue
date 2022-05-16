@@ -37,8 +37,8 @@
               {{ item.last_login | moment("DD/MM/YYYY") }}
             </template>
             <template #item.is_suspended="{ item }">
-              <v-chip class="ma-2 white--text" color="blueMinsal" small v-if="item.is_suspended">Si</v-chip>
-              <v-chip class="ma-2 white--text" color="red darken-1" v-else small>No</v-chip>
+              <v-chip class="ma-2 white--text" color="red darken-1" small v-if="item.is_suspended">No</v-chip>
+              <v-chip class="ma-2 white--text" color="blueMinsal" v-else small>Si</v-chip>
             </template>
             <template v-slot:[`item.accion`]="{ item }">
               <v-btn icon small @click="showUsuarioData(item)">
@@ -141,7 +141,7 @@ export default {
         value: "last_login",
       },
       {
-        text: "Deshabilitado",
+        text: "Habilitado",
         align: "start",
         value: "is_suspended",
       },
@@ -166,10 +166,10 @@ export default {
       this.usuarioData = item;
     },
     async deleteUsuarios(idUser) {
-      await this.services.users.deleteUser(idUser)
+      const response=await this.services.users.deleteUser(idUser)
       this.temporalAlert({
         show: true,
-        message: "Se deshabilitó el usuario",
+        message: response?.data?.message || 'Exitoso',
         type: "success",
       });
       await this.getUsuarios();

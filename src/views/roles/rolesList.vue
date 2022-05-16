@@ -3,271 +3,229 @@
     <v-flex xs12 sm11 md10 lg9>
       <v-card class="pa-4" rounded="lg">
         <v-card-title
-          primary-title
-          class="d-flex justify-space-between blueGrayMinsal--text"
+            primary-title
         >
-          Roles
-          <div>
-            <!-- <v-menu rounded="0" :close-on-content-click="false">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
+          <v-row>
+            <v-col>
+              <v-text-field label="Buscar" v-model="search"></v-text-field>
+            </v-col>
+            <v-col><h2 class="text-h5 text-center">Roles</h2></v-col>
+            <v-col class="text-right">
+              <v-btn
                   rounded
                   color="blueMinsal"
                   class="white--text ma-1"
-                  v-bind="attrs"
-                  v-on="on"
-                  ><v-icon left>mdi-filter-variant-plus</v-icon>filtros</v-btn
-                >
-              </template>
-
-              <v-list dense>
-                <v-list-item-group
-                  v-model="filtros_seleccionados_aux"
-                  multiple
-                  color="blueMinsal"
-                >
-                  <v-virtual-scroll
-                    :items="filtros_disponibles"
-                    :item-height="40"
-                    max-height="250"
-                    :bench="14"
-                    width="200"
-                  >
-                    <template v-slot="{ item }">
-                      <v-list-item :key="item.id" link :value="item">
-                        <v-list-item-title>{{ item.nombre }}</v-list-item-title>
-                      </v-list-item></template
-                    >
-                  </v-virtual-scroll>
-                </v-list-item-group>
-              </v-list>
-            </v-menu> -->
-            <v-btn
-              rounded
-              color="blueMinsal"
-              class="white--text ma-1"
-              @click="$router.push('create')"
-              ><v-icon left>mdi-plus</v-icon>Agregar</v-btn
-            >
-          </div>
-        </v-card-title>
-        <v-card-text
-          :class="filtros_seleccionados.length > 0 ? 'pt-7' : 'pa-0 pt-2'"
-        >
-          <v-slide-x-transition group tag="div" class="row">
-            <v-col
-              cols="12"
-              md="4"
-              lg="3"
-              sm="6"
-              xl="2"
-              class="py-0"
-              v-for="(filtro_disponible, index) in filtros_seleccionados"
-              :key="index + 1"
-            >
-              <v-text-field
-                v-if="filtro_disponible.tipo == 'text'"
-                dense
-                outlined
-                color="blueMinsal"
-                :label="filtro_disponible.nombre"
-                v-model="filtro_disponible.value"
-                @keypress.enter="filtrarRoles()"
+                  @click="formClean(); showModal=true"
               >
-              </v-text-field>
+                <v-icon left>mdi-plus</v-icon>
+                Agregar
+              </v-btn>
             </v-col>
-          </v-slide-x-transition>
-          <v-slide-y-transition>
-            <v-btn
-              color="blueMinsal"
-              v-show="filtros_seleccionados.length > 0"
-              @click="filtrarRoles()"
-              rounded
-              text
-              ><v-icon left>mdi-filter</v-icon>Filtrar</v-btn
-            >
-          </v-slide-y-transition>
-          <v-slide-y-transition>
-            <v-btn
-              color="red"
-              rounded
-              text
-              v-show="filtros_seleccionados.length > 0"
-              @click="limpiarFiltros()"
-              ><v-icon left>mdi-filter-off</v-icon>Limpiar</v-btn
-            >
-          </v-slide-y-transition>
-        </v-card-text>
+          </v-row>
+        </v-card-title>
         <v-card-text>
-          <v-skeleton-loader v-if="loading == true"></v-skeleton-loader>
+          <v-skeleton-loader v-if="loading"></v-skeleton-loader>
           <v-data-table
-            v-model="selected"
-            :headers="headers"
-            :items="roles"
-            :single-select="true"
-            item-key="id"
-            show-select
-            class="elevation-0 border-1"
-            no-data-text="No hay datos"
-            no-results-text="No hay resultados"
-            :footer-props="{
-              'items-per-page-options': [5, 10, 20],
-              'items-per-page-text': 'Filas',
-              'page-text': '',
-            }"
-            v-if="roles.length > 0 && loading == false"
+              :headers="headers"
+              :items="rolesSearch"
+              item-key="id"
+              class="elevation-0 border-1"
+              no-data-text="No hay datos"
+              no-results-text="No hay resultados"
+              v-if="rolesSearch.length > 0 && !loading"
           >
             <template v-slot:[`item.accion`]="{ item }">
-              <v-btn icon small @click="showRolData(item)"
-                ><v-icon>mdi-eye</v-icon></v-btn
-              >
-              <v-btn icon small @click="editingRole(item)"
-                ><v-icon>mdi-pencil</v-icon></v-btn
-              >
-            </template>
-            <template v-slot:[`body.append`]>
-              <v-expand-transition>
-                <div v-show="selected.length > 0">
-                  <tr>
-                    <td class="px-2">
-                      <v-btn
-                        color="blueMinsal"
-                        text
-                        rounded
-                        icon
-                        @click="deleteRoles()"
-                        ><v-icon color="red darken-1"
-                          >mdi-trash-can</v-icon
-                        ></v-btn
-                      >
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </div>
-              </v-expand-transition>
+              <v-btn icon small @click="updateRole(item)">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon small @click="deleteRole(item.id)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </template>
           </v-data-table>
           <v-alert
-            color="blueMinsal"
-            icon="mdi-information"
-            prominent
-            text
-            v-else
+              color="blueMinsal"
+              icon="mdi-information"
+              prominent
+              text
+              v-else
           >
-            No se encontraron datos</v-alert
+            No se encontraron datos
+          </v-alert
           >
         </v-card-text>
       </v-card>
     </v-flex>
-    <v-dialog
-      v-model="rolModal"
-      scrollable
-      max-width="500px"
-      transition="dialog-transition"
-    >
-      <v-card rounded="lg">
-        <v-card-title primary-title> Detalle: </v-card-title>
+
+    <v-dialog v-model="showModal" :max-width="360">
+      <v-card>
+        <v-card-title class="text-center">{{ form.id ? 'Editando ' : 'Registrando' }} Role</v-card-title>
         <v-card-text>
-          <span class="font-weight-bold">Nombre</span>
-          <v-spacer></v-spacer>
-          {{ rolData ? rolData.name : null }}
+          <v-container>
+            <div>
+              <v-select label="Seleccione tipo rol" :error-messages="typeRoleErrors" v-model="form.id_tipo_rol"
+                        :items="typeRoles" item-value="id"
+                        item-text="name" @blur="$v.form.id_tipo_rol.$touch()"></v-select>
+            </div>
+            <div class="input-role">
+              <v-text-field label="nombre" v-model.trim="form.name" :error-messages="nameErrors"
+                            @blur="$v.form.name.$touch()" :readonly="!form.id_tipo_rol"></v-text-field>
+            </div>
+          </v-container>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="formClean;showModal = false"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="saveRole"
+          >
+            Guardar
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-container>
 </template>
 <script>
+import {required} from "vuelidate/lib/validators";
+import {mapMutations} from "vuex";
+
 export default {
+  validations: {
+    form: {
+      name: {
+        required,
+        isCorrectRole: function (value) {
+          if (!value) return false;
+          return value.trim().toUpperCase().startsWith(this.getPrefixRole?.prefijo.trim().toUpperCase())
+        }
+      },
+      id_tipo_rol: {
+        required
+      }
+    }
+  },
   data: () => ({
-    roles: [],
-    selected: [],
+    form: {
+      id: null,
+      id_tipo_rol: null,
+      name: null
+    },
+    typeRoles: [],
+    showModal: false,
     loading: false,
-    filtros_seleccionados_aux: [],
-    filtros_disponibles: [],
-    rolModal: false,
-    rolData: null,
+    roles: [],
+    search: [],
     headers: [
       {
         text: "Nombre",
         align: "start",
         value: "name",
       },
-      { text: "Accion", value: "accion", sortable: false, width: "100" },
+      {text: "Accion", value: "accion", sortable: false, width: "100"},
     ],
   }),
   methods: {
-    async filtrarRoles() {
-      let filtros = {};
-      this.filtros_seleccionados.forEach((filtro_selec) => {
-        filtros[filtro_selec.filter_name] = filtro_selec.value;
-      });
-      await this.getRoles(filtros);
+    ...mapMutations('utils', ['setLoader']),
+    formClean() {
+      this.$v.$reset()
+      this.form.name = null;
+      this.form.id = null;
+      this.form.id_tipo_rol = null
     },
-    limpiarFiltros() {
-      this.filtros_seleccionados_aux.forEach((filtro) => {
-        filtro.value = null;
-      });
-      this.filtros_seleccionados_aux = [];
-      this.getRoles();
-    },
-    async getRoles(filtros = null) {
-      this.loading = true;
-      const response = await this.http_client("/api/v1/roles", filtros);
-      this.roles = response.data;
-      this.loading = false;
-    },
-    editingRole(item) {
-      localStorage.setItem("editingRole", JSON.stringify(item));
-      this.$router.push(`edit/${item.id}`);
-    },
-    showRolData(item) {
-      this.rolModal = true;
-      this.rolData = item;
-    },
-    async deleteRoles() {
-      const rol = this.selected[0].id;
-      const response = await this.http_client(
-        `/api/v1/roles/${rol}`,
-        {},
-        "delete"
-      );
-      if (response?.status === 200) {
+    async deleteRole(idRole) {
+      try {
+        this.setLoader(true)
+        await this.services.roles.deleteRole(idRole)
+        await this.getRoles()
         this.temporalAlert({
           show: true,
-          message: "Se eliminaron los roles",
-          type: "success",
-        });
+          type: 'success',
+          message: 'Rol eliminado'
+        })
+      } catch {
+      } finally {
+        this.setLoader(false)
       }
-      this.selected = [];
-      this.getRoles();
     },
+    async getTypeRoles() {
+      const response = await this.services.typeRoles.getTypeRoles()
+      this.typeRoles = response.data
+    },
+    async getRoles() {
+      const response = await this.services.roles.getRoles()
+      this.roles = response.data
+    },
+    async saveRole() {
+      this.$v.$touch()
+      if (!this.$v.$invalid) {
+        try {
+          this.loading = true
+          const body = {
+            name: this.form.name.trim().toUpperCase(),
+            id_tipo_rol: this.form.id_tipo_rol
+          }
+          if (this.form.id)
+            await this.services.roles.updateRole(this.form.id, body)
+          else
+            await this.services.roles.createRole(body)
+          await this.getRoles()
+          this.temporalAlert({
+            show: true,
+            type: 'success',
+            message: this.form.id ? 'Role actualizado' : 'Role Registrado'
+          })
+          this.showModal = false
+        } catch {
+        } finally {
+          this.loading = false
+        }
+      }
+    },
+    updateRole(item) {
+      this.form.name = item.name;
+      this.form.id = item.id;
+      this.showModal = true
+    }
   },
   computed: {
-    busquedas() {
-      return this.filtros_seleccionados.filter((filtro) => {
-        return { id: filtro.id, search: filtro.search, value: filtro.value };
-      });
+    rolesSearch() {
+      return this.roles.filter(row => row.name.toLowerCase().includes(this.search))
     },
-    filtros() {
-      return [
-        {
-          id: 0,
-          nombre: "Nombre",
-          tipo: "text",
-          multiple: false,
-          value: null,
-          filter_name: "nombre",
-        },
-      ];
+    nameErrors() {
+      const errors = []
+      if (!this.$v.form.name.$dirty) return errors
+      !this.$v.form.name.required && errors.push('Rol es obligatorio')
+      !this.$v.form.name.isCorrectRole && errors.push(`Rol tiene que iniciar ${this.getPrefixRole?.prefijo}`)
+      return errors
     },
-    filtros_seleccionados() {
-      return this.filtros_seleccionados_aux;
+    typeRoleErrors() {
+      const errors = []
+      if (!this.$v.form.id_tipo_rol.$dirty) return errors
+      !this.$v.form.id_tipo_rol.required && errors.push('Tipo de rol es obligatorio')
+      return errors
     },
+    getPrefixRole() {
+      return this.typeRoles.find(type => type.id === this.form.id_tipo_rol)
+    }
   },
   async created() {
-    this.filtros_disponibles = this.filtros;
-    await this.getRoles();
+    this.getRoles()
+    this.getTypeRoles()
   },
 };
 </script>
+<style lang="scss">
+.input-role input {
+  text-transform: uppercase;
+}
+
+</style>
