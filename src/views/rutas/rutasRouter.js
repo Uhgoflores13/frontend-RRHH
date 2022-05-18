@@ -7,10 +7,10 @@ export default [
     {
         path: "/rutas/create",
         name: "rutasCreate",
-        component: () => import(/* webpackChunkName: "rutasCreate" */ "./rutasCreate.vue" ),
+        component: () => import(/* webpackChunkName: "formPath" */ "./formPath.vue" ),
     },
     {
         path: "/rutas/edit/:id",
         name: "rutasEdit",
-        component: () => import(/* webpackChunkName: "rutasEdit" */ "./rutasEdit.vue" ),},
+        component: () => import(/* webpackChunkName: "formPath" */ "./formPath.vue" ),},
 ];
