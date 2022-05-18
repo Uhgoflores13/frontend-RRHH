@@ -1,7 +1,14 @@
 import {http_client} from "../plugins/http_client";
 
-const getProfiles = async () => await http_client('/api/v1/perfiles')
+const url = '/api/v1/perfiles';
 
+const getProfiles = async () => await http_client(url)
+const createProfile = async (body) => await http_client(url, body, 'post')
+const showPorfile = async (idProfile) => await http_client(`${url}/${idProfile}`)
+const updateProfile = async (idProfile, body) => await http_client(`${url}/${idProfile}`, body, 'put')
 export default {
-    getProfiles
+    getProfiles,
+    createProfile,
+    showPorfile,
+    updateProfile,
 }

@@ -8,7 +8,7 @@
     ></app-aside-bar>
     <v-main class="bgMinsal">
       <div class="pa-2 pa-sm-4" v-if="userDetail">
-        <router-view :key="$route.path" />
+        <router-view :key="$route.fullPath" />
       </div>
     </v-main>
     <app-bottom-navigation :menu="menu"

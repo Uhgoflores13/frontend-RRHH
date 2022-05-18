@@ -12,7 +12,7 @@ export default [
         name: "perfilesCreate",
         component: () =>
             import(
-                /* webpackChunkName: "perfilesCreate" */ "./perfilesCreate.vue"
+                /* webpackChunkName: "perfilesCreate" */ "./formProfile.vue"
                 ),
     },
     {
@@ -20,7 +20,7 @@ export default [
         name: "perfilesEdit",
         component: () =>
             import(
-                /* webpackChunkName: "perfilesEdit" */ "./perfilesEdit.vue"
+                /* webpackChunkName: "perfilesEdit" */ "./formProfile.vue"
                 ),
     },
 ]
