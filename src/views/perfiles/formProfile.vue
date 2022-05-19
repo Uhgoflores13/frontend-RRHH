@@ -34,11 +34,11 @@
             <v-col class="pa-0">
               <v-btn color="blueMinsal" class="white--text ma-1" rounded @click="saveProfile(true)">
                 <v-icon left>mdi-content-save</v-icon>
-                Crear y regresar al listado
+                {{!$route.params.id?'Crear':'Editar'}} y regresar al listado
               </v-btn
               >
               <v-btn color="blueMinsal" class="white--text ma-1" :small="$vuetify.breakpoint.xs" rounded
-                     @click="saveProfile()">
+                     @click="saveProfile()" v-if="!$route.params.id">
                 <v-icon left>mdi-content-save-all</v-icon>
                 Crear y agregar otro
               </v-btn
