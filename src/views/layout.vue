@@ -7,7 +7,7 @@
       v-if="!$vuetify.breakpoint.xs && !$vuetify.breakpoint.sm"
     ></app-aside-bar>
     <v-main class="bgMinsal">
-      <div class="pa-2 pa-sm-4" v-if="userDetail">
+      <div class="pa-2 pa-sm-4" v-if="userInfo.user">
         <router-view :key="$route.fullPath" />
       </div>
     </v-main>
@@ -23,17 +23,13 @@ import jwtDecode from "jwt-decode";
 
 export default {
   name: "layout",
-  data: () => ({}),
   methods: {
-    ...mapMutations(["setUserInfo",'setUserDetail']),
-    //...mapActions(['getEstablecimientos']),
-    ...mapActions(["getUserDetail"]),
+    ...mapMutations(["setUserInfo"]),
   },
   computed: {
     ...mapState({
       userInfo: "userInfo",
       token: "token",
-      userDetail: "userDetail",
     }),
     ...mapState("utils", ["loader", "menu"]),
   },
@@ -42,7 +38,6 @@ export default {
     if (userToken) {
       const userDecode = jwtDecode(userToken);
       this.setUserInfo(userDecode);
-      this.setUserDetail(userDecode.user);
     } else {
       this.$router.push("/login").catch((e) => {});
     }
