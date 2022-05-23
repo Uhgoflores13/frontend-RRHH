@@ -165,7 +165,6 @@ Vue.prototype.canNext = async (ruta) => {
         "reset-password",
         "2fa",
         "verifyMail",
-        "perfil"
     ];
     if (!ruta.name) return false;
     //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso
