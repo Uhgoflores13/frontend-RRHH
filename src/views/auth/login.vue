@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import {mapMutations} from "vuex";
+import {mapActions, mapMutations} from "vuex";
 import {required, email} from 'vuelidate/lib/validators'
 import jwtDecode from "jwt-decode";
 
@@ -138,6 +138,7 @@ export default {
     loading: false,
   }),
   methods: {
+    ...mapActions(['setAuth']),
     ...mapMutations(["setToken", "setUserInfo"]),
     ...mapMutations('utils', ['setRutas']),
     async login() {
@@ -157,10 +158,7 @@ export default {
               },
             });
           } else {
-            localStorage.setItem("token", response?.data?.token);
-            localStorage.setItem("refresh_token", response?.data?.refreshToken);
-            this.setToken(response?.data?.token);
-            this.setUserInfo(jwtDecode(response?.data?.token));
+            this.setAuth(response?.data)
             this.$router.push({name: 'dashboard'});
           }
         } catch (e) {

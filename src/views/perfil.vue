@@ -36,21 +36,53 @@
             <p class="text-h5 text-center blueGrayMinsal--text">
               Actualizar contraseña
             </p>
-            <v-form>
+            <v-form @submit.prevent="changePassword()">
               <v-text-field
                   prepend-icon="mdi-lock"
                   name="password"
+                  :type="showPassword?'text':'password'"
                   v-model="form_password.password"
-                  label="Contraseña Actual"
-                  outlined
+                  label="Contraseña Actual" :error-messages="passwordErrors"
+                  outlined @blur="$v.form_password.password.$touch()"
                   dense
               >
+                <template #append>
+                  <v-icon v-if="!showPassword" @click="showPassword = !showPassword"
+                          :color="passwordErrors.length>0 ? 'red' : ''" tabindex="-1">
+                    mdi-eye
+                  </v-icon>
+                  <v-icon v-else @click="showPassword = !showPassword"
+                          :color="passwordErrors.length>0 ? 'red' : ''" tabindex="-1">mdi-eye-off
+                  </v-icon>
+                </template>
               </v-text-field>
-              <v-text-field prepend-icon="mdi-lock" name="newPassword" v-model="form_password.new_password"
-                            label="Nueva Contraseña" outlined dense>
+              <v-text-field prepend-icon="mdi-lock" name="newPassword"
+                            :error-messages="newPasswordErrors" :type="showNewPassword?'text':'password'"
+                            v-model="form_password.new_password"
+                            label="Nueva Contraseña" outlined dense @blur="$v.form_password.new_password.$touch()">
+                <template #append>
+                  <v-icon v-if="!showNewPassword" @click="showNewPassword = !showNewPassword"
+                          :color="newPasswordErrors.length>0 ? 'red' : ''" tabindex="-1">
+                    mdi-eye
+                  </v-icon>
+                  <v-icon v-else @click="showNewPassword = !showNewPassword"
+                          :color="newPasswordErrors.length>0 ? 'red' : ''" tabindex="-1">mdi-eye-off
+                  </v-icon>
+                </template>
               </v-text-field>
               <v-text-field prepend-icon="mdi-lock" name="confirmPassword" v-model="form_password.confirm_password"
-                            label="Confirmar Contraseña" outlined dense>
+                            label="Confirmar Contraseña" :error-messages="confirmPasswordErrors"
+                            :type="showConfirmPassword?'text':'password'"
+                            outlined dense @blur="$v.form_password.confirm_password.$touch()">
+                <template #append>
+                  <v-icon v-if="!showConfirmPassword" @click="showConfirmPassword = !showConfirmPassword"
+                          :color="confirmPasswordErrors.length>0 ? 'red' : ''" tabindex="-1">
+                    mdi-eye
+                  </v-icon>
+                  <v-icon v-else @click="showConfirmPassword = !showConfirmPassword"
+                          :color="confirmPasswordErrors.length>0 ? 'red' : ''" tabindex="-1">mdi-eye-off
+                  </v-icon>
+                </template>
               </v-text-field>
               <v-card-actions class="flex justify-center pa-0">
                 <div class="text-center">
@@ -76,8 +108,18 @@
         <v-card-title>Ingrese su contraseña</v-card-title>
         <v-card-text class="pt-2 pb-0">
           <v-text-field v-model="form_email.password" @blur="$v.form_email.password.$touch()"
-                        :error-messages="passwordByChangeEmailErrors"
-                        @keyup.enter="changeEmail()" label="Contraseña actual" outlined dense>
+                        :error-messages="passwordByChangeEmailErrors" :loading="loadin_change_password"
+                        @keyup.enter="changeEmail()" label="Contraseña actual"
+                        :type="showChangeEmailPassword?'text':'password'" outlined dense>
+            <template #append>
+              <v-icon v-if="!showChangeEmailPassword" @click="showChangeEmailPassword = !showChangeEmailPassword"
+                      :color="passwordByChangeEmailErrors.length>0 ? 'red' : ''" tabindex="-1">
+                mdi-eye
+              </v-icon>
+              <v-icon v-else @click="showChangeEmailPassword = !showChangeEmailPassword"
+                      :color="passwordByChangeEmailErrors.length>0 ? 'red' : ''" tabindex="-1">mdi-eye-off
+              </v-icon>
+            </template>
           </v-text-field>
         </v-card-text>
         <v-card-actions class="pb-4">
@@ -99,9 +141,8 @@
 
 <script>
 import {mapActions, mapMutations, mapState} from "vuex";
-import jwtDecode from "jwt-decode";
-import {required, email} from "vuelidate/lib/validators";
-
+import {required, email, sameAs, minLength, helpers} from "vuelidate/lib/validators";
+const alpha=helpers.regex('alpha', /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@#$!%*?&-_.:])([A-Za-zd$@$!%*?&]|[^ d]){8,20}$/)
 export default {
   name: "perfil",
   validations: {
@@ -115,18 +156,22 @@ export default {
     },
     form_password: {
       password: {
-        required
+        required,
       },
       new_password: {
-        required
+        required,
+        minLength: minLength(8),
+        alpha
       }, confirm_password: {
-        required
+        required,
+        sameAsPassword: sameAs('new_password')
       }
     }
   },
   data: () => ({
     show_change_email: false,
     loadin_change_email: false,
+    loadin_change_password: false,
     form_email: {
       email: null,
       password: null
@@ -135,10 +180,14 @@ export default {
       password: null,
       new_password: null,
       confirm_password: null
-    }
+    },
+    showConfirmPassword: false,
+    showNewPassword: false,
+    showPassword: false,
+    showChangeEmailPassword: false,
   }),
   methods: {
-    ...mapActions(["getUserDetail"]),
+    ...mapActions(["getUserDetail", 'setAuth']),
     ...mapMutations(["setUserInfo", "setToken"]),
     async validateUserByChangeEmail() {
       this.$v.form_email.email.$touch()
@@ -154,13 +203,10 @@ export default {
             email: this.form_email.email,
             password: this.form_email.password,
           })
-          const {token, refreshToken} = response.data
-          this.setUserInfo(jwtDecode(token))
-          this.setToken(token)
-          localStorage.setItem('token', token)
-          localStorage.setItem('refresh_token', refreshToken)
+          this.setAuth(response.data)
           this.show_change_email = false
           this.$v.form_email.$reset()
+          this.cleanForms(this.form_email)
         } catch {
 
         } finally {
@@ -169,16 +215,29 @@ export default {
       }
 
     },
+    cleanForms(form) {
+      for (const property in form) {
+        form[property] = null
+      }
+    },
     async changePassword() {
-      const response = await this.http_client(
-          "/api/v1/users/update/password",
-          {
-            password_actual: this.password.value,
-            password: this.new_password.value,
-            confirm_password: this.confirm_password.value,
-          },
-          "put"
-      );
+      this.$v.form_password.$touch()
+      if (!this.$v.form_password.$invalid) {
+        try {
+          this.loadin_change_password = true
+          const response = await this.services.auth.changePassword({
+            password_actual: this.form_password.password,
+            password: this.form_password.new_password,
+            confirm_password: this.form_password.confirm_password
+          })
+          this.setAuth(response.data)
+          this.$v.form_password.$reset()
+          this.cleanForms(this.form_password)
+        } catch {
+        } finally {
+          this.loadin_change_password = false
+        }
+      }
     },
   },
   computed: {
@@ -194,6 +253,27 @@ export default {
       const errors = []
       if (!this.$v.form_email.password.$dirty) return errors
       !this.$v.form_email.password.required && errors.push('Contraseña es obligatoria')
+      return errors
+    },
+    passwordErrors() {
+      const errors = []
+      if (!this.$v.form_password.password.$dirty) return errors
+      !this.$v.form_password.password.required && errors.push('Contraseña es obligatoria')
+      return errors
+    },
+    newPasswordErrors() {
+      const errors = []
+      if (!this.$v.form_password.new_password.$dirty) return errors
+      !this.$v.form_password.new_password.required && errors.push('Nueva contraseña es obligatoria')
+      !this.$v.form_password.new_password.minLength && errors.push('Minimo de caracteres 8')
+      !this.$v.form_password.new_password.alpha && errors.push('Tiene que contener Mayuscula, minusculas y numeros')
+      return errors
+    },
+    confirmPasswordErrors() {
+      const errors = []
+      if (!this.$v.form_password.confirm_password.$dirty) return errors
+      !this.$v.form_password.confirm_password.required && errors.push('Confirmacion de la contraseña es obligatoria')
+      !this.$v.form_password.confirm_password.sameAsPassword && errors.push('Las contraseñas no coinciden')
       return errors
     }
   },
