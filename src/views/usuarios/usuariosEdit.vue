@@ -12,7 +12,7 @@
         <v-card-text>
           <v-text-field
               label="Correo"
-              type="search"
+              type="search" :error-messages="emailErrors" @blur="$v.usuario.email.$touch()"
               autocomplete="username"
               color="blueMinsal"
               v-model="usuario.email"
@@ -108,7 +108,7 @@ export default {
     },
     async saveUser() {
       this.$v.$touch()
-      if (!this.$v.invalid) {
+      if (!this.$v.$invalid) {
         try {
           await this.setLoader(true)
           await this.services.users.updateUser(this.$route.params.id, {
@@ -132,12 +132,24 @@ export default {
     }
   },
   computed: {
-    perfilesErrors() {
-      return [];
+    emailErrors() {
+      const errors = []
+      if (!this.$v.usuario.email.$dirty) return errors
+      !this.$v.usuario.email.required && errors.push('Correo es obligatorio')
+      !this.$v.usuario.email.email && errors.push('El correo no es valido')
+      return errors
     },
-    rolesErrors() {
-      return []
-    }
+    perfilesErrors() {
+      const errors = []
+      if (!this.$v.usuario.perfiles.$dirty) return errors
+      !this.$v.usuario.perfiles.required && errors.push('Perfil son requeridos si no hay roles')
+      return errors
+    }, rolesErrors() {
+      const errors = []
+      if (!this.$v.usuario.roles.$dirty) return errors
+      !this.$v.usuario.roles.required && errors.push('Roles son requeridos si no hay perfiles')
+      return errors
+    },
   },
   async created() {
     try {

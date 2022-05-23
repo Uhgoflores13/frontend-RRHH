@@ -79,9 +79,8 @@
 </template>
 <script>
 
-import {email, required, minLength, sameAs, requiredIf} from "vuelidate/lib/validators";
-import {mapMutations} from "vuex";
-
+import {email, required, minLength, sameAs, requiredIf, helpers} from "vuelidate/lib/validators";
+const alpha=helpers.regex('alpha', /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@#$!%*?&-_.:])([A-Za-zd$@$!%*?&]|[^ d]){8,20}$/)
 export default {
   name: "usuariosCreate",
   validations: {
@@ -91,7 +90,8 @@ export default {
       },
       password: {
         required,
-        minLength: minLength(6)
+        minLength: minLength(8),
+        alpha,
       },
       confirm_password: {
         required,
@@ -179,7 +179,8 @@ export default {
       const errors = []
       if (!this.$v.form.password.$dirty) return errors
       !this.$v.form.password.required && errors.push('Contraseña es obligatorio')
-      !this.$v.form.password.minLength && errors.push('Minimo de caracteres 6')
+      !this.$v.form.password.minLength && errors.push('Minimo de caracteres 8')
+      !this.$v.form.password.alpha && errors.push('Tiene que tener mayusculas, minusculas y numeros')
       return errors
     }, confirmPasswordErrors() {
       const errors = []
