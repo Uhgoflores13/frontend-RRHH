@@ -29,11 +29,8 @@
               class="elevation-0 border-1"
               no-data-text="No hay datos"
               no-results-text="No hay resultados"
-              :footer-props="{
-              'items-per-page-options': [5, 10, 20],
-              'items-per-page-text': 'Filas',
-              'page-text': '',
-            }"
+              disable-pagination
+              hide-default-footer
               v-else
           >
             <template v-slot:[`item.mostrar`]="{ item }">
@@ -74,6 +71,22 @@
               </v-btn>
             </template>
           </v-data-table>
+          <v-row class="mt-4">
+            <v-col>
+              <v-select :items="options"
+                        v-model.number="per_page" label="Cantidad por página"></v-select>
+            </v-col>
+            <v-col class="d-flex justify-center align-center">
+              <p>Total registros {{ total_rows }}</p>
+            </v-col>
+            <v-col>
+              <v-pagination
+                  v-model="page"
+                  @input="getPaths"
+                  :length="totalPages"
+              ></v-pagination>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -85,6 +98,7 @@ import {mapActions} from "vuex";
 export default {
   data: () => ({
     rutas: [],
+    options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
     rutaModal: false,
     loading: false,
     headers: [
@@ -126,20 +140,36 @@ export default {
       },
       {text: "Accion", value: "accion", sortable: false, width: "100"},
     ],
+    page: 1,
+    per_page: 10,
+    total_rows: 0,
   }),
   methods: {
     ...mapActions("utils", ["getMenu"]),
     async getPaths() {
       this.loading = true;
-      const response = await this.services.paths.getPaths()
-      this.rutas = response.data;
+      const response = await this.services.paths.getPaths({
+        page: this.page,
+        per_page: this.per_page
+      })
+      this.rutas = response.data.body;
+      this.page = response.data.page;
+      this.per_page = response.data.per_page;
+      this.total_rows = response.data.total_rows
       this.loading = false;
     },
-    async deleteRutas(idPath) {
-
-    },
   },
-  computed: {},
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total_rows / this.per_page)
+    }
+  },
+  watch: {
+    per_page() {
+      this.page = 1;
+      this.getPaths()
+    }
+  },
   async created() {
     this.getPaths()
   },
