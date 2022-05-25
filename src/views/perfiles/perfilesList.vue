@@ -26,15 +26,12 @@
           <v-data-table
               :headers="headers"
               :items="perfiles"
+              hide-default-footer
+              disable-pagination
               item-key="id"
               class="elevation-0 border-1"
               no-data-text="No hay datos"
               no-results-text="No hay resultados"
-              :footer-props="{
-              'items-per-page-options': [5, 10, 20],
-              'items-per-page-text': 'Filas',
-              'page-text': '',
-            }"
               v-else
           >
             <template v-slot:[`item.accion`]="{ item }">
@@ -44,6 +41,25 @@
             </template>
           </v-data-table>
         </v-card-text>
+
+        <v-card-actions>
+          <v-row class="mt-4">
+            <v-col>
+              <v-select :items="options"
+                        v-model.number="per_page" label="Cantidad por página"></v-select>
+            </v-col>
+            <v-col class="d-flex justify-center align-center">
+              <p>Total registros {{ total_rows }}</p>
+            </v-col>
+            <v-col>
+              <v-pagination
+                  v-model="page"
+                  @input="getProfiles"
+                  :length="totalPages"
+              ></v-pagination>
+            </v-col>
+          </v-row>
+        </v-card-actions>
       </v-card>
     </v-flex>
   </v-container>
@@ -54,6 +70,10 @@ import {mapMutations} from "vuex";
 export default {
   data: () => ({
     perfiles: [],
+    options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
+    page:1,
+    total_rows:0,
+    per_page:10,
     loading: false,
     headers: [
       {
@@ -71,16 +91,29 @@ export default {
   }),
   methods: {
     ...mapMutations('utils', ['setLoader']),
-    async getPerfiles() {
+    async getProfiles() {
       this.loading = true;
       const response = await this.services.profiles.getProfiles();
-      this.perfiles = response.data;
+      this.perfiles = response.data.body;
+      this.page=response.data.page;
+      this.per_page=response.data.per_page;
+      this.total_rows=response.data.total_rows;
       this.loading = false;
     },
   },
-  computed: {},
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total_rows / this.per_page)
+    }
+  },
+  watch: {
+    per_page() {
+      this.page = 1;
+      this.getPaths()
+    }
+  },
   async created() {
-    await this.getPerfiles();
+    await this.getProfiles();
   },
 };
 </script>
