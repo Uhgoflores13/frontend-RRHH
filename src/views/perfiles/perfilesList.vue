@@ -93,7 +93,10 @@ export default {
     ...mapMutations('utils', ['setLoader']),
     async getProfiles() {
       this.loading = true;
-      const response = await this.services.profiles.getProfiles();
+      const response = await this.services.profiles.getProfiles({
+        page:this.page,
+        per_page:this.per_page
+      });
       this.perfiles = response.data.body;
       this.page=response.data.page;
       this.per_page=response.data.per_page;
@@ -109,7 +112,7 @@ export default {
   watch: {
     per_page() {
       this.page = 1;
-      this.getPaths()
+      this.getProfiles()
     }
   },
   async created() {

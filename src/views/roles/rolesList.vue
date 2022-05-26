@@ -27,12 +27,14 @@
           <v-skeleton-loader v-if="loading"></v-skeleton-loader>
           <v-data-table
               :headers="headers"
-              :items="rolesSearch"
+              :items="roles"
+              disable-pagination
+              hide-default-footer
               item-key="id"
               class="elevation-0 border-1"
               no-data-text="No hay datos"
               no-results-text="No hay resultados"
-              v-if="rolesSearch.length > 0 && !loading"
+              v-if="roles.length > 0 && !loading"
           >
             <template v-slot:[`item.accion`]="{ item }">
               <v-btn icon small @click="updateRole(item)">
@@ -51,8 +53,23 @@
               v-else
           >
             No se encontraron datos
-          </v-alert
-          >
+          </v-alert>
+          <v-row class="mt-4">
+            <v-col>
+              <v-select :items="options"
+                        v-model.number="per_page" label="Cantidad por página"></v-select>
+            </v-col>
+            <v-col class="d-flex justify-center align-center">
+              <p>Total registros {{ total_rows }}</p>
+            </v-col>
+            <v-col>
+              <v-pagination
+                  v-model="page"
+                  @input="getRoles"
+                  :length="totalPages"
+              ></v-pagination>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -123,7 +140,11 @@ export default {
     showModal: false,
     loading: false,
     roles: [],
-    search: [],
+    page: 1,
+    per_page: 10,
+    total_rows: 0,
+    search: null,
+    timer: null,
     headers: [
       {
         text: "Nombre",
@@ -132,6 +153,7 @@ export default {
       },
       {text: "Accion", value: "accion", sortable: false, width: "100"},
     ],
+    options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
   }),
   methods: {
     ...mapMutations('utils', ['setLoader']),
@@ -161,8 +183,15 @@ export default {
       this.typeRoles = response.data
     },
     async getRoles() {
-      const response = await this.services.roles.getRoles()
-      this.roles = response.data
+      const response = await this.services.roles.getRoles({
+        nombre:this.search,
+        page: this.page,
+        per_page: this.per_page
+      })
+      this.roles = response.data.body
+      this.page = response.data.page
+      this.per_page = response.data.per_page
+      this.total_rows = response.data.total_rows
     },
     async saveRole() {
       this.$v.$touch()
@@ -197,9 +226,6 @@ export default {
     }
   },
   computed: {
-    rolesSearch() {
-      return this.roles.filter(row => row.name.toLowerCase().includes(this.search))
-    },
     nameErrors() {
       const errors = []
       if (!this.$v.form.name.$dirty) return errors
@@ -215,6 +241,22 @@ export default {
     },
     getPrefixRole() {
       return this.typeRoles.find(type => type.id === this.form.id_tipo_rol)
+    },
+    totalPages() {
+      return Math.ceil(this.total_rows / this.per_page)
+    }
+  },
+  watch: {
+    per_page() {
+      this.page = 1;
+      this.getRoles()
+    },
+    search() {
+      if (this.timer)
+        clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.getRoles()
+      }, 500)
     }
   },
   async created() {
