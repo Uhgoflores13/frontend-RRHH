@@ -127,11 +127,15 @@ export default {
   }),
   methods: {
     async getRoles() {
-      const response = await this.http_client("/api/v1/roles");
+      const response = await this.http_client("/api/v1/roles",{
+        paginacion:false
+      });
       this.roles = response.data;
     },
     async getProfiles() {
-      const response = await this.http_client("/api/v1/perfiles");
+      const response = await this.http_client("/api/v1/perfiles",{
+        paginacion:false
+      });
       this.profiles = response.data;
     },
     async createUser(navigate = false) {

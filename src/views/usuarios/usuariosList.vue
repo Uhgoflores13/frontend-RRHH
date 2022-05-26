@@ -8,7 +8,7 @@
         >
           Usuarios
           <div>
-            <v-btn
+            <v-btn v-if="hasRole('ROLE_ADMIN_USER_CREATE')"
                 rounded
                 color="blueMinsal"
                 class="white--text ma-1"
@@ -44,10 +44,10 @@
               <v-btn icon small @click="showUsuarioData(item)">
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
-              <v-btn icon small :to="{name:'usuariosEdit', params:{id:item.id}}">
+              <v-btn icon small v-if="hasRole('ROLE_ADMIN_USER_UPDATE')" :to="{name:'usuariosEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon small @click="deleteUsuarios(item.id)">
+              <v-btn icon small @click="deleteUsuarios(item.id)" v-if="hasRole('ROLE_ADMIN_USER_DELETE')">
                 <v-icon>{{ item.is_suspended ? 'mdi-check' : 'mdi-delete' }}</v-icon>
               </v-btn>
             </template>
@@ -155,10 +155,11 @@ export default {
         per_page: this.per_page,
         page: this.page
       })
-      this.usuarios = response?.data?.body;
-      this.per_page = response.data.per_page;
-      this.page = response.data.page;
-      this.total_rows = response.data.total_rows;
+      this.usuarios = response?.data;
+      const {page, per_page, total_rows}=this.getPaginationProperties(response)
+      this.per_page = per_page;
+      this.page = page;
+      this.total_rows = total_rows;
       this.loading = false;
     },
     showUsuarioData(item) {
