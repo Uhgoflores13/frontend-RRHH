@@ -215,7 +215,9 @@ export default {
       }
     },
     async getPaths() {
-      const response = await this.services.paths.getPaths()
+      const response = await this.services.paths.getPaths({
+        paginacion:false
+      })
       this.paths = response.data
     },
     stringEmptyToNull() {

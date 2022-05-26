@@ -11,7 +11,7 @@
             </v-col>
             <v-col><h2 class="text-h5 text-center">Roles</h2></v-col>
             <v-col class="text-right">
-              <v-btn
+              <v-btn v-if="hasRole('ROLE_ADMIN_ROLE_CREATE')"
                   rounded
                   color="blueMinsal"
                   class="white--text ma-1"
@@ -37,10 +37,10 @@
               v-if="roles.length > 0 && !loading"
           >
             <template v-slot:[`item.accion`]="{ item }">
-              <v-btn icon small @click="updateRole(item)">
+              <v-btn icon small @click="updateRole(item)" v-if="hasRole('ROLE_ADMIN_ROLE_UPDATE')">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon small @click="deleteRole(item.id)">
+              <v-btn icon small @click="deleteRole(item.id)" v-if="hasRole('ROLE_ADMIN_ROLE_DELETE')">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
@@ -184,14 +184,15 @@ export default {
     },
     async getRoles() {
       const response = await this.services.roles.getRoles({
-        nombre:this.search,
+        nombre: this.search,
         page: this.page,
-        per_page: this.per_page
+        per_page: this.per_page,
       })
-      this.roles = response.data.body
-      this.page = response.data.page
-      this.per_page = response.data.per_page
-      this.total_rows = response.data.total_rows
+      this.roles = response.data;
+      const {page, per_page, total_rows} = this.getPaginationProperties(response)
+      this.page = page
+      this.per_page = per_page
+      this.total_rows = total_rows
     },
     async saveRole() {
       this.$v.$touch()
