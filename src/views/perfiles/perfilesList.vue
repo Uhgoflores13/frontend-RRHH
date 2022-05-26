@@ -13,6 +13,7 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 @click="$router.push('create')"
+                v-if="hasRole('ROLE_ADMIN_PROFILE_CREATE')"
             >
               <v-icon left>mdi-plus</v-icon>
               Agregar
@@ -35,7 +36,7 @@
               v-else
           >
             <template v-slot:[`item.accion`]="{ item }">
-              <v-btn icon small :to="{name:'perfilesEdit', params:{id:item.id}}">
+              <v-btn icon small :to="{name:'perfilesEdit', params:{id:item.id}}"  v-if="hasRole('ROLE_ADMIN_PROFILE_UPDATE')">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
@@ -71,9 +72,9 @@ export default {
   data: () => ({
     perfiles: [],
     options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
-    page:1,
-    total_rows:0,
-    per_page:10,
+    page: 1,
+    total_rows: 0,
+    per_page: 10,
     loading: false,
     headers: [
       {
@@ -94,13 +95,14 @@ export default {
     async getProfiles() {
       this.loading = true;
       const response = await this.services.profiles.getProfiles({
-        page:this.page,
-        per_page:this.per_page
+        page: this.page,
+        per_page: this.per_page,
       });
-      this.perfiles = response.data.body;
-      this.page=response.data.page;
-      this.per_page=response.data.per_page;
-      this.total_rows=response.data.total_rows;
+      this.perfiles = response.data;
+      const {page, per_page, total_rows} = this.getPaginationProperties(response)
+      this.page = page;
+      this.per_page = per_page;
+      this.total_rows = total_rows;
       this.loading = false;
     },
   },
