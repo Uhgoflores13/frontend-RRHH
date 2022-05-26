@@ -13,7 +13,7 @@
                 color="blueMinsal"
                 class="white--text ma-1"
                 @click="$router.push({name:'rutasCreate'})"
-            >
+                v-if="hasRole('ROLE_ADMIN_PATH_CREATE')">
               <v-icon left>mdi-plus</v-icon>
               Agregar
             </v-btn
@@ -65,7 +65,7 @@
                 No
               </v-chip>
             </template>
-            <template v-slot:[`item.accion`]="{ item }">
+            <template v-slot:[`item.accion`]="{ item }" v-if="hasRole('ROLE_ADMIN_PATH_UPDATE')">
               <v-btn icon small :to="{name:'rutasEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
@@ -152,10 +152,11 @@ export default {
         page: this.page,
         per_page: this.per_page
       })
-      this.rutas = response.data.body;
-      this.page = response.data.page;
-      this.per_page = response.data.per_page;
-      this.total_rows = response.data.total_rows
+      const {page, per_page, total_rows} = this.getPaginationProperties(response)
+      this.rutas = response.data;
+      this.page = page;
+      this.per_page = per_page;
+      this.total_rows = total_rows;
       this.loading = false;
     },
   },

@@ -5,42 +5,10 @@ Vue.prototype.showLoader = async () => {
     await store.commit("utils/setLoader", true);
 };
 
-Vue.prototype.hideLoader = async () => {
-    await store.commit("utils/setLoader", false);
-};
-Vue.prototype.isPassword = (value) => {
-    if (value === null) return false;
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^&\*])(?=.{8,20})/.test(
-        value
-    );
-};
-Vue.prototype.isEmail = (value) => {
-    if (value === null) return false;
-    return /^(?!(?:(?:\x22?\x5C[\x00-\x7E]\x22?)|(?:\x22?[^\x5C\x22]\x22?)){255,})(?!(?:(?:\x22?\x5C[\x00-\x7E]\x22?)|(?:\x22?[^\x5C\x22]\x22?)){65,}@)(?:(?:[\x21\x23-\x27\x2A\x2B\x2D\x2F-\x39\x3D\x3F\x5E-\x7E]+)|(?:\x22(?:[\x01-\x08\x0B\x0C\x0E-\x1F\x21\x23-\x5B\x5D-\x7F]|(?:\x5C[\x00-\x7F]))*\x22))(?:\.(?:(?:[\x21\x23-\x27\x2A\x2B\x2D\x2F-\x39\x3D\x3F\x5E-\x7E]+)|(?:\x22(?:[\x01-\x08\x0B\x0C\x0E-\x1F\x21\x23-\x5B\x5D-\x7F]|(?:\x5C[\x00-\x7F]))*\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-[a-z0-9]+)*\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-[a-z0-9]+)*)|(?:\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\]))$/.test(
-        value
-    );
-};
 Vue.prototype.temporalAlert = async (alert) => {
     await store.commit("utils/setAlert", alert);
 };
-(Vue.prototype.validInput = (v) => {
-    if (v.value != null && v.value != "") {
-        v.error = false;
-        v.error_msg = "";
-        return true;
-    } else {
-        v.error = true;
-        v.error_msg = "Este campo es requerido";
-        return false;
-    }
-}),
-    (Vue.prototype.restrictInteger = (value) => {
-        if (value.charCode >= 48 && value.charCode <= 57) {
-            return true;
-        } else {
-            value.preventDefault();
-        }
-    });
+
 Vue.prototype.isDui = (dui) => {
     if (dui === null) return false;
     let valido = false;
@@ -136,18 +104,13 @@ Vue.prototype.isNit = (nit) => {
     }
     return valido;
 };
-Vue.prototype.objectsEqual = (object1, object2) => {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
-    if (keys1.length !== keys2.length) {
-        return false;
+
+Vue.prototype.getPaginationProperties=(response)=>{
+    return {
+        page:Number(response.headers.page),
+        per_page:Number(response.headers.per_page),
+        total_rows:Number(response.headers.total_rows)
     }
-    for (let key of keys1) {
-        if (object1[key] !== object2[key]) {
-            return false;
-        }
-    }
-    return true;
 }
 //Funcion auxiliar para verificar rutas accesibles
 const buscarRuta = (rutas, ruta) => {

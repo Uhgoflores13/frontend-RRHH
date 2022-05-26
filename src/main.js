@@ -2,6 +2,7 @@ import Vue from "vue";
 import "./plugins/axios";
 import "./plugins/http_client";
 import "./plugins/utils";
+import "./plugins/security"
 import App from "./App.vue";
 import router from "./router";
 import './services'
