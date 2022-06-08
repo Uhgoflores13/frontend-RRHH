@@ -147,18 +147,11 @@ export default {
         this.loading = true;
         try {
           const response = await this.services.auth.login(this.form)
-          if (process.env.VUE_APP_TWO_FACTOR_AUTH === 'true') {
-            this.$router.push({
-              name: "2fa",
-              params: {
-                email: this.form.email,
-                token: response?.data?.token,
-                verified: response?.data?.verified,
-                metodos_autenticacion: response?.data?.metodos_autenticacion,
-              },
-            });
+          const {user}=jwtDecode(response.data.token);
+          this.setAuth(response?.data)
+          if(user?.two_factor_status){
+            this.$router.push({name: "2fa"});
           } else {
-            this.setAuth(response?.data)
             this.$router.push({name: 'dashboard'});
           }
         } catch (e) {

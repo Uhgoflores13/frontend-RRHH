@@ -5,136 +5,71 @@
         <v-layout justify-center>
           <v-flex xs12 sm8 md6 lg4>
             <v-img
-              class="mx-auto d-flex mb-2"
-              src="@/assets/img/SIS-HAZUL.png"
-              max-width="350"
+                class="mx-auto d-flex mb-2"
+                src="@/assets/img/SIS-HAZUL.png"
+                max-width="350"
             />
-            <v-card v-if="!selectedMethod" class="pa-6" rounded="lg">
-              <v-card-title primary-title>Tipo de autenticación</v-card-title>
-              <v-card-text class="pb-0"
-                >Se le proporcionará un <b>código temporal</b> para iniciar
-                sesión. Seleccione:</v-card-text
-              >
-
-              <v-list rounded flat>
-                <v-list-item
-                  @click="checkSelectedMethod(item.id)"
-                  v-for="(item, index) in metodos_auth"
-                  :key="index"
-                >
-                  <v-list-item-icon>
-                    <v-icon>{{ item.icono }}</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.nombre }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card>
             <v-card
-              class="pa-2 pa-sm-6"
-              v-if="selectedMethod == 1"
-              rounded="lg"
+                class="pa-2 pa-sm-6"
+                rounded="lg"
             >
-              <v-card-title primary-title> Correo electrónico </v-card-title>
-              <v-card-text
-                >Se envió un código de seis digitos a su
-                <b>correo electrónico</b>, por favor ingrese el
-                código</v-card-text
-              >
-              <v-card-text class="py-2">
-                <v-text-field
-                  placeholder="ingrese el codigo"
-                  label="Codigo"
-                  v-model="codigo"
-                  pattern="[0-9]*"
-                  type="number"
-                  @keypress="this.restrictInteger"
-                  color="blueMinsal"
-                  v-mask="'######'"
-                  @keypress.enter="check2fa()"
-                  :rules="[
-                    (v) =>
-                      (v !== null && v !== '') || 'Este campo es obligatorio',
-                    (v) => (v !== null && v.length === 6) || 'Código inválido',
-                  ]"
-                ></v-text-field>
+              <v-card-title primary-title v-if="this.form.id_method===1">Correo electrónico</v-card-title>
+              <v-card-title primary-title v-else-if="form.id_method===2"> Autenticación de código QR</v-card-title>
+              <v-card-title primary-title v-else> Tipo de autenticación</v-card-title>
+              <v-card-text>
+                <p v-if="form.id_method===1">Se envió un código de seis digitos a su
+                  <b>correo electrónico</b>, por favor ingrese el
+                  código
+                </p>
+                <p v-else-if="form.id_method===2">
+                  Ingrese el código que le proporciona la aplicación de
+                  <b>Autenticador de Google</b> o
+                  <b>Autenticador de Microsoft</b>
+                </p>
+                <p v-else>Se le proporcionará un <b>código temporal</b> para iniciar
+                  sesión. Seleccione:</p>
+                <v-list rounded flat v-if="!form.id_method">
+                  <v-list-item
+                      @click="selectMethod(item.id)"
+                      v-for="(item, index) in methods"
+                      :key="index"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ item.icono }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.nombre }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                <div v-if="form.id_method">
+                  <v-text-field
+                      placeholder="ingrese el codigo"
+                      label="Codigo"
+                      v-model="form.code" :error-messages="codeErrors" @blur="$v.form.code.$touch()"
+                      type="text"
+                      color="blueMinsal"
+                      v-mask="'######'"
+                      @keypress.enter="VerifyCode2fa"
+                  ></v-text-field>
+                </div>
               </v-card-text>
-              <v-card-actions class="py-0">
+              <v-card-actions class="py-0" v-if="form.id_method">
                 <v-row class="my-2 my-xs-0">
                   <v-btn
-                    color="blueMinsal white--text elevation-0 ma-1"
-                    rounded
-                    @click="check2fa()"
+                      color="blueMinsal white--text elevation-0 ma-1"
+                      rounded
+                      @click="VerifyCode2fa"
                   >
                     Ingresar
                   </v-btn>
                   <v-btn
-                    class="d-xs-flex ma-1"
-                    color="blueMinsal elevation-0 "
-                    rounded
-                    text
-                    v-if="metodos_auth.length !== 1"
-                    @click="
-                      selectedMethod = null;
-                      codigo = null;
-                    "
-                  >
-                    Probar otro método
-                  </v-btn>
-                </v-row>
-              </v-card-actions>
-            </v-card>
-            <v-card
-              class="pa-2 pa-sm-6"
-              v-if="selectedMethod == 2"
-              rounded="lg"
-            >
-              <v-card-title primary-title>
-                Autenticación de código QR
-              </v-card-title>
-              <v-card-text
-                >Ingrese el código que le proporciona la aplicación de
-                <b>Autenticador de Google</b> o
-                <b>Autenticador de Microsoft</b></v-card-text
-              >
-              <v-card-text class="py-2">
-                <v-text-field
-                  placeholder="ingrese el codigo"
-                  label="Codigo"
-                  v-model="codigo"
-                  pattern="[0-9]*"
-                  type="number"
-                  @keypress="this.restrictInteger"
-                  @keypress.enter="check2fa()"
-                  :rules="[
-                    (v) =>
-                      (v !== null && v !== '') || 'Este campo es obligatorio',
-                    (v) => (v !== null && v.length === 6) || 'Código inválido',
-                  ]"
-                  color="blueMinsal"
-                  v-mask="'######'"
-                ></v-text-field>
-              </v-card-text>
-              <v-card-actions class="py-0">
-                <v-row class="my-2 my-xs-0">
-                  <v-btn
-                    color="blueMinsal white--text elevation-0 ma-1"
-                    rounded
-                    @click="check2fa()"
-                  >
-                    Ingresar
-                  </v-btn>
-                  <v-btn
-                    class="d-xs-flex ma-1"
-                    color="blueMinsal  elevation-0 "
-                    rounded
-                    text
-                    @click="
-                      selectedMethod = null;
-                      codigo = null;
-                    "
-                    v-if="metodos_auth.length !== 1"
+                      class="d-xs-flex ma-1"
+                      color="blueMinsal elevation-0 "
+                      rounded
+                      text
+                      v-if="methods.length > 1"
+                      @click="form.id_method = null; codigo = null;"
                   >
                     Probar otro método
                   </v-btn>
@@ -149,28 +84,28 @@
       <v-row>
         <v-col cols="12" sm="6" md="4">
           <v-img
-            src="@/assets/img/escudo-white-minsal.png"
-            width="200"
-            class="mx-auto"
+              src="@/assets/img/escudo-white-minsal.png"
+              width="200"
+              class="mx-auto"
           />
         </v-col>
         <v-col
-          class="text-center white--text font-weight-thin align-center"
-          cols="12"
-          sm="6"
-          md="4"
+            class="text-center white--text font-weight-thin align-center"
+            cols="12"
+            sm="6"
+            md="4"
         >
           <p class="ma-0">
-            Ministerio de Salud <br />
-            República de El Salvador, C.A <br />
+            Ministerio de Salud <br/>
+            República de El Salvador, C.A <br/>
             Calle Arce No. 827, San Salvador, El Salvador
           </p>
         </v-col>
         <v-col cols="12" sm="12" md="4">
           <v-img
-            src="@/assets/img/SIS-HBLANCO.png"
-            width="150"
-            class="mx-auto"
+              src="@/assets/img/SIS-HBLANCO.png"
+              width="150"
+              class="mx-auto"
           />
         </v-col>
       </v-row>
@@ -178,91 +113,66 @@
   </v-app>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
+import {required} from 'vuelidate/lib/validators'
+import jwtDecode from "jwt-decode";
 
 export default {
+  validations: {
+    form:{
+      code:{required},
+    }
+  },
   data: () => ({
-    codigo: null,
-    tempToken: null,
-    check2fa_resp: null,
-    selectedMethod: null,
-    metodos_auth: null,
+    form:{
+      id_method: null,
+      code: null,
+    }
   }),
   methods: {
+    ...mapActions(['setAuth']),
     ...mapMutations(["setToken", "setUserInfo"]),
-    async checkSelectedMethod(id) {
-      this.selectedMethod = id;
-      if (this.selectedMethod == 1) {
-        const response = await this.http_client(
-          "/api/v1/2fa",
-          { id_metodo: this.selectedMethod },
-          "post",
-          {
-            Authorization: `Bearer ${this.tempToken}`,
-          }
-        );
-        if (response?.status == 200) {
-          this.temporalAlert({
-            show: true,
-            message: "Revise su bandeja de entrada",
-            type: "success",
-          });
-        }
-      }
-    },
-    async check2fa() {
-      if (!this.codigo) {
+    async selectMethod(id) {
+      this.form.id_method = id;
+      if (id === 1) {
+        const response = await this.services.auth.twoFactor({id_method: id})
         this.temporalAlert({
           show: true,
-          message: "Por favor ingrese su código",
-          type: "error",
+          message: "Revise su bandeja de entrada",
+          type: "success",
         });
-        return;
       }
-      try {
-        const response = await this.http_client(
-          `/api/v1/2fa/check`,
-          { codigo: this.codigo, id_metodo: this.selectedMethod },
-          "post",
-          {
-            Authorization: `Bearer ${this.tempToken}`,
-          }
-        );
-        if (response?.status == 200) {
-          this.check2fa_resp = response.data;
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("refresh_token", response.data.refreshToken);
-          this.setToken(response.data.token);
-          this.setUserInfo(jwtDecode(response.data.token));
-        }
-      } catch (e) {
-        e.response
-          ? this.temporalAlert({
-              show: true,
-              message: e.response.data.message,
-              type: "error",
-            })
-          : null;
-      } finally {
-        this.check2fa_resp
-          ? this.check2fa_resp["2fa"] == true
-            ? this.$router.push("/")
-            : null
-          : null;
+    },
+    async VerifyCode2fa() {
+      this.$v.form.$touch()
+      if(!this.$v.form.$invalid){
+        const response = await this.services.auth.verifyCode(this.form)
+        this.setAuth(response?.data)
+        this.$router.push({name: 'dashboard'})
       }
     },
   },
-  mounted() {
-    this.tempToken = this.$route.params.token;
-    this.metodos_auth = this.$route.params.metodos_autenticacion;
-    if (!this.metodos_auth || !this.tempToken) {
-      this.$router.push("/login");
+  computed: {
+    ...mapState(['userInfo']),
+    methods() {
+      const aux = this.userInfo?.user?.auth_methods || [];
+      this.form.id_method=(aux.find(item=>item.is_primary))?.id
+      return aux || null
+    },
+    codeErrors() {
+      const errors = []
+      if (!this.$v.form.code.$dirty) return errors
+      !this.$v.form.code.required && errors.push('El codigo es requerido')
+      return errors
     }
-    this.metodos_auth.forEach((element) => {
-      if (element.is_primary) {
-        this.checkSelectedMethod(element.id);
-      }
-    });
+  },
+  created() {
+    const token = localStorage.getItem('token')
+    if (token) {
+      if (!this.userInfo.user)
+        this.setUserInfo(jwtDecode(localStorage.getItem('token')))
+    } else
+      this.$router.go(-1);
   },
 };
 </script>
