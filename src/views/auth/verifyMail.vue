@@ -11,7 +11,7 @@
               {{ message }}
             </p>
             <v-progress-circular
-              v-if="message == ''"
+              v-if="loading"
               indeterminate
               color="blueMinsal"
               class="d-flex mx-auto"
@@ -20,13 +20,13 @@
               color="blueMinsal"
               class="mt-8"
               rounded
-              @click="ejecutarMover()"
+              :to="{name:'login'}"
               text
               id="botomAction"
               style="text-transform: none"
               large
             >
-              <p class="text-h6 ma-0">Regresar al login</p>
+              Regresar al login
             </v-btn>
           </v-col>
         </v-row>
@@ -38,37 +38,21 @@
 export default {
   name: "verifyMail",
   data: () => ({
-    move: 0,
+    loading:false,
     interval: null,
     message: "",
   }),
   methods: {
-    mover() {
-      this.move = this.move + 10;
-    },
     async checkVerify() {
-      let token = this.$route.params.token;
-      const response = await this.http_client(
-        `/api/v1/verificar-usuario/${token}`
-      );
-      this.message = response?.data.message || "Ha ocurrido un problema";
-    },
-    ejecutarMover() {
-      // const btn = document.getElementById('botomAction')
-      // const x = document.getElementById('botomAction').getBoundingClientRect()
-      // const ancho=screen.width
-      // let positionX = 0
-      // let interval=setInterval(() => {
-      //     positionX  = btn.getBoundingClientRect().x
-      //     if( positionX < ancho){
-      //       this.mover()
-      //     }else{
-      //       this.move = x
-      //       clearInterval(interval)
-      //       this.ejecutarMover()
-      //     }
-      //   },1)
-      this.$router.push("/login");
+      try{
+        this.loading=true
+        const token = this.$route.params.token;
+        const response=await this.services.auth.verifyAccount(token)
+        this.message = response?.data.message || "Ha ocurrido un problema";
+      }catch{
+      }finally {
+        this.loading=false
+      }
     },
   },
   computed: {
