@@ -41,7 +41,7 @@ _axios.interceptors.response.use(
 
         if (
             status !== 401 ||
-            (status === 401 && window.location.pathname === "/login")
+            (status === 401 && (window.location.pathname === "/login" || window.location.pathname.includes('/verify-mail/')) )
         ) {
             return Promise.reject(error);
         }

@@ -4,10 +4,18 @@
       <v-container fluid fill-height>
         <v-row class="text-center">
           <v-col cols="12">
-            <img src="../../assets/img/SIS-HAZUL.png" :width="dinamicSize" />
+            <img src="../../assets/img/SIS-HAZUL.png"  style="max-width: 350px; width: 75%"/>
           </v-col>
           <v-col cols="12">
-            <p :class="dinamicClass">
+            <p :class="{
+              'text-h6': breakpoint==='xs',
+              'text-h6': breakpoint==='sm',
+              'text-h4': breakpoint==='md',
+              'text-h3': breakpoint==='lg',
+              'text-h3': breakpoint==='lx',
+              'text-h3': breakpoint==='2xl',
+              'red--text':!verify
+            }">
               {{ message }}
             </p>
             <v-progress-circular
@@ -41,6 +49,7 @@ export default {
     loading:false,
     interval: null,
     message: "",
+    verify:null,
   }),
   methods: {
     async checkVerify() {
@@ -49,44 +58,18 @@ export default {
         const token = this.$route.params.token;
         const response=await this.services.auth.verifyAccount(token)
         this.message = response?.data.message || "Ha ocurrido un problema";
+        this.verify=true
       }catch{
+        this.verify=false;
+        this.message="No se pudo verificar la cuenta del usuario";
       }finally {
         this.loading=false
       }
     },
   },
   computed: {
-    dinamicClass() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return "text-h6";
-        case "sm":
-          return "text-h6";
-        case "md":
-          return "text-h4";
-        case "lg":
-          return "text-h3";
-        case "xl":
-          return "text-h3";
-        case "2xl":
-          return "text-h3";
-      }
-    },
-    dinamicSize() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return 300;
-        case "sm":
-          return 300;
-        case "md":
-          return 400;
-        case "lg":
-          return 500;
-        case "xl":
-          return 500;
-        case "2xl":
-          return 700;
-      }
+    breakpoint(){
+      return this.$vuetify.breakpoint.name
     },
   },
   created() {
