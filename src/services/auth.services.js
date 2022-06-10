@@ -4,8 +4,12 @@ const login = async (body) => await http_client('/api/v1/login', body, 'post');
 const changeEmail = async (body) => await http_client(`/api/v1/users/update/email`, body, 'put');
 const changePassword = async (body) => await http_client(`/api/v1/users/update/password`, body, 'put');
 const verifyAccount = async (token) => await http_client(`/api/v1/verification/account/${token}`);
-const twoFactor=async (body)=> await http_client('/api/v1/2fa', body, 'post')
-const verifyCode = async (body) => await http_client('/api/v1/2fa/verify', body, 'post')
+const twoFactor = async (body) => await http_client('/api/v1/2fa/code', body, 'post');
+const verifyCode = async (body) => await http_client('/api/v1/2fa/verify', body, 'post');
+const get2FAMethods = async () => await http_client('/api/v1/users/2fa/method');
+const store2FAMethods = async (body) => await http_client('/api/v1/users/2fa/method', body, 'post');
+const authMethodVerification = async (body)=> await http_client('/api/v1/users/2fa/method/verify', body, 'post');
+const changePrimaryMethod= async (idMethod)=>await http_client(`/api/v1/users/2fa/method/${idMethod}`,{}, 'put')
 
 export default {
     login,
@@ -13,5 +17,9 @@ export default {
     changePassword,
     verifyAccount,
     verifyCode,
-    twoFactor
+    twoFactor,
+    get2FAMethods,
+    store2FAMethods,
+    authMethodVerification,
+    changePrimaryMethod
 }

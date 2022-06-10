@@ -135,7 +135,7 @@ export default {
     async selectMethod(id) {
       this.form.id_method = id;
       if (id === 1) {
-        const response = await this.services.auth.twoFactor({id_method: id})
+        await this.services.auth.twoFactor({id_method: id})
         this.temporalAlert({
           show: true,
           message: "Revise su bandeja de entrada",

@@ -123,6 +123,7 @@ Vue.prototype.canNext = async (ruta) => {
     //Rutas a las que el usuario siempre va a poder acceder
     const permit = [
         "Forbidden",
+        "security",
         "login",
         "recuperar-password",
         "reset-password",
