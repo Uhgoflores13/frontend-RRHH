@@ -33,25 +33,6 @@
                   }}
                 </v-list-item-subtitle>
               </v-list-item-content>
-              <v-list-item-action
-                  v-if="item.id !== 1 && item.configured && item.is_primary"
-              >
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                        icon
-                        @click.stop="eliminarMetodo(item.id_metodo_usuario)"
-                        v-bind="attrs"
-                        v-on="on"
-                    >
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn
-                    >
-                  </template
-                  >
-                  <span>Quitar método</span>
-                </v-tooltip>
-              </v-list-item-action>
             </v-list-item>
           </v-list>
         </v-card-text>
