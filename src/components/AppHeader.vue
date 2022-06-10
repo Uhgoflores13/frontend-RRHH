@@ -1,11 +1,11 @@
 <template>
   <v-app-bar app :elevation="0" color="bgWhite" dense>
     <v-btn
-      text
-      icon
-      @click.stop="setSibeBar(!sideBar)"
-      color="blueMinsal"
-      v-if="!$vuetify.breakpoint.smAndDown"
+        text
+        icon
+        @click.stop="setSibeBar(!sideBar)"
+        color="blueMinsal"
+        v-if="!$vuetify.breakpoint.smAndDown"
     >
       <v-icon>mdi-menu</v-icon>
     </v-btn>
@@ -40,13 +40,13 @@
         <v-list-item class="my-0">
           <v-list-item-icon>
             <v-switch
-              v-model="$vuetify.theme.dark"
-              class="my-0"
-              hint="This toggles the global state of the Vuetify theme"
-              dense
+                v-model="$vuetify.theme.dark"
+                class="my-0"
+                hint="This toggles the global state of the Vuetify theme"
+                dense
             ></v-switch>
           </v-list-item-icon>
-          <v-list-item-title>Tema Oscuro </v-list-item-title>
+          <v-list-item-title>Tema Oscuro</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
   name: "AppHeader",
@@ -64,8 +64,10 @@ export default {
     async cerrarSession() {
       this.setMenu([]);
       this.setToken(null);
+      await this.services.auth.logout()
       localStorage.clear();
-      this.$router.push("/login").catch((e) => {});
+      this.$router.push({name: 'login'}).catch((e) => {
+      });
     },
   },
   computed: {
