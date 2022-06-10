@@ -70,7 +70,7 @@
                       rounded
                       text
                       v-if="methods.length > 1"
-                      @click="form.id_method = null; codigo = null;"
+                      @click="form.id_method = null; form.code = null;"
                   >
                     Probar otro método
                   </v-btn>
@@ -122,64 +122,64 @@ import AppLoader from "../../components/AppLoader";
 export default {
   components: {AppLoader},
   validations: {
-    form:{
-      code:{required},
+    form: {
+      code: {required},
     }
   },
   data: () => ({
-    form:{
+    methods: [],
+    form: {
       id_method: null,
       code: null,
     },
-    loader:false
+    loader: false
   }),
   methods: {
     ...mapActions(['setAuth']),
     ...mapMutations(["setToken", "setUserInfo"]),
-    cleanForm(){
-      this.form.code=null
+    cleanForm() {
+      this.form.code = null
       this.$v.form.$reset()
     },
     async selectMethod(id) {
       this.cleanForm();
       this.form.id_method = id;
-      if (id === 1) {
-        try{
-          this.loader=true
-          await this.services.auth.twoFactor({id_method: id})
+      await this.sendCodeEmail()
+    },
+    async sendCodeEmail() {
+      if (this.form.id_method===1) {
+        try {
+          this.loader = true
+          await this.services.auth.twoFactor()
           this.temporalAlert({
             show: true,
             message: "Revise su bandeja de entrada",
             type: "success",
           });
-        }catch  {
-        }finally {
-          this.loader=false
+        } catch {
+        } finally {
+          this.loader = false
         }
       }
     },
     async VerifyCode2fa() {
       this.$v.form.$touch()
-      if(!this.$v.form.$invalid){
-       try{
-         this.loader=true;
-         const response = await this.services.auth.verifyCode(this.form)
-         this.setAuth(response?.data)
-         this.$router.push({name: 'dashboard'})
-       }catch {
-       }finally {
-         this.loader=false;
-       }
+      if (!this.$v.form.$invalid) {
+        try {
+          this.loader = true;
+          const response = await this.services.auth.verifyCode(this.form)
+          this.setAuth(response?.data)
+          this.$router.push({name: 'dashboard'})
+        } catch {
+        } finally {
+          this.loader = false;
+        }
       }
     },
   },
   computed: {
     ...mapState(['userInfo']),
-    methods() {
-      const aux = this.userInfo?.user?.auth_methods || [];
-      this.form.id_method=(aux.find(item=>item.is_primary))?.id
-      return aux || null
-    },
+
     codeErrors() {
       const errors = []
       if (!this.$v.form.code.$dirty) return errors
@@ -187,11 +187,14 @@ export default {
       return errors
     }
   },
-  created() {
+  async created() {
     const token = localStorage.getItem('token')
-    if (token) {
-      if (!this.userInfo.user)
-        this.setUserInfo(jwtDecode(localStorage.getItem('token')))
+    if (token && this.userInfo.user) {
+      await this.setUserInfo(jwtDecode(localStorage.getItem('token')))
+      const aux = this.userInfo?.user?.auth_methods || [];
+      this.methods=aux;
+      this.form.id_method = (aux.find(item => item.is_primary))?.id;
+      await this.sendCodeEmail()
     } else
       this.$router.go(-1);
   },
