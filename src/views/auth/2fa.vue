@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <app-loader v-if="loader"></app-loader>
     <v-main class="bgMinsal">
       <v-container fluid class="mb-5 mb-sm-16">
         <v-layout justify-center>
@@ -116,8 +117,10 @@
 import {mapActions, mapMutations, mapState} from "vuex";
 import {required} from 'vuelidate/lib/validators'
 import jwtDecode from "jwt-decode";
+import AppLoader from "../../components/AppLoader";
 
 export default {
+  components: {AppLoader},
   validations: {
     form:{
       code:{required},
@@ -127,28 +130,46 @@ export default {
     form:{
       id_method: null,
       code: null,
-    }
+    },
+    loader:false
   }),
   methods: {
     ...mapActions(['setAuth']),
     ...mapMutations(["setToken", "setUserInfo"]),
+    cleanForm(){
+      this.form.code=null
+      this.$v.form.$reset()
+    },
     async selectMethod(id) {
+      this.cleanForm();
       this.form.id_method = id;
       if (id === 1) {
-        await this.services.auth.twoFactor({id_method: id})
-        this.temporalAlert({
-          show: true,
-          message: "Revise su bandeja de entrada",
-          type: "success",
-        });
+        try{
+          this.loader=true
+          await this.services.auth.twoFactor({id_method: id})
+          this.temporalAlert({
+            show: true,
+            message: "Revise su bandeja de entrada",
+            type: "success",
+          });
+        }catch  {
+        }finally {
+          this.loader=false
+        }
       }
     },
     async VerifyCode2fa() {
       this.$v.form.$touch()
       if(!this.$v.form.$invalid){
-        const response = await this.services.auth.verifyCode(this.form)
-        this.setAuth(response?.data)
-        this.$router.push({name: 'dashboard'})
+       try{
+         this.loader=true;
+         const response = await this.services.auth.verifyCode(this.form)
+         this.setAuth(response?.data)
+         this.$router.push({name: 'dashboard'})
+       }catch {
+       }finally {
+         this.loader=false;
+       }
       }
     },
   },
