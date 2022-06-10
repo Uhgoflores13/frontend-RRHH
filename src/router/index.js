@@ -24,16 +24,15 @@ const routes = [
                 component: () =>
                     import(/* webpackChunkName: "perfiles" */ "../views/perfil"),
             },
-            {
-                path: "/seguridad",
-                name: "seguridad",
-                component: () =>
-                    import(/* webpackChunkName: "seguridad" */ "../views/auth/security.vue"),
-            },
             ...rolesRouter,
             ...perfilesRouter,
             ...usuariosRouter,
             ...rutasRouter,
+            {
+                path: "/security",
+                name: "security",
+                component: () => import(/* webpackChunkName: "qr" */ "../views/auth/security"),
+            },
         ],
     },
     {
@@ -71,10 +70,6 @@ const routes = [
         path: "/autenticacionqr",
         name: "2fa",
         component: () => import(/* webpackChunkName: "qr" */ "../views/auth/2fa"),
-    }, {
-        path: "/security",
-        name: "security",
-        component: () => import(/* webpackChunkName: "qr" */ "../views/auth/security"),
     },
 ];
 
