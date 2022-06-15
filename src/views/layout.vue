@@ -4,16 +4,12 @@
 
     <app-header></app-header>
     <app-aside-bar :menu="menu"
-      v-if="!$vuetify.breakpoint.xs && !$vuetify.breakpoint.sm"
     ></app-aside-bar>
     <v-main class="bgMinsal">
       <div class="pa-2 pa-sm-4" v-if="userInfo.user">
         <router-view :key="$route.fullPath" />
       </div>
     </v-main>
-    <app-bottom-navigation :menu="menu"
-      v-if="$vuetify.breakpoint.xs || $vuetify.breakpoint.sm"
-    ></app-bottom-navigation>
   </v-app>
 </template>
 

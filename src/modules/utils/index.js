@@ -26,7 +26,7 @@ export default {
     setLoader: (state, payload) => {
       state.loader = payload;
     },
-    setSibeBar: (state, payload) => {
+    setSideBar: (state, payload) => {
       state.sideBar = payload;
     },
     setMenu: (state, menu) => {

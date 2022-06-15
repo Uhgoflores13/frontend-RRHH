@@ -1,12 +1,9 @@
 <template>
   <v-navigation-drawer
+      :value="sideBar"
+      absolute
       app
-      permanent
-      stateless
-      :class="sideBar ? 'px-0' : 'px-2'"
-      :mini-variant="sideBar"
-      mini-variant-width="70"
-      @input="setSibeBar($event)"
+      @input="setSideBar($event)"
   >
     <template v-slot:prepend>
       <v-card elevation="2" class="ma-4 py-0" v-if="!sideBar">
@@ -85,7 +82,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("utils", ["setSibeBar"]),
+    ...mapMutations("utils", ["setSideBar"]),
   },
   computed: {
     ...mapState("utils", ["sideBar"]),

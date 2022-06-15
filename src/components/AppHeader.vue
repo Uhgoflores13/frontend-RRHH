@@ -1,14 +1,6 @@
 <template>
   <v-app-bar app :elevation="0" color="bgWhite" dense>
-    <v-btn
-        text
-        icon
-        @click.stop="setSibeBar(!sideBar)"
-        color="blueMinsal"
-        v-if="!$vuetify.breakpoint.smAndDown"
-    >
-      <v-icon>mdi-menu</v-icon>
-    </v-btn>
+    <v-app-bar-nav-icon @click.stop="setSideBar(!sideBar)"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
 
     <v-menu offset-y transition="scroll-y-transition" rounded="lg">
@@ -59,7 +51,7 @@ import {mapMutations, mapState} from "vuex";
 export default {
   name: "AppHeader",
   methods: {
-    ...mapMutations("utils", ["setSibeBar", "setMenu"]),
+    ...mapMutations("utils", ["setSideBar", "setMenu"]),
     ...mapMutations(["setToken"]),
     async cerrarSession() {
       this.setMenu([]);
