@@ -86,7 +86,7 @@
               </v-text-field>
               <v-card-actions class="flex justify-center pa-0">
                 <div class="text-center">
-                  <v-btn color="blueMinsal white--text" rounded type="submit">
+                  <v-btn color="blueMinsal white--text" rounded type="submit" :loading="loadin_change_password">
                     <v-icon class="mr-1">mdi-content-save</v-icon>
                     Guardar
                   </v-btn>
@@ -127,6 +127,7 @@
               rounded
               color="blueMinsal"
               class="white--text"
+              :loading="loadin_change_email"
               @click="changeEmail()"
           >
             <v-icon left>mdi-content-save</v-icon>
@@ -207,6 +208,11 @@ export default {
           this.show_change_email = false
           this.$v.form_email.$reset()
           this.cleanForms(this.form_email)
+          this.temporalAlert({
+            show: true,
+            message: "Se ha actualizado el correo electronico",
+            type: "success",
+          });
         } catch {
 
         } finally {
@@ -233,6 +239,11 @@ export default {
           this.setAuth(response.data)
           this.$v.form_password.$reset()
           this.cleanForms(this.form_password)
+          this.temporalAlert({
+            show: true,
+            message: "Se ha actualizado la contraseña",
+            type: "success",
+          });
         } catch {
         } finally {
           this.loadin_change_password = false
