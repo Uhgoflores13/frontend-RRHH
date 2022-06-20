@@ -40,13 +40,6 @@ El proyecto es de propiedad intelectual del Ministerio de Salud de El Salvador y
         <tr>
             <td align="center">
                 <div align="center">
-                    <a href="http://codigo.salud.gob.sv/bceren"  target="_blank"><img  style="width: 90px; height: 90px;" width="90" src="https://www.gravatar.com/avatar/b01808613a27f98a8c080e0d6be04afc?s=800&d=identicon"></a><br />
-                    Bryan Ceren<br/>
-                    <a href="mailto:bryan.ceren@salud.gob.sv">bryan.ceren@salud.gob.sv</a>
-                </div>
-            </td>
-            <td align="center">
-                <div align="center">
                     <a href="http://codigo.salud.gob.sv/rsreyes"  target="_blank"><img  style="width: 90px; height: 90px;" width="90" src="https://www.gravatar.com/avatar/cc9dbec5e2a3668a5e653c9c9ccf3731?s=800&d=identicon"></a><br />
                     Roberto Reyes<br/>
                     <a href="mailto:robertostanleyreyes@gmail.com">robertostanleyreyes@gmail.com</a>
