@@ -8,9 +8,11 @@ const twoFactor = async (body) => await http_client('/api/v1/2fa/code', body, 'p
 const verifyCode = async (body) => await http_client('/api/v1/2fa/verify', body, 'post');
 const get2FAMethods = async () => await http_client('/api/v1/users/2fa/method');
 const store2FAMethods = async (body) => await http_client('/api/v1/users/2fa/method', body, 'post');
-const authMethodVerification = async (body)=> await http_client('/api/v1/users/2fa/method/verify', body, 'post');
-const changePrimaryMethod= async (idMethod)=>await http_client(`/api/v1/users/2fa/method/${idMethod}`,{}, 'put');
-const logout=async ()=>await http_client('/api/v1/logout', {}, 'post')
+const authMethodVerification = async (body) => await http_client('/api/v1/users/2fa/method/verify', body, 'post');
+const changePrimaryMethod = async (idMethod) => await http_client(`/api/v1/users/2fa/method/${idMethod}`, {}, 'put');
+const logout = async () => await http_client('/api/v1/logout', {}, 'post')
+const resetPassword = async (body) => await http_client('/api/v1/password/reset', body, 'post')
+const newPassword=async (body)=>await http_client('/api/v1/password/change', body, 'post')
 
 export default {
     login,
@@ -23,5 +25,7 @@ export default {
     store2FAMethods,
     authMethodVerification,
     changePrimaryMethod,
-    logout
+    logout,
+    resetPassword,
+    newPassword
 }
