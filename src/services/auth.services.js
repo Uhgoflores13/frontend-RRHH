@@ -12,7 +12,9 @@ const authMethodVerification = async (body) => await http_client('/api/v1/users/
 const changePrimaryMethod = async (idMethod) => await http_client(`/api/v1/users/2fa/method/${idMethod}`, {}, 'put');
 const logout = async () => await http_client('/api/v1/logout', {}, 'post')
 const resetPassword = async (body) => await http_client('/api/v1/password/reset', body, 'post')
-const newPassword=async (body)=>await http_client('/api/v1/password/change', body, 'post')
+const newPassword=async (body, token)=>await http_client('/api/v1/password/change', body, 'put', {
+    Authorization: `Bearer ${token}`,
+})
 
 export default {
     login,
