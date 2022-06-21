@@ -19,10 +19,10 @@ const routes = [
                     import(/* webpackChunkName: "profiles" */ "../views/dashboard"),
             },
             {
-                path: "perfil",
-                name: "perfil",
+                path: "profile",
+                name: "profile",
                 component: () =>
-                    import(/* webpackChunkName: "profiles" */ "../views/perfil"),
+                    import(/* webpackChunkName: "profiles" */ "../views/profile"),
             },
             ...rolesRouter,
             ...perfilesRouter,

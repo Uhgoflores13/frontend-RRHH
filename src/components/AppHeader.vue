@@ -11,7 +11,7 @@
         </v-btn>
       </template>
       <v-list dense nav>
-        <v-list-item to="/perfil" class="my-0">
+        <v-list-item :to="{name:'profile'}" class="my-0">
           <v-list-item-icon>
             <v-icon size="20">mdi-account</v-icon>
           </v-list-item-icon>
