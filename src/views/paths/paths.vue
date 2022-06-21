@@ -12,7 +12,7 @@
                 rounded
                 color="blueMinsal"
                 class="white--text ma-1"
-                @click="$router.push({name:'pathCreate'})"
+                :to="{name:'pathsCreate'}"
                 v-if="hasRole('ROLE_ADMIN_PATH_CREATE')">
               <v-icon left>mdi-plus</v-icon>
               Agregar
@@ -66,7 +66,7 @@
               </v-chip>
             </template>
             <template v-slot:[`item.accion`]="{ item }" v-if="hasRole('ROLE_ADMIN_PATH_UPDATE')">
-              <v-btn icon small :to="{name:'pathEdit', params:{id:item.id}}">
+              <v-btn icon small :to="{name:'pathsEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>

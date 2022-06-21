@@ -6,11 +6,11 @@ export default [
     },
     {
         path: "/paths/create",
-        name: "pathCreate",
+        name: "pathsCreate",
         component: () => import(/* webpackChunkName: "formPath" */ "./pathForm.vue" ),
     },
     {
         path: "/paths/edit/:id",
-        name: "pathEdit",
+        name: "pathsEdit",
         component: () => import(/* webpackChunkName: "formPath" */ "./pathForm.vue" ),},
 ];
