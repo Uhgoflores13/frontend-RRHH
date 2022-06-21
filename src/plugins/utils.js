@@ -112,13 +112,13 @@ Vue.prototype.getPaginationProperties=(response)=>{
         total_rows:Number(response.headers.total_rows)
     }
 }
-//Funcion auxiliar para verificar rutas accesibles
+//Funcion auxiliar para verificar paths accesibles
 const buscarRuta = (rutas, ruta) => {
     return rutas.some((item) => {
         return item.nombre_uri.toLowerCase() === ruta.name.toLowerCase();
     });
 };
-//Funcion para verificar las rutas accesibles
+//Funcion para verificar las paths accesibles
 Vue.prototype.canNext = async (ruta) => {
     //Rutas a las que el usuario siempre va a poder acceder
     const permit = [
@@ -134,12 +134,12 @@ Vue.prototype.canNext = async (ruta) => {
     //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso
     if (permit.some((row) => row.toLowerCase() === ruta.name.toLowerCase()))
         return true;
-    //Se verifica si la ruta proporcionada se encuentra en las rutas
+    //Se verifica si la ruta proporcionada se encuentra en las paths
     //almacenadas, si no hay entonces se hace la petición para almacenarlas
     let {utils} = store.state;
     if (utils.rutas && utils.rutas.length === 0) {
         await store.dispatch("utils/getMenu");
     }
-    //Busca ruta en el arreglo de rutas
+    //Busca ruta en el arreglo de paths
     return buscarRuta(utils.rutas, ruta);
 };

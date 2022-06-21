@@ -12,7 +12,7 @@
                 rounded
                 color="blueMinsal"
                 class="white--text ma-1"
-                @click="$router.push({name:'rutasCreate'})"
+                @click="$router.push({name:'pathCreate'})"
                 v-if="hasRole('ROLE_ADMIN_PATH_CREATE')">
               <v-icon left>mdi-plus</v-icon>
               Agregar
@@ -24,7 +24,7 @@
           <v-skeleton-loader v-if="loading"></v-skeleton-loader>
           <v-data-table
               :headers="headers"
-              :items="rutas"
+              :items="paths"
               item-key="id"
               class="elevation-0 border-1"
               no-data-text="No hay datos"
@@ -66,7 +66,7 @@
               </v-chip>
             </template>
             <template v-slot:[`item.accion`]="{ item }" v-if="hasRole('ROLE_ADMIN_PATH_UPDATE')">
-              <v-btn icon small :to="{name:'rutasEdit', params:{id:item.id}}">
+              <v-btn icon small :to="{name:'pathEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
@@ -97,9 +97,8 @@ import {mapActions} from "vuex";
 
 export default {
   data: () => ({
-    rutas: [],
+    paths: [],
     options: [{value: 10, text: '10'}, {value: 25, text: '25'}, {value: 50, text: '50'}],
-    rutaModal: false,
     loading: false,
     headers: [
       {
@@ -153,7 +152,7 @@ export default {
         per_page: this.per_page
       })
       const {page, per_page, total_rows} = this.getPaginationProperties(response)
-      this.rutas = response.data;
+      this.paths = response.data;
       this.page = page;
       this.per_page = per_page;
       this.total_rows = total_rows;

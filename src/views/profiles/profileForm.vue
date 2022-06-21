@@ -109,7 +109,7 @@ export default {
             message: this.$route.params.id ? 'Perfil actualizado' : 'Perfil creado',
             type: "success",
           });
-          if (navigate) await this.$router.push({name: 'perfilesList'})
+          if (navigate) await this.$router.push({name: 'profiles'})
         } catch {
         } finally {
           this.loading = false

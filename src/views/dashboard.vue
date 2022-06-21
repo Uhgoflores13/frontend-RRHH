@@ -83,9 +83,9 @@ export default {
           {
             nombre: "Agregar Nuevo",
             icono: "mdi-plus-circle",
-            path: "/rutas/create",
+            path: "/paths/create",
           },
-          { nombre: "Listar", icono: "mdi-view-list", path: "/rutas/list" },
+          { nombre: "Listar", icono: "mdi-view-list", path: "/paths/list" },
         ],
       },
     ],

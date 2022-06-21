@@ -106,7 +106,7 @@ import AppSearchList from "../../components/AppSearchList";
 import {required} from "vuelidate/lib/validators";
 
 export default {
-  name: "formPath",
+  name: "pathForm",
   components: {AppSearchList},
   validations: {
     form: {
@@ -172,7 +172,7 @@ export default {
       this.form.show = data.mostrar
       this.form.public = data.publico
       this.form.admin = data.admin
-      this.form.roles = data.Rols.map(rol => rol.id)
+      this.form.roles = data?.Rols?.map(rol => rol.id)
     },
     async savePath(navigate = false) {
       this.$v.$touch()
@@ -206,7 +206,7 @@ export default {
           })
           this.formClean()
           if (navigate)
-            await this.$router.push({name: 'rutasList'})
+            await this.$router.push({name: 'paths'})
         } catch {
         } finally {
           this.loading = false
