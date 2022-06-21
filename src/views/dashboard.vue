@@ -72,9 +72,9 @@ export default {
           {
             nombre: "Agregar Nuevo",
             icono: "mdi-plus-circle",
-            path: "/perfiles/create",
+            path: "/profiles/create",
           },
-          { nombre: "Listar", icono: "mdi-view-list", path: "/perfiles/list" },
+          { nombre: "Listar", icono: "mdi-view-list", path: "/profiles/list" },
         ],
       },
       {

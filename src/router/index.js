@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import rolesRouter from "../views/roles/rolesRouter";
-import perfilesRouter from "../views/perfiles/perfilesRouter";
+import perfilesRouter from "../views/profiles/profilesRouter";
 import usuariosRouter from "../views/usuarios/usuariosRouter";
 import rutasRouter from "../views/rutas/rutasRouter";
 
@@ -16,13 +16,13 @@ const routes = [
                 path: "/",
                 name: "dashboard",
                 component: () =>
-                    import(/* webpackChunkName: "perfiles" */ "../views/dashboard"),
+                    import(/* webpackChunkName: "profiles" */ "../views/dashboard"),
             },
             {
                 path: "perfil",
                 name: "perfil",
                 component: () =>
-                    import(/* webpackChunkName: "perfiles" */ "../views/perfil"),
+                    import(/* webpackChunkName: "profiles" */ "../views/perfil"),
             },
             ...rolesRouter,
             ...perfilesRouter,

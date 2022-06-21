@@ -133,7 +133,7 @@ export default {
       this.roles = response.data;
     },
     async getProfiles() {
-      const response = await this.http_client("/api/v1/perfiles",{
+      const response = await this.http_client("/api/v1/profiles",{
         paginacion:false
       });
       this.profiles = response.data;
@@ -202,7 +202,7 @@ export default {
     }, rolesErrors() {
       const errors = []
       if (!this.$v.form.roles.$dirty) return errors
-      !this.$v.form.roles.required && errors.push('Roles son requeridos si no hay perfiles')
+      !this.$v.form.roles.required && errors.push('Roles son requeridos si no hay profiles')
       return errors
     },
   },

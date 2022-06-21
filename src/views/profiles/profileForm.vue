@@ -57,7 +57,7 @@ import AppSearchList from "../../components/AppSearchList";
 import {required} from "vuelidate/lib/validators";
 
 export default {
-  name: "formProfile",
+  name: "profileForm",
   components: {AppSearchList},
   validations: {
     form: {

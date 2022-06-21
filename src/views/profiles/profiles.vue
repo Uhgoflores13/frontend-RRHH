@@ -12,7 +12,7 @@
                 rounded
                 color="blueMinsal"
                 class="white--text ma-1"
-                @click="$router.push('create')"
+                :to="{name:'profilesCreate'}"
                 v-if="hasRole('ROLE_ADMIN_PROFILE_CREATE')"
             >
               <v-icon left>mdi-plus</v-icon>
@@ -36,7 +36,7 @@
               v-else
           >
             <template v-slot:[`item.accion`]="{ item }">
-              <v-btn icon small :to="{name:'perfilesEdit', params:{id:item.id}}"  v-if="hasRole('ROLE_ADMIN_PROFILE_UPDATE')">
+              <v-btn icon small :to="{name:'profilesEdit', params:{id:item.id}}"  v-if="hasRole('ROLE_ADMIN_PROFILE_UPDATE')">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>

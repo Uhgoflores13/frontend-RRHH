@@ -147,7 +147,7 @@ export default {
     }, rolesErrors() {
       const errors = []
       if (!this.$v.usuario.roles.$dirty) return errors
-      !this.$v.usuario.roles.required && errors.push('Roles son requeridos si no hay perfiles')
+      !this.$v.usuario.roles.required && errors.push('Roles son requeridos si no hay profiles')
       return errors
     },
   },
