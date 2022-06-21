@@ -1,10 +1,10 @@
 export default [
     {
-        path: "/roles/list",
-        name: "rolesList",
+        path: "/roles",
+        name: "roles",
         component: () =>
             import(
-                /* webpackChunkName: "rolesList" */ "./rolesList.vue"
+                /* webpackChunkName: "rolesList" */ "./roles.vue"
                 ),
     },
 ]
