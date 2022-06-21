@@ -12,23 +12,23 @@
         <v-card-text>
           <v-text-field
               label="Correo"
-              type="search" :error-messages="emailErrors" @blur="$v.usuario.email.$touch()"
+              type="search" :error-messages="emailErrors" @blur="$v.user.email.$touch()"
               autocomplete="username"
               color="blueMinsal"
-              v-model="usuario.email"
+              v-model="user.email"
           ></v-text-field>
           <v-row>
             <v-col>
               <app-search-list :error-messages="perfilesErrors" placeholder="Buscar Perfiles"
                                item-text="nombre"
                                item-value="id"
-                               :items="perfiles" v-model="usuario.perfiles">
+                               :items="profiles" v-model="user.profiles">
               </app-search-list>
             </v-col>
             <v-col cols="12" md="6">
               <app-search-list :error-messages="rolesErrors" placeholder="Buscar Perfiles"
                                item-text="name" item-value="id"
-                               :items="roles" v-model="usuario.roles">
+                               :items="roles" v-model="user.roles">
               </app-search-list>
             </v-col>
           </v-row>
@@ -69,24 +69,24 @@ export default {
     AppSearchList
   },
   validations: {
-    usuario: {
+    user: {
       email: {required, email},
-      perfiles: {
+      profiles: {
         required: requiredIf(function () {
-          return this.usuario.roles.length === 0
+          return this.user.roles.length === 0
         })
       },
       roles: {
         required: requiredIf(function () {
-          return this.usuario.perfiles.length === 0
+          return this.user.profiles.length === 0
         })
       }
     }
 
   },
   data: () => ({
-    usuario: {email: null, roles: [], perfiles: []},
-    perfiles: [],
+    user: {email: null, roles: [], profiles: []},
+    profiles: [],
     roles: []
   }),
   methods: {
@@ -97,14 +97,14 @@ export default {
     },
     async getProfiles() {
       const response = await this.services.profiles.getProfiles()
-      this.perfiles = response.data
+      this.profiles = response.data
     },
     async getUser() {
       const response = await this.services.users.showUser(this.$route.params.id)
       const {data} = response
       data.roles = data.roles.map(rol => rol.id)
-      data.perfiles = data.perfiles.map(profile => profile.id)
-      this.usuario = data
+      data.profiles = data.perfiles.map(profile => profile.id)
+      this.user = data
     },
     async saveUser() {
       this.$v.$touch()
@@ -112,9 +112,9 @@ export default {
         try {
           await this.setLoader(true)
           await this.services.users.updateUser(this.$route.params.id, {
-            email: this.usuario.email,
-            roles: this.usuario.roles,
-            perfiles: this.usuario.perfiles
+            email: this.user.email,
+            roles: this.user.roles,
+            perfiles: this.user.profiles
           })
           this.temporalAlert({
             show: true,
@@ -122,7 +122,7 @@ export default {
             type: "success",
           });
           await this.$router.push({
-            name: 'usuariosList'
+            name: 'users'
           })
         } catch (e) {
         } finally {
@@ -134,20 +134,20 @@ export default {
   computed: {
     emailErrors() {
       const errors = []
-      if (!this.$v.usuario.email.$dirty) return errors
-      !this.$v.usuario.email.required && errors.push('Correo es obligatorio')
-      !this.$v.usuario.email.email && errors.push('El correo no es valido')
+      if (!this.$v.user.email.$dirty) return errors
+      !this.$v.user.email.required && errors.push('Correo es obligatorio')
+      !this.$v.user.email.email && errors.push('El correo no es valido')
       return errors
     },
     perfilesErrors() {
       const errors = []
-      if (!this.$v.usuario.perfiles.$dirty) return errors
-      !this.$v.usuario.perfiles.required && errors.push('Perfil son requeridos si no hay roles')
+      if (!this.$v.user.profiles.$dirty) return errors
+      !this.$v.user.profiles.required && errors.push('Perfil son requeridos si no hay roles')
       return errors
     }, rolesErrors() {
       const errors = []
-      if (!this.$v.usuario.roles.$dirty) return errors
-      !this.$v.usuario.roles.required && errors.push('Roles son requeridos si no hay profiles')
+      if (!this.$v.user.roles.$dirty) return errors
+      !this.$v.user.roles.required && errors.push('Roles son requeridos si no hay profiles')
       return errors
     },
   },

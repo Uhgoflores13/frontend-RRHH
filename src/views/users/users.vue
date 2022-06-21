@@ -12,7 +12,7 @@
                 rounded
                 color="blueMinsal"
                 class="white--text ma-1"
-                :to="{name:'usuariosCreate'}"
+                :to="{name:'usersCreate'}"
             >
               <v-icon left>mdi-plus</v-icon>
               Agregar
@@ -44,7 +44,7 @@
               <v-btn icon small @click="showUsuarioData(item)">
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
-              <v-btn icon small v-if="hasRole('ROLE_ADMIN_USER_UPDATE')" :to="{name:'usuariosEdit', params:{id:item.id}}">
+              <v-btn icon small v-if="hasRole('ROLE_ADMIN_USER_UPDATE')" :to="{name:'usersEdit', params:{id:item.id}}">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
               <v-btn icon small @click="deleteUsuarios(item.id)" v-if="hasRole('ROLE_ADMIN_USER_DELETE')">

@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import rolesRouter from "../views/roles/rolesRouter";
 import perfilesRouter from "../views/profiles/profilesRouter";
-import usuariosRouter from "../views/usuarios/usuariosRouter";
+import usuariosRouter from "../views/users/userRouter";
 import rutasRouter from "../views/paths/pathRouter";
 
 Vue.use(VueRouter);

@@ -42,7 +42,7 @@
           </div>
           <v-row>
             <v-col cols="12" md="6">
-              <app-search-list :error-messages="perfilesErrors" placeholder="Buscar Perfiles"
+              <app-search-list :error-messages="profilesErrors" placeholder="Buscar Perfiles"
                                item-text="nombre"
                                item-value="id"
                                :items="profiles" v-model="form.perfiles">
@@ -127,16 +127,12 @@ export default {
   }),
   methods: {
     async getRoles() {
-      const response = await this.http_client("/api/v1/roles",{
-        paginacion:false
-      });
-      this.roles = response.data;
+      const response = await this.services.roles.getRoles()
+      this.roles = response.data
     },
     async getProfiles() {
-      const response = await this.http_client("/api/v1/profiles",{
-        paginacion:false
-      });
-      this.profiles = response.data;
+      const response = await this.services.profiles.getProfiles()
+      this.profiles = response.data
     },
     async createUser(navigate = false) {
       this.$v.$touch()
@@ -152,7 +148,7 @@ export default {
           });
           this.cleanForm()
           if (navigate)
-            await this.$router.push({name: 'usuariosList'});
+            await this.$router.push({name: 'users'});
           else
             this.$v.$reset()
         } catch {
@@ -194,7 +190,7 @@ export default {
       !this.$v.form.confirm_password.sameAsPassword && errors.push('Las contraseñas no coinciden')
       return errors
     },
-    perfilesErrors() {
+    profilesErrors() {
       const errors = []
       if (!this.$v.form.perfiles.$dirty) return errors
       !this.$v.form.perfiles.required && errors.push('Perfil son requeridos si no hay roles')

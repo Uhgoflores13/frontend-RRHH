@@ -50,9 +50,9 @@ export default {
           {
             nombre: "Agregar Nuevo",
             icono: "mdi-plus-circle",
-            path: "/usuarios/create",
+            path: "/users/create",
           },
-          { nombre: "Listar", icono: "mdi-view-list", path: "/usuarios/list" },
+          { nombre: "Listar", icono: "mdi-view-list", path: "/users/list" },
         ],
       },
       {
