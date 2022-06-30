@@ -125,7 +125,7 @@ Vue.prototype.canNext = async (ruta) => {
         "Forbidden",
         "security",
         "login",
-        "recuperar-password",
+        "forgot-password",
         "reset-password",
         "2fa",
         "verifyMail",

@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import rolesRouter from "../views/roles/rolesRouter";
-import perfilesRouter from "../views/profiles/profilesRouter";
-import usuariosRouter from "../views/users/userRouter";
-import rutasRouter from "../views/paths/pathRouter";
+import profilesRouter from "../views/profiles/profilesRouter";
+import usersRouter from "../views/users/userRouter";
+import pathsRouter from "../views/paths/pathRouter";
 
 Vue.use(VueRouter);
 
@@ -25,9 +25,9 @@ const routes = [
                     import(/* webpackChunkName: "profiles" */ "../views/profile"),
             },
             ...rolesRouter,
-            ...perfilesRouter,
-            ...usuariosRouter,
-            ...rutasRouter,
+            ...profilesRouter,
+            ...usersRouter,
+            ...pathsRouter,
             {
                 path: "/security",
                 name: "security",
@@ -41,8 +41,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "login" */ "../views/auth/login"),
     },
     {
-        path: "/recuperar-password",
-        name: "recuperar-password",
+        path: "/forgot-password",
+        name: "forgot-password",
         component: () =>
             import(
                 /* webpackChunkName: "recuperarPassword" */ "../views/auth/recoverPassword"

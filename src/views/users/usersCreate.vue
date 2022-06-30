@@ -127,11 +127,15 @@ export default {
   }),
   methods: {
     async getRoles() {
-      const response = await this.services.roles.getRoles()
+      const response = await this.services.roles.getRoles({
+        paginacion:false
+      })
       this.roles = response.data
     },
     async getProfiles() {
-      const response = await this.services.profiles.getProfiles()
+      const response = await this.services.profiles.getProfiles({
+        paginacion:false
+      })
       this.profiles = response.data
     },
     async createUser(navigate = false) {

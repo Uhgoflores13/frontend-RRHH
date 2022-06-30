@@ -80,7 +80,9 @@ export default {
   }),
   methods: {
     async getRoles() {
-      const response = await this.services.roles.getRoles()
+      const response = await this.services.roles.getRoles({
+        paginacion:false
+      })
       this.roles = response.data;
     },
     async getPorfile() {

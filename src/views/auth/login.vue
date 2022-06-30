@@ -67,7 +67,7 @@
                       color="blueMinsal"
                       class="mt-2 mx-auto"
                       rounded
-                      to="/recuperar-password"
+                      :to="{name:'forgot-password'}"
                   >Olvidaste tu contraseña?
                   </v-btn
                   >
