@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
       :value="sideBar"
-      absolute
+      fixed
       app
       @input="setSideBar($event)"
   >
