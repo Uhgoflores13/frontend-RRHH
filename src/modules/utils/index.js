@@ -39,8 +39,7 @@ export default {
     actions: {
         getMenu: async ({commit}) => {
             const response = await pathServices.getAuthorizedPaths()
-            console.log(getNavItem(Object.assign( response?.data)))
-            const menu = response?.data.filter((item) => item.mostrar === true);
+            const menu = getNavItem(response?.data)
             commit("setMenu", menu);
             commit("setRutas", response.data);
 
@@ -53,13 +52,9 @@ export default {
 };
 
 const getNavItem = (items) => {
-    const accumulator = [];
-    items.forEach((item) => {
-        if (item.mostrar) {
-            if (item.childrens?.length > 0) item.childrens = getNavItem(item.childrens)
-            accumulator.push(item)
-        }
+    return items.filter((item) => {
+        if (!item.mostrar) return false
+        if (item.childrens?.length > 0) item.childrens = getNavItem(item.childrens)
+        return true
     })
-
-    return accumulator;
 }
