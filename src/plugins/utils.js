@@ -105,16 +105,19 @@ Vue.prototype.isNit = (nit) => {
     return valido;
 };
 
-Vue.prototype.getPaginationProperties=(response)=>{
+Vue.prototype.getPaginationProperties = (response) => {
     return {
-        page:Number(response.headers.page),
-        per_page:Number(response.headers.per_page),
-        total_rows:Number(response.headers.total_rows)
+        page: Number(response.headers.page),
+        per_page: Number(response.headers.per_page),
+        total_rows: Number(response.headers.total_rows)
     }
 }
 //Funcion auxiliar para verificar paths accesibles
 const buscarRuta = (rutas, ruta) => {
     return rutas.some((item) => {
+        if (item?.childrens?.length > 0)
+            if (buscarRuta(item?.childrens, ruta)) return true
+
         return item.nombre_uri.toLowerCase() === ruta.name.toLowerCase();
     });
 };
@@ -134,8 +137,8 @@ Vue.prototype.canNext = async (ruta) => {
     //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso
     if (permit.some((row) => row.toLowerCase() === ruta.name.toLowerCase()))
         return true;
-    //Se verifica si la ruta proporcionada se encuentra en las paths
-    //almacenadas, si no hay entonces se hace la petición para almacenarlas
+    /*Se verifica si la ruta proporcionada se encuentra en las paths
+    almacenadas, si no hay entonces se hace la petición para almacenarlas*/
     let {utils} = store.state;
     if (utils.rutas && utils.rutas.length === 0) {
         await store.dispatch("utils/getMenu");
