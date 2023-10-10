@@ -4,6 +4,7 @@ import rolesRouter from "../views/roles/rolesRouter";
 import profilesRouter from "../views/profiles/profilesRouter";
 import usersRouter from "../views/users/userRouter";
 import pathsRouter from "../views/paths/pathRouter";
+import libroRouter from "../views/libros/routes/index";
 
 Vue.use(VueRouter);
 
@@ -71,6 +72,7 @@ const routes = [
         name: "2fa",
         component: () => import(/* webpackChunkName: "qr" */ "../views/auth/2fa"),
     },
+    ...libroRouter
 ];
 
 const router = new VueRouter({
