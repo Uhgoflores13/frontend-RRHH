@@ -1,11 +1,11 @@
 <template>
-  <v-app>
+  <div>
     <v-app-bar app color="primary">
       <v-container max-width="xl" class="py-4">
         <v-row>
           <v-col cols="12">
             <h1 class="display-1 font-weight-bold white--text">
-              Administrador de Libros
+              Administrador de Autores
             </h1>
           </v-col>
         </v-row>
@@ -14,55 +14,59 @@
     <v-main class="pa-5">
       <v-container max-width="960px" class="mt-10">
         <div class="flex-container mb-3">
-          <v-btn
-            :to="{ name: 'nuevo-libro' }"
-            color="primary"
-            class="rounded-btn"
-            depressed
-          >
-            Autores
+          <v-btn to="libros" color="primary" class="rounded-btn" depressed>
+            Libros
           </v-btn>
         </div>
         <v-row>
           <v-col>
-            <Heading tittle="Libros"></Heading>
+            <h1 class="display-1 font-weight-bold">Autores</h1>
           </v-col>
           <v-col cols="8">
             <v-text-field
               v-model="search"
-              label="Buscar libro"
+              label="Buscar autor"
               solo
             ></v-text-field>
           </v-col>
           <v-col cols="auto">
-            <v-btn @click="searchBook" color="primary"> Buscar </v-btn>
+            <v-btn @click="searchAuthor" color="primary"> Buscar </v-btn>
           </v-col>
         </v-row>
         <v-row>
           <!-- Sección de Filtros -->
           <v-col cols="12" md="4">
             <!-- En pantallas medianas (md) y mayores ocupará 4/12 del ancho -->
-            <!-- Filtro de Género -->
-            <v-select
-              :items="genres"
-              label="Género"
-              v-model="selectedGenre"
-              solo
-            ></v-select>
-
             <!-- Filtro de Autor -->
             <v-select
               :items="authors"
-              label="autor"
-              v-model="selectedAuthor"
+              label="Autor"
+              v-model="selectednameAuthor"
+              solo
+            ></v-select>
+
+            <!-- Filtro de Edad -->
+            <v-select
+              :items="ages"
+              label="Edad"
+              v-model="selectedage"
               solo
               class="mt-3"
             ></v-select>
 
-            <!-- Filtro de Año -->
+            <!-- Filtro de Sexo -->
+            <v-select
+              :items="sexes"
+              label="Sexo"
+              v-model="selectedSex"
+              solo
+              class="mt-3"
+            ></v-select>
+
+            <!-- Filtro de Año de Nacimiento (Esto debería ser un número, no una lista de strings) -->
             <v-select
               :items="years"
-              label="Año"
+              label="Año de Nacimiento"
               v-model="selectedYear"
               solo
               class="mt-3"
@@ -75,7 +79,7 @@
             <!-- Tu tabla de libros aquí ... -->
             <v-data-table
               :headers="headers"
-              :items="filteredBooks"
+              :items="filteredAuthors"
               :items-per-page="5"
               class="elevation-1 mt-5"
             >
@@ -88,9 +92,9 @@
             </v-data-table>
             <v-dialog v-model="deleteDialogVisible" persistent max-width="290">
               <v-card>
-                <v-card-title class="headline">Eliminar libro</v-card-title>
+                <v-card-title class="headline">Eliminar autor</v-card-title>
                 <v-card-text
-                  >¿Estas seguro que quieres borrar este libro?</v-card-text
+                  >¿Estas seguro que quieres borrar este autor?</v-card-text
                 >
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -106,37 +110,37 @@
 
             <v-dialog v-model="dialogVisible" max-width="600px">
               <v-card>
-                <v-card-title class="headline">Editar Libro</v-card-title>
+                <v-card-title class="headline">Editar autor</v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12">
                         <v-text-field
-                          v-model="editedBook.bookName"
-                          label="Libro"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editedBook.genre"
-                          label="Género"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editedBook.author"
+                          v-model="editedAuthor.authorName"
                           label="Autor"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-text-field
-                          v-model="editedBook.year"
+                          v-model="editedAuthor.age"
+                          label="Edad"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editedAuthor.sex"
+                          label="Sexo"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editedAuthor.estado"
                           label="Año"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-text-field
-                          v-model="editedBook.status"
+                          v-model="editedAuthor.status"
                           label="Estado"
                         ></v-text-field>
                       </v-col>
@@ -151,7 +155,7 @@
                     @click="dialogVisible = false"
                     >Cancelar</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click="saveEditedBook"
+                  <v-btn color="blue darken-1" text @click="saveEditedAuthor"
                     >Guardar</v-btn
                   >
                 </v-card-actions>
@@ -161,99 +165,96 @@
         </v-row>
       </v-container>
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script>
 import RouterLink from "../../components/Ui/RouterLink.vue";
-import Heading from "../../components/Ui/Heading.vue";
-
 export default {
   data: () => ({
     search: "",
     headers: [
-      { text: "Libro", value: "bookName" },
-      { text: "Género", value: "genre" },
-      { text: "Autor", value: "author" },
+      { text: "Nombre", value: "nameAuthor" },
+      { text: "Edad", value: "age" },
+      { text: "Sexo", value: "sex" },
       { text: "Año", value: "year" },
       { text: "Estado", value: "status" },
       { text: "Acciones", value: "action", sortable: false },
     ],
-    books: [
+    authors: [
       {
-        bookName: "El principito",
-        genre: "Ficción",
-        author: "Autor 1",
+        nameAuthor: "Autor 1",
+        age: "25",
+        sex: "Masculino",
         year: "2001",
         status: "Disponible",
       },
-      // ... puedes agregar más libros aquí
+      // ... puedes agregar más autores aquí
     ],
-    selectedGenre: null, // Valor seleccionado en el filtro de género
-    selectedAuthor: null, // Valor seleccionado en el filtro de autor
+    selectednameAuthor: null, // Valor seleccionado en el filtro de género
+    selectedage: null, // Valor seleccionado en el filtro de autor
+    selectedSex: null, // Valor seleccionado en el filtro de sexo
     selectedYear: null, // Valor seleccionado en el filtro de año
-    genres: [
-      "Ficción",
-      "Drama",
-      "Terror",
-      "accion" /* ... otros géneros ... */,
-    ],
-    authors: ["Autor 1", "Autor 2" /* ... otros autores ... */],
-    years: ["2000", "2001", "2002" /* ... otros años ... */],
-    dialogVisible: false, // Controla la visibilidad del modal
-    editedBook: {
-      bookName:"",
-      genre: "",
-      author: "",
-      year: "",
-      status: "",
-    },
+
+     
+  ages: [25, 30, 35, 40, 45, 50], // Edades típicas, puedes cambiarlas según lo que necesites.
+  sexes: ["Masculino", "Femenino"],
+  years: [2000, 2001, 2002], // Años como números.
+
+  dialogVisible: false, // Controla la visibilidad del modal
+  editedAuthor: {
+    nameAuthor: "",
+    age: null,  // Considera si quieres inicializar esto como 0 o null.
+    sex: "",
+    year: null,  // Lo mismo aquí.
+    status: "",
+  },
     deleteDialogVisible: false,
-    bookToDelete: null,
+    authorToDelete: null,
   }),
   components: {
     RouterLink,
-    Heading,
   },
   methods: {
     editItem(item) {
-      this.editedBook = { ...item };
+      this.editedAuthor = { ...item };
       this.dialogVisible = true;
     },
-    searchBook() {
+    searchAuthor() {
       // Aquí es donde agregarás la lógica para buscar el libro
       console.log("Buscar libro:", this.search);
     },
-    saveEditedBook() {
+    saveEditedAuthor() {
       // Aquí podrías implementar la lógica para guardar las ediciones, por ejemplo, actualizando el libro en un servidor o en un store de Vuex.
       this.dialogVisible = false; // Cerrar el modal
     },
     deleteItem(item) {
-      this.bookToDelete = item;
+      this.authorToDelete = item;
       this.deleteDialogVisible = true;
     },
     confirmDelete() {
       // Aquí puedes agregar la lógica para eliminar el libro de tu lista
       // Por ejemplo: this.books.splice(this.books.indexOf(this.bookToDelete), 1);
-      this.bookToDelete = null;
+      this.authorToDelete = null;
       this.deleteDialogVisible = false;
     },
     cancelDelete() {
-      this.bookToDelete = null;
+      this.authorToDelete = null;
       this.deleteDialogVisible = false;
     },
   },
-  computed: {
-    filteredBooks() {
-      return this.books.filter((book) => {
+computed: {
+    filteredAuthors() {
+      return this.authors.filter((author) => {
         return (
-          (!this.selectedGenre || book.genre === this.selectedGenre) &&
-          (!this.selectedAuthor || book.author === this.selectedAuthor) &&
-          (!this.selectedYear || book.year === this.selectedYear)
+          (!this.selectednameAuthor || author.nameAuthor === this.selectednameAuthor) &&
+          (!this.selectedage || author.age === this.selectedage) &&
+          (!this.selectedSex || author.sex === this.selectedSex) &&
+          (!this.selectedYear || author.year === this.selectedYear)
         );
       });
     },
-  },
+},
   watch: {},
   async created() {},
 };

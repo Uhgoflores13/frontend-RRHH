@@ -133,6 +133,7 @@ Vue.prototype.canNext = async (ruta) => {
         "2fa",
         "verifyMail",
         "libros",
+        "nuevo-libro",
     ];
     if (!ruta.name) return false;
     //Si la ruta a ingresar esta definida en el arreglo local, permite ingreso
